@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "325863853447",
+    "project_id": "dataapp-cc323",
+    "storage_bucket": "dataapp-cc323.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:325863853447:android:466f7cd93cb02abcb51722",
+        "android_client_info": {
+          "package_name": "com.dataappng"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1LL-iB3vCwSVKYO0R6Hyu78cKEldhjR0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
