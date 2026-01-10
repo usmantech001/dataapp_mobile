@@ -69,13 +69,13 @@ class _GiftcardTxnViewState extends State<GiftcardTxnView> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      appBar: (widget.hideAppBar == true)
-          ? PreferredSize(
-              child: const SizedBox(),
-              preferredSize: MediaQuery.of(context).size)
-          : CustomAppBar(
-              title: Text("Giftcard Transactions", style: get18TextStyle()),
-              elevation: 1),
+      // appBar: (widget.hideAppBar == true)
+      //     ? PreferredSize(
+      //         child: const SizedBox(),
+      //         preferredSize: MediaQuery.of(context).size)
+      //     : CustomAppBar(
+      //         title: Text("Giftcard Transactions", style: get18TextStyle()),
+      //         elevation: 1),
       body: Column(
         children: [
           SizedBox(height: DashboardTabsItems.getDasboardTabTopPadding),

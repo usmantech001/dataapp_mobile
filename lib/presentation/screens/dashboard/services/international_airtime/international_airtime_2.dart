@@ -136,7 +136,7 @@ class InternationalAirtime2 extends StatelessWidget {
                   {required String transaction_pin}) async {
                 try {
                   ServiceTxn _ = await ServicesHelper.buyInternationalAirtime(
-                    amount: double.parse(arg.amountInNGN),
+                    amount: arg.amountInNGN,
                     pin: transaction_pin,
                     phone: arg.phoneNumber,
                     provider: arg.provider.code,

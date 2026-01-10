@@ -1,10 +1,12 @@
 import 'package:dataplug/core/constants.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
+import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_container.dart';
 import 'package:dataplug/presentation/misc/image_manager/image_manager.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
 import '../../../../core/helpers/auth_helper.dart';
@@ -20,79 +22,74 @@ class SettingsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: Constants.kHorizontalScreenPadding),
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: CustomAppbar(title: 'Settings', canPop: false,),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
         child: Column(
+          spacing: 8.h,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Text(
-                "Settings",
-                style: get14TextStyle().copyWith(
-                  fontSize: 20,
-                  color: ColorManager.kBlack,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            Gap(16),
+            
             //
             SettingsIconTab(
                 onTap: () {
-                  Navigator.pushNamed(context, RoutesManager.profileSettings);
+                  Navigator.pushNamed(context, RoutesManager.generalSettings);
                 },
-                text: "Profile",
-                img: Assets.images.profileIcon.path),
-            Divider(
-              thickness: .4,
-            ),
-            Gap(10),
+                text: "General Settings",
+                shortDesc: 'Profile, Account Closure ',
+                img: 'user'),
+            
             SettingsIconTab(
                 onTap: () {
                   Navigator.pushNamed(context, RoutesManager.security);
                 },
                 text: "Security",
-                img: Assets.images.securityMenuIcon.path),
-            Divider(
-              thickness: .4,
-            ),
-            Gap(10),
+                shortDesc: 'Password, PIN, Two-Factor',
+                img: 'security-icon'),
+           
+            
             SettingsIconTab(
                 onTap: () {
                   //
                   Navigator.pushNamed(context, RoutesManager.support);
                 },
                 text: "Support",
-                img: Assets.images.supportMenu.path),
-            Divider(
-              thickness: .4,
-            ),
-            Gap(10),
+                shortDesc: "Call us, Email, WhatsApp",
+                img: 'support-icon'),
+            
             SettingsIconTab(
                 onTap: () {
                   Navigator.pushNamed(context, RoutesManager.addedBanks);
                 },
-                text: "Bank Info",
-                img: Assets.images.bankMenuIcon.path),
-
-            Divider(
-              thickness: .4,
-            ),
-            Gap(10),
+                text: "Invite a Friend",
+                shortDesc: "Invite friends and earn rewards",
+                img: 'profile-icon'),
+           
             SettingsIconTab(
                 onTap: () {
                   Navigator.pushNamed(context, RoutesManager.faqs);
                 },
-                text: "FAQs",
-                img: Assets.images.fAQsMenuIcon.path),
+                text: "Notifications",
+                shortDesc: "Notifications settings",
+                img: 'notification'),
 
-            Divider(
-              thickness: .4,
-            ),
-            Gap(10),
+              SettingsIconTab(
+                onTap: () {
+                  Navigator.pushNamed(context, RoutesManager.addedBanks);
+                },
+                text: "Bank Account",
+                shortDesc: "Transfers, Cards, Withdraw",
+                img: 'bank-icon'),
+          SettingsIconTab(
+                onTap: () {
+                  Navigator.pushNamed(context, RoutesManager.faqs);
+                },
+                text: "FAQs",
+                shortDesc: "FAQs",
+                img: 'help'),
+            
+          
             SettingsIconTab(
                 onTap: () {
                   showCustomBottomSheet(
@@ -101,12 +98,12 @@ class SettingsTab extends StatelessWidget {
                     isDismissible: true,
                   );
                 },
-                text: "Log Out from this account",
-                img: Assets.images.logoutIcon.path),
-
-            const SizedBox(height: 30),
-
-            const SizedBox(height: 15),
+                text: "Log Out",
+                shortDesc: "Log Out from this account",
+                hasNavIcon: false,
+                img: 'log-out'),
+            
+      /*
             GestureDetector(
               onTap: () {
                 showCustomBottomSheet(
@@ -139,7 +136,7 @@ class SettingsTab extends StatelessWidget {
                 ),
               ),
             ),
-
+            */
             //
           ],
         ),

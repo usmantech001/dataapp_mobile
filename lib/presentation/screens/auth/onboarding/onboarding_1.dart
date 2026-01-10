@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dataplug/core/helpers/tiktok_helper.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
@@ -50,37 +51,37 @@ class _Onboarding1State extends State<Onboarding1> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      backgroundColor: ColorManager.kPrimaryLight,
+    return Scaffold(
+      //backgroundColor: ColorManager.kPrimaryLight,
       body: SafeArea(
         bottom: false,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              color: ColorManager.kPrimaryLight,
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              // color: ColorManager.kPrimaryLight,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //
                   Padding(
-                    padding: const EdgeInsets.only(left: 15.0, top: 0),
+                    padding: const EdgeInsets.only(left: 0, top: 0),
                     child: Assets.images.dataplugLogoText
-                        .image(width: 150, height: 30),
+                        .image(width: 118, height: 30),
                   ),
-                  customDivider(
-                    height: 1,
-                    margin: const EdgeInsets.only(top: 16, bottom: 20),
-                    color: ColorManager.kPrimary.withOpacity(.1),
+                  Gap(25),
+                  Text(
+                    "Create an Account",
+                    style: get24TextStyle(),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Sign Up",
-                        style: get18TextStyle(),
-                      ),
-                      RichText(
+                  Gap(12),
+                   Text(
+                    "Sign Up Today to Manage Data and Pay Bills in One Place",
+                    style: get14TextStyle(),
+                  ),
+                  /*
+                   RichText(
                         text: TextSpan(
                           style: get12TextStyle().copyWith(fontSize: 13),
                           children: [
@@ -100,8 +101,7 @@ class _Onboarding1State extends State<Onboarding1> {
                           ],
                         ),
                       )
-                    ],
-                  ),
+                   */
 
                   const SizedBox(height: 10),
                 ],
@@ -168,9 +168,8 @@ class _Onboarding1State extends State<Onboarding1> {
                                         screen: const SelectCountry());
                                     if (res != null) {
                                       setState(() {
-
-                                      countryCode = res.phone_code ?? "";
-                                      country = res;
+                                        countryCode = res.phone_code ?? "";
+                                        country = res;
                                       });
                                     }
                                   },
@@ -180,8 +179,7 @@ class _Onboarding1State extends State<Onboarding1> {
                                       Padding(
                                         padding: const EdgeInsets.only(
                                             left: 8, right: 4.5),
-                                        child: Text(
-                                            " ${countryCode?? "--"}",
+                                        child: Text(" ${countryCode ?? "--"}",
                                             style: get14TextStyle().copyWith(
                                                 fontWeight: FontWeight.w400)),
                                       ),
@@ -259,10 +257,8 @@ class _Onboarding1State extends State<Onboarding1> {
 
                                     //
                                   } catch (e) {
-
                                     log(e.toString());
                                     showCustomToast(
-                                        
                                         context: context, description: "$e");
                                   }
                                 },
@@ -308,13 +304,20 @@ class _Onboarding1State extends State<Onboarding1> {
     setState(() => loading = true);
 
     await AuthHelper.signUp(
-      firstname: firstnameController.text,
-      lastname: lastnameController.text,
-      email: emailController.text,
-      password: passwordController.text,
-      referrerCode: referralController.text,
-      phone: (countryCode) + phoneController.text,
-    ).then((value) {
+            firstname: firstnameController.text,
+            lastname: lastnameController.text,
+            email: emailController.text,
+            password: passwordController.text,
+            referrerCode: referralController.text,
+            phone: phoneController.text,
+            phoneCode: countryCode)
+        .then((value) {
+      TiktokHelper().logEvent('Registration', {
+        'firstname': firstnameController.text,
+        'lastname': lastnameController.text,
+        'email': emailController.text,
+        'phone': phoneController.text
+      });
       showCustomToast(
         context: context,
         description: "Account creation was sucessful.",

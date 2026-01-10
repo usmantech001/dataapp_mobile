@@ -218,7 +218,7 @@ class UserHelper {
     throw throwHttpError(res);
   }
 
-  static Future<Map<String, dynamic>> getReferralInfo() async {
+  static Future<ReferralInfo> getReferralInfo() async {
     String url = "/referrals?per_page=1&page=1";
 
     http.Response response = await HttpRequest.get(url).catchError((err) {
@@ -226,7 +226,9 @@ class UserHelper {
     });
 
     Map res = json.decode(response.body);
-    if (response.statusCode < 400) return res["data"];
+    if (response.statusCode < 400) {
+      return ReferralInfo.fromJson(res["data"]);
+    }
 
     throw throwHttpError(res);
   }
@@ -257,6 +259,7 @@ class UserHelper {
 
     Map res = json.decode(response.body);
     if (response.statusCode < 400) {
+      print('.....the referral $res');
       if (status == ReferralStatus.all) {
         return (res["data"]["referrals"] as List)
             .map((e) => Referral.fromMap(e))

@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
+import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_scaffold.dart';
 import 'package:dataplug/presentation/misc/custom_components/loading.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:dataplug/presentation/screens/auth/password_reset/misc/password_reset_3_arg.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -75,219 +75,166 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      backgroundColor: ColorManager.kPrimaryLight,
+    return Scaffold(
+      backgroundColor: ColorManager.kWhite,
+      appBar: CustomAppbar(title: '', hasLogo: true,),
       body: SafeArea(
         bottom: false,
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                color: ColorManager.kPrimaryLight,
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 16, top: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Assets.images.dataplugLogoText.image(width: 150, height: 30),
-                    
-                      customDivider(
-                    height: 1,
-                    margin: const EdgeInsets.only(top: 16, bottom: 20),
-                    color: ColorManager.kPrimary.withOpacity(.1),
-                  ),
-                      Text(
-                        widget.param.emailVerificationType ==
-                                EmailVerificationType.passordReset
-                            ? "Reset Password"
-                            : "Sign Up ",
-                        textAlign: TextAlign.left,
-                        style: get18TextStyle().copyWith(fontSize: 16.5),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              //
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(
+                 // crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
 
-              //
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: ColorManager.kWhite,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
+                  
+                  
+                    Text(
+                      "Enter verification code",
+                      textAlign: TextAlign.center,
+                      style: get24TextStyle().copyWith(),
                     ),
-                  ),
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Flexible(
-                            flex: 1,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 15),
-                              child: BackIcon(),
-                            ),
-                          ),
-                          Expanded(
-                              flex: 2,
-                              child: Text("Verify your Email",
-                                  textAlign: TextAlign.center,
-                                  style: get16TextStyle())),
-                          const Flexible(flex: 1, child: SizedBox()),
-                        ],
-                      ),
-                      customDivider(
-                        height: 1,
-                        margin: const EdgeInsets.only(top: 16, bottom: 26),
-                        color: ColorManager.kPrimary.withOpacity(.1),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 0),
-                        child: Text(
-                          "Kindly input the OTP that has been sent to\n${widget.param.user.email}",
-                          textAlign: TextAlign.center,
-                          style: get14TextStyle().copyWith(),
-                        ),
-                      ),
-                      //
-
-                      const SizedBox(height: 32),
-                      Expanded(
-                        child: ListView(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          children: [
-                            Form(
-                              key: _formKey,
-                              child: PinCodeTextField(
-                                appContext: context,
-                                length: 6,
-                                obscureText: false,
-                                animationType: AnimationType.fade,
-                                pinTheme: getPinTheme(),
-                                cursorColor: ColorManager.kFormHintText,
-                                cursorWidth: 1.5,
-                                cursorHeight: 20,
-                                animationDuration:
-                                    const Duration(milliseconds: 50),
-                                enableActiveFill: true,
-                                errorAnimationController: errorController,
-                                controller: textEditingController,
-                                keyboardType: TextInputType.number,
-                                onCompleted: (_) {},
-                                onChanged: (_) => setState(() {}),
-                                beforeTextPaste: (_) => true,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Didn’t receive a code? ",
-                                  style: get12TextStyle(),
-                                ),
-
-                                requestOtpLoading
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(left: 4),
-                                        child: buildLoader())
-                                    : GestureDetector(
-                                        behavior: HitTestBehavior.translucent,
-                                        onTap: () => sendOtp(),
-                                        child: Text(
-                                          "Resend",
-                                          style: get12TextStyle().copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            color: ColorManager.kPrimary,
-                                          ),
-                                        ),
-                                      ),
-                                //
-
-                                //
-                              ],
-                            ),
-
-                            //
-                            spacer,
-                            spacer,
-                            spacer,
-                            CustomButton(
-                                text: "Proceed",
-                                isActive: true,
-                                onTap: () async {
-                                  _formKey.currentState!.validate();
-                                  if (textEditingController.text.length != 6) {
-                                    errorController
-                                        .add(ErrorAnimationType.shake);
-                                    return;
-                                  }
-
-                                  // print(
-                                  //     "widget.param.emailVerificationType ${widget.param.emailVerificationType}");
-
-                                  if (widget.param.emailVerificationType ==
-                                      EmailVerificationType.signp) {
-                                    setState(() => loading = true);
-                                    await confirmSignUpOtp(
-                                        textEditingController.text);
-                                    setState(() => loading = false);
-                                  }
-
-                                  if (widget.param.emailVerificationType ==
-                                      EmailVerificationType.passordReset) {
-                                    setState(() => loading = true);
-                                    await verifyPasswordResetOtp(
-                                        textEditingController.text);
-                                    setState(() => loading = false);
-                                  }
-
-                                  if (widget.param.emailVerificationType ==
-                                      EmailVerificationType.login) {
-                                    setState(() => loading = true);
-                                    await confirmLoginOtp();
-                                    setState(() => loading = false);
-                                  }
-
-                                  if (widget.param.emailVerificationType ==
-                                      EmailVerificationType.twoFA) {
-                                    setState(() => loading = true);
-                                    await confirm2FAOtp();
-                                    setState(() => loading = false);
-                                  }
-
-                                  // if (widget.param.emailVerificationType ==
-                                  //     EmailVerificationType.pinUpdate) {
-                                  //   setState(() => loading = true);
-                                  //   await confirmPinUpdateOtp();
-                                  //   setState(() => loading = false);
-                                  // }
-
-                                  // Navigator.pushNamed(
-                                  //     context, RoutesManager.dashboardWrapper);
-                                  // // Navigator.pushNamedAndRemoveUntil(
-                                  // //     context,
-                                  // //     RoutesManager.dashboardWrapper,
-                                  // //     (Route<dynamic> route) => false);
-                                },
-                                loading: loading),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
-              ),
-            ],
+                //
+            
+                //
+                Gap(12),
+                Text(
+                  "We have sent a verification code to\n${widget.param.user.email}",
+                  textAlign: TextAlign.center,
+                  style: get14TextStyle().copyWith(),
+                ),
+                //
+                          
+                Gap(32.h),
+                Column(
+                            
+                  children: [
+                    Form(
+                      key: _formKey,
+                      child: PinCodeTextField(
+                        appContext: context,
+                        length: 6,
+                        obscureText: false,
+                        animationType: AnimationType.fade,
+                        pinTheme: getPinTheme(),
+                        cursorColor: ColorManager.kFormHintText,
+                        cursorWidth: 1.5,
+                        cursorHeight: 20,
+                        animationDuration:
+                            const Duration(milliseconds: 50),
+                        enableActiveFill: true,
+                        errorAnimationController: errorController,
+                        controller: textEditingController,
+                        keyboardType: TextInputType.number,
+                        onCompleted: (_) {},
+                        onChanged: (_) => setState(() {}),
+                        beforeTextPaste: (_) => true,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Didn’t receive a code? ",
+                          style: get12TextStyle(),
+                        ),
+                        
+                        requestOtpLoading
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 4),
+                                child: buildLoader())
+                            : GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () => sendOtp(),
+                                child: Text(
+                                  "Resend",
+                                  style: get12TextStyle().copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    color: ColorManager.kPrimary,
+                                  ),
+                                ),
+                              ),
+                        //
+                        
+                        //
+                      ],
+                    ),
+                        
+                    //
+                    spacer,
+                    spacer,
+                    spacer,
+                    CustomButton(
+                        text: "Proceed",
+                        isActive: true,
+                        onTap: () async {
+                          _formKey.currentState!.validate();
+                          if (textEditingController.text.length != 6) {
+                            errorController
+                                .add(ErrorAnimationType.shake);
+                            return;
+                          }
+                        
+                          // print(
+                          //     "widget.param.emailVerificationType ${widget.param.emailVerificationType}");
+                        
+                          if (widget.param.emailVerificationType ==
+                              EmailVerificationType.signp) {
+                            setState(() => loading = true);
+                            await confirmSignUpOtp(
+                                textEditingController.text);
+                            setState(() => loading = false);
+                          }
+                        
+                          if (widget.param.emailVerificationType ==
+                              EmailVerificationType.passordReset) {
+                            setState(() => loading = true);
+                            await verifyPasswordResetOtp(
+                                textEditingController.text);
+                            setState(() => loading = false);
+                          }
+                        
+                          if (widget.param.emailVerificationType ==
+                              EmailVerificationType.login) {
+                            setState(() => loading = true);
+                            await confirmLoginOtp();
+                            setState(() => loading = false);
+                          }
+                        
+                          if (widget.param.emailVerificationType ==
+                              EmailVerificationType.twoFA) {
+                            setState(() => loading = true);
+                            await confirm2FAOtp();
+                            setState(() => loading = false);
+                          }
+                        
+                          // if (widget.param.emailVerificationType ==
+                          //     EmailVerificationType.pinUpdate) {
+                          //   setState(() => loading = true);
+                          //   await confirmPinUpdateOtp();
+                          //   setState(() => loading = false);
+                          // }
+                        
+                          // Navigator.pushNamed(
+                          //     context, RoutesManager.dashboardWrapper);
+                          // // Navigator.pushNamedAndRemoveUntil(
+                          // //     context,
+                          // //     RoutesManager.dashboardWrapper,
+                          // //     (Route<dynamic> route) => false);
+                        },
+                        loading: loading),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

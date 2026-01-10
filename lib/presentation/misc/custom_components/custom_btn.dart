@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../color_manager/color_manager.dart';
 import '../style_manager/styles_manager.dart';
@@ -50,7 +51,7 @@ class CustomButton extends StatelessWidget {
         decoration: boxDecoration ??
             BoxDecoration(
               border: border,
-              borderRadius: borderRadius ?? BorderRadius.circular(10),
+              borderRadius: borderRadius ?? BorderRadius.circular(12.r),
               color: backgroundColor ??
                   (isActive
                       ? ColorManager.kPrimary
@@ -84,6 +85,22 @@ class CustomButton extends StatelessWidget {
                   ),
                 ),
       ),
+    );
+  }
+}
+
+class CustomBottomNavBotton extends StatelessWidget {
+  const CustomBottomNavBotton(
+      {super.key, required this.text, required this.onTap});
+  final String text;
+  final VoidCallback onTap;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: ColorManager.kWhite,
+      padding: EdgeInsets.fromLTRB(16, 20, 16, 40),
+      child: CustomButton(
+          text: text, isActive: true, onTap: onTap, loading: false),
     );
   }
 }

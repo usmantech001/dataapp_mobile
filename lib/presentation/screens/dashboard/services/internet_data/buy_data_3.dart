@@ -138,7 +138,7 @@ class BuyData3 extends StatelessWidget {
                       code: dataPlan.code,
                       provider: arg.dataProvider.code,
                       isPorted: arg.isPorted,
-                      dataPurchaseType: arg.dataPurchaseType,
+                      dataPurchaseType: '',
                       pin: "$transaction_pin",
                     );
 

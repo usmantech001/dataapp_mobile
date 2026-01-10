@@ -85,8 +85,8 @@ String getRemark() {
     case ServicePurpose.transfer:
       return param.remark;
     default:
-      final provider = param.meta["provider"];
-      final providerName = provider is Map ? provider["name"] ?? "" : "";
+      final provider = param.meta.provider;
+      final providerName = provider is Map ? provider?.name ?? "" : "";
       return "$providerName ${ServiceTxn.serviceEnumToString(param.purpose)}";
   }
 }
@@ -137,7 +137,7 @@ String getRemark() {
                 ),
                 padding: const EdgeInsets.all(1.5),
                 child: loadNetworkImage(
-                  param.meta["provider"]?["logo"] ?? "",
+                  param.meta.provider?.logo?? "",
                   borderRadius: BorderRadius.circular(78),
                   width: 19,
                 ),

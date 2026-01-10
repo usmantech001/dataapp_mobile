@@ -226,10 +226,11 @@ class _SetTransactionPinState extends State<SetTransactionPin> {
         description: "Pin Set successfully",
         type: ToastType.success,
       );
-
+     print('...the new user data after pin set is ${user.toMap()}');
       UserProvider userProvider =
           Provider.of<UserProvider>(context, listen: false);
       userProvider.updateUser(user);
+      AuthHelper.updateSavedUserDetails(user);
       Navigator.pushNamedAndRemoveUntil(context, RoutesManager.dashboardWrapper,
           (Route<dynamic> route) => false);
     }).catchError((e) {

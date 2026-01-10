@@ -75,12 +75,11 @@ class UserProvider with ChangeNotifier {
 
   Future<void> updateReferralsInfo() async {
     await UserHelper.getReferralInfo().then((val) {
-      _inactiveReferrals =
-          num.tryParse(val['inactive_referrals'].toString()) ?? 0;
-      _activeReferrals = num.tryParse(val['active_referrals'].toString()) ?? 0;
-      _totalReferrals = num.tryParse(val['total_referrals'].toString()) ?? 0;
+      _inactiveReferrals = 0;
+      _activeReferrals = 0;
+      _totalReferrals = num.tryParse(val.totalReferrals) ?? 0;
       _totalReferralsEarnings =
-          num.tryParse(val['total_earnings'].toString()) ?? 0;
+          num.tryParse(val.totalEarnings) ?? 0;
 
       notifyListeners();
     }).catchError((e) {});

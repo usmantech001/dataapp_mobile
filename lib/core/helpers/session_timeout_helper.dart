@@ -9,7 +9,7 @@ import 'auth_helper.dart';
 
 class SessionTimeoutHelper {
   static Timer? _inactivityTimer;
-  static const Duration _timeoutDuration = Duration(minutes: 5);
+  static const Duration _timeoutDuration = Duration(hours: 5);
 
   static void startInactivityTimer(BuildContext context) {
     _inactivityTimer?.cancel();

@@ -1,10 +1,13 @@
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
+import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_container.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_scaffold.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 
 import '../../../../../core/helpers/generic_helper.dart';
 import '../../../../../core/model/core/faq.dart';
@@ -37,6 +40,7 @@ class _FaqsState extends State<Faqs> {
 
   Future<void> fetchFAQ() async {
     faqs = await GenericHelper.getFaqs().catchError((err) {
+
       showCustomToast(context: context, description: err.toString());
     });
     loading = false;
@@ -45,89 +49,40 @@ class _FaqsState extends State<Faqs> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      backgroundColor: ColorManager.kPrimary,
+    return Scaffold(
+      appBar: CustomAppbar(title: 'FAQs'),
       body: SafeArea(
         bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //
-
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: ColorManager.kWhite,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                padding: const EdgeInsets.only(top: 20),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            padding: const EdgeInsets.only(left: 15),
-                            alignment: Alignment.centerLeft,
-                            child: const BackIcon(),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: [
-                              Container(
-                                width: 44,
-                                height: 44,
-                                margin: const EdgeInsets.only(bottom: 10),
-                                decoration: BoxDecoration(
-                                    color: ColorManager.kPrimaryLight,
-                                    borderRadius: BorderRadius.circular(8),
-                                    image: DecorationImage(
-                                        image: AssetImage(
-                                            ImageManager.kFAQsIcon))),
-                              ),
-                              //
-                              Text(
-                                "FAQs",
-                                textAlign: TextAlign.center,
-                                style: get18TextStyle(),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Expanded(flex: 1, child: SizedBox()),
-                      ],
+            Column(
+              children: [
+                loading
+                    ? buildLoading()
+                    : ListView.builder(
+                      shrinkWrap: true,
+                      padding:
+                           EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
+                      itemCount: faqs.length,
+                      itemBuilder: (context, indexx) {
+                        return Column(
+                          spacing: 12,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                           if(faqs[indexx].data.isNotEmpty) Text(faqs[indexx].name, style: get16TextStyle().copyWith(fontWeight: FontWeight.w500, color: ColorManager.kGreyColor),),
+                           faqs[indexx].data.isNotEmpty? ListView.separated(
+                            
+                              shrinkWrap: true,
+                              itemBuilder: (context, index){
+                              final faq = faqs[indexx].data[index];
+                              return FAQsWidget(question: faq.question, answer: faq.answer);
+                            }, separatorBuilder: (context, index)=> Gap(10), itemCount: faqs[indexx].data.length): SizedBox()
+                          ],
+                        );
+                      },
                     ),
-
-                    //
-
-                    //
-                    customDivider(
-                      height: 1,
-                      margin: const EdgeInsets.only(top: 16, bottom: 30),
-                      color: ColorManager.kBar2Color,
-                    ),
-
-                    loading
-                        ? buildLoading()
-                        : Expanded(
-                            child: ListView.builder(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              itemCount: faqs.length,
-                              itemBuilder: (context, index) =>
-                                  buildCard(faqs[index]),
-                            ),
-                          ),
-                  ],
-                ),
-              ),
+              ],
             ),
           ],
         ),
@@ -135,51 +90,101 @@ class _FaqsState extends State<Faqs> {
     );
   }
 
-  Widget buildCard(Faq faq) {
-    return CustomContainer(
-      borderRadiusSize: 32,
-      header: Text(faq.name.toUpperCase(), style: get14TextStyle()),
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-      child: Column(
+
+
+}
+
+
+
+class FAQsWidget extends StatefulWidget {
+  const FAQsWidget({super.key, required this.question, required this.answer});
+  final String question;
+  final String answer;
+
+  @override
+  State<FAQsWidget> createState() => _FAQsWidgetState();
+}
+
+class _FAQsWidgetState extends State<FAQsWidget> {
+  bool isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.r),
+          color: ColorManager.kWhite,
+          border: Border.all(color: isExpanded? ColorManager.kGreyColor.withValues(alpha: .09): ColorManager.kGreyE5)),
+      child: ExpansionTile(
+        enableFeedback: false,
+        onExpansionChanged: (value) {
+          setState(() {
+            isExpanded = value;
+          });
+        },
+        shape: Border.all(color: Colors.transparent),
+        expandedAlignment: Alignment.centerLeft,
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        collapsedIconColor: ColorManager.kGreyColor.withValues(alpha: .7),
+        iconColor: ColorManager.kGreyColor.withValues(alpha: 2),
+        childrenPadding: EdgeInsets.only(left: 15.w, right: 10.w, bottom: 20.h),
+        trailing: isExpanded? RotatedBox(
+          quarterTurns: 1,
+          child: Icon( Icons.arrow_back_ios)) : RotatedBox(
+          quarterTurns: -1,
+          child: Icon( Icons.arrow_back_ios, color: ColorManager.kGreyColor.withValues(alpha: 02),)),
+        title: Text(
+           widget.question,
+        ),
         children: [
-          for (int i = 0; i < faq.data.length; i++)
-            buildTile(
-              faq.data[i],
-              margin: EdgeInsets.only(top: i > 0 ? 14 : 0),
-            ),
+          Text(
+             widget.answer,
+          )
         ],
       ),
     );
   }
+}
 
-  Widget buildTile(FaqData faqData, {EdgeInsetsGeometry? margin}) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        Navigator.pushNamed(context, RoutesManager.faqDetails,
-            arguments: faqData);
-      },
-      child: Container(
-        margin: margin,
-        decoration: BoxDecoration(
-          border: Border.all(width: 1, color: ColorManager.kBar2Color),
-          borderRadius: BorderRadius.circular(19),
+/*
+class FAQsWidget extends StatelessWidget {
+  const FAQsWidget({super.key, required this.question, required this.answer});
+  final String question;
+  final String answer;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.r),
+          color: AppColors.kWhite,
+          border: Border.all(color: AppColors.kGreyD0)),
+      child: ExpansionTile(
+        enableFeedback: false,
+        onExpansionChanged: (value) {
+          print(value);
+        },
+        shape: Border.all(color: Colors.transparent),
+        expandedAlignment: Alignment.centerLeft,
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        collapsedIconColor: AppColors.kGrey7F,
+        iconColor: AppColors.kGrey7F,
+        childrenPadding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 20.h),
+        trailing: const Icon(Icons.add),
+        title: CustomText(
+          text: question,
+          fontSize: 14,
+          color: AppColors.kGrey34,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 22),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Text(
-                faqData.question,
-                style: get14TextStyle().copyWith(fontWeight: FontWeight.w500),
-              ),
-            ),
-            Icon(Icons.chevron_right, color: ColorManager.kBarColor)
-          ],
-        ),
+        children: [
+          CustomText(
+            text: answer,
+            color: AppColors.kGrey66,
+            fontSize: 12,
+          )
+        ],
       ),
     );
   }
 }
+
+*/

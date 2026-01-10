@@ -1,4 +1,6 @@
+import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../../core/enum.dart';
 import '../../../../../../core/helpers/user_helper.dart';
@@ -36,136 +38,77 @@ class _ChangePasswordState extends State<ChangePassword> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: CustomScaffold(
-        backgroundColor: ColorManager.kPrimary,
-        body: SafeArea(
-          bottom: false,
+      child: Scaffold(
+        appBar: CustomAppbar(title: 'Change Password'),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: ColorManager.kWhite,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
+
+              Form(
+                key: _formKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: Column(
+                  children: [
+                    CustomInputField(
+                      formHolderName: "Old Password",
+                      hintText: "Enter your old password",
+                      textInputAction: TextInputAction.next,
+                      isPasswordField: true,
+                      textEditingController: oldPasswordController,
+                      validator: (value) => Validator.validateField(
+                          fieldName: "Old Password", input: value),
                     ),
-                  ),
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              padding: const EdgeInsets.only(left: 15),
-                              alignment: Alignment.centerLeft,
-                              child: const BackIcon(),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              children: [
-                                Image.asset(ImageManager.kChangePassword,
-                                    width: 43),
-                                const SizedBox(height: 10),
-                                Text("Change Password",
-                                    textAlign: TextAlign.center,
-                                    style: get18TextStyle()),
-                              ],
-                            ),
-                          ),
-                          const Expanded(flex: 1, child: SizedBox()),
-                        ],
+                    spacer,
+
+                    CustomInputField(
+                      formHolderName: "New Password",
+                      hintText: "Enter your new password",
+                      textInputAction: TextInputAction.next,
+                      isPasswordField: true,
+                      textEditingController: newPasswordController,
+                      validator: (value) => Validator.validateField(
+                          fieldName: "New Password", input: value),
+                      onChanged: (_) => setState(() {}),
+                    ),
+                    spacer,
+
+                    CustomInputField(
+                      formHolderName: "Confirm Password",
+                      hintText: "Confirm your new password",
+                      textInputAction: TextInputAction.done,
+                      isPasswordField: true,
+                      textEditingController: confirmNewPasswordController,
+                      onChanged: (_) => setState(() {}),
+                      validator: (v) => Validator.doesPasswordMatch(
+                        password: newPasswordController.text,
+                        confirmPassword: confirmNewPasswordController.text,
                       ),
+                    ),
+                    spacer,
 
-                      //
+                    //
+                    const SizedBox(height: 54),
+                    CustomButton(
+                      text: "Save Password",
+                      isActive: true,
+                      onTap: () {
+                        if (!(_formKey.currentState?.validate() ?? false)) {
+                          showCustomToast(
+                            context: context,
+                            description:
+                                "Please ensure that all input are filled correctly.",
+                          );
+                          return;
+                        }
 
-                      //
-                      customDivider(
-                        height: 1,
-                        margin: const EdgeInsets.only(top: 16, bottom: 26),
-                        color: ColorManager.kBar2Color,
-                      ),
-
-                      Expanded(
-                        child: Form(
-                          key: _formKey,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          child: ListView(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            controller: controller,
-                            children: [
-                              CustomInputField(
-                                formHolderName: "Old Password",
-                                hintText: "Enter your old password",
-                                textInputAction: TextInputAction.next,
-                                isPasswordField: true,
-                                textEditingController: oldPasswordController,
-                                validator: (value) => Validator.validateField(
-                                    fieldName: "Old Password", input: value),
-                              ),
-                              spacer,
-
-                              CustomInputField(
-                                formHolderName: "New Password",
-                                hintText: "Enter your new password",
-                                textInputAction: TextInputAction.next,
-                                isPasswordField: true,
-                                textEditingController: newPasswordController,
-                                validator: (value) => Validator.validateField(
-                                    fieldName: "New Password", input: value),
-                                onChanged: (_) => setState(() {}),
-                              ),
-                              spacer,
-
-                              CustomInputField(
-                                formHolderName: "Confirm Password",
-                                hintText: "Confirm your new password",
-                                textInputAction: TextInputAction.done,
-                                isPasswordField: true,
-                                textEditingController:
-                                    confirmNewPasswordController,
-                                onChanged: (_) => setState(() {}),
-                                validator: (v) => Validator.doesPasswordMatch(
-                                  password: newPasswordController.text,
-                                  confirmPassword:
-                                      confirmNewPasswordController.text,
-                                ),
-                              ),
-                              spacer,
-
-                              //
-                              const SizedBox(height: 54),
-                              CustomButton(
-                                text: "Proceed",
-                                isActive: true,
-                                onTap: () {
-                                  if (!(_formKey.currentState?.validate() ??
-                                      false)) {
-                                    showCustomToast(
-                                      context: context,
-                                      description:
-                                          "Please ensure that all input are filled correctly.",
-                                    );
-                                    return;
-                                  }
-
-                                  updatePassword();
-                                },
-                                loading: loading,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                        updatePassword();
+                      },
+                      loading: loading,
+                    )
+                  ],
                 ),
               ),
             ],

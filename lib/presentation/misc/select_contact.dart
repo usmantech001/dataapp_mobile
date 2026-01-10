@@ -11,7 +11,7 @@ import 'style_manager/styles_manager.dart';
 
 class SelectFromContactWidget extends StatefulWidget {
   
-  SelectFromContactWidget({
+ const SelectFromContactWidget({
     super.key,
   });
 

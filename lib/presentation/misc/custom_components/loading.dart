@@ -10,6 +10,7 @@ Widget buildLoading({
   double height = 70,
 }) {
   Widget child = ListView.separated(
+    shrinkWrap: true,
       padding: padding ?? const EdgeInsets.symmetric(horizontal: 15),
       separatorBuilder: ((context, index) => const SizedBox(height: 25)),
       itemCount: itemCount ?? 235,

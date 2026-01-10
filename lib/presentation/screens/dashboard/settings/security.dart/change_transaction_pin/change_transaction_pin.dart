@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../../../../../core/enum.dart';
@@ -52,216 +54,148 @@ class _ChangeTransactionPinState extends State<ChangeTransactionPin> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: CustomScaffold(
-        backgroundColor: ColorManager.kPrimary,
-        body: SafeArea(
-          bottom: false,
+      child: Scaffold(
+        appBar: CustomAppbar(title: 'Change Transaction PIN'),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: ColorManager.kWhite,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
+              Form(
+                key: _formKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                        padding:
+                            const EdgeInsets.only(top: 5, bottom: 10, left: 15),
+                        child: Text("Enter Old PIN", style: get16TextStyle())),
+
+                    PinCodeTextField(
+                      appContext: context,
+                      length: 4,
+                      obscureText: false,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      animationType: AnimationType.fade,
+                      pinTheme: getPinTheme(width: 70),
+                      cursorColor: ColorManager.kFormHintText,
+                      cursorWidth: 1.5,
+                      cursorHeight: 20,
+                      animationDuration: const Duration(milliseconds: 50),
+                      enableActiveFill: true,
+                      textInputAction: TextInputAction.next,
+                      errorAnimationController: errorController,
+                      controller: textEditingController,
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {},
+                      validator: (value) => Validator.validateField(
+                          fieldName: "Old PIN", input: value),
                     ),
-                  ),
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                padding: const EdgeInsets.only(left: 15),
-                                alignment: Alignment.centerLeft,
-                                child: const BackIcon(),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Column(
-                                children: [
-                                  Image.asset(ImageManager.kTxnPinIcon,
-                                      width: 43),
-                                  const SizedBox(height: 10),
-                                  Text("Change Transaction PIN",
-                                      textAlign: TextAlign.center,
-                                      style: get18TextStyle()),
-                                ],
-                              ),
-                            ),
-                            const Expanded(flex: 1, child: SizedBox()),
-                          ],
-                        ),
 
-                        //
-
-                        //
-                        customDivider(
-                          height: 1,
-                          margin: const EdgeInsets.only(top: 16, bottom: 26),
-                          color: ColorManager.kBar2Color,
-                        ),
-
-                        Expanded(
-                          child: ListView(
-                            controller: controller,
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            children: [
-                              Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 5, bottom: 10, left: 15),
-                                  child: Text("Enter Old PIN",
-                                      style: get14TextStyle())),
-
-                              PinCodeTextField(
-                                appContext: context,
-                                length: 4,
-                                obscureText: false,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                animationType: AnimationType.fade,
-                                pinTheme: getPinTheme(width: 70),
-                                cursorColor: ColorManager.kFormHintText,
-                                cursorWidth: 1.5,
-                                cursorHeight: 20,                             
-                                animationDuration:
-                                    const Duration(milliseconds: 50),
-                                enableActiveFill: true,
-                                textInputAction: TextInputAction.next,
-                                errorAnimationController: errorController,
-                                controller: textEditingController,
-                                keyboardType: TextInputType.number,
-                                onChanged: (value) {},
-                                validator: (value) => Validator.validateField(
-                                    fieldName: "Old PIN", input: value),
-                              ),
-
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 25, bottom: 10, left: 15),
-                                child: Text("Enter New PIN",
-                                    style: get14TextStyle()),
-                              ),
-
-                              ////
-                              PinCodeTextField(
-                                appContext: context,
-                                length: 4,
-                                obscureText: false,
-                                textInputAction: TextInputAction.next,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                animationType: AnimationType.fade,
-                                validator: (value) => Validator.validateField(
-                                    fieldName: "New PIN", input: value),
-                                pinTheme: getPinTheme(width: 70),
-                                cursorColor: ColorManager.kFormHintText,
-                                cursorWidth: 1.5,
-                                cursorHeight: 20,
-                                animationDuration:
-                                    const Duration(milliseconds: 50),
-                                enableActiveFill: true,
-                                errorAnimationController: errorController2,
-                                controller: textEditingController2,
-                                keyboardType: TextInputType.number,
-                                onChanged: (value) {},
-                              ),
-
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 25, bottom: 10, left: 15),
-                                child: Text("Confirm New Pin",
-                                    style: get14TextStyle()),
-                              ),
-                              PinCodeTextField(
-                                appContext: context,
-                                length: 4,
-                                obscureText: false,
-                                textInputAction: TextInputAction.done,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                animationType: AnimationType.fade,
-                                validator: (value) =>
-                                    Validator.doesPasswordMatch(
-                                  confirmPassword: textEditingController2.text,
-                                  password: value,
-                                  fieldName: "Confirm Pin",
-                                ),
-                                pinTheme: getPinTheme(width: 70),
-                                cursorColor: ColorManager.kFormHintText,
-                                cursorWidth: 1.5,
-                                cursorHeight: 20,
-                                animationDuration:
-                                    const Duration(milliseconds: 50),
-                                enableActiveFill: true,
-                                errorAnimationController: errorController3,
-                                controller: textEditingController3,
-                                keyboardType: TextInputType.number,
-                                onChanged: (value) {},
-                              ),
-
-                              //
-                              const SizedBox(height: 54),
-                              CustomButton(
-                                text: "Proceed",
-                                isActive: true,
-                                onTap: () async {
-                                  // if (!_formKey.currentState!.validate()) {
-                                  //   return;
-                                  // }
-
-                                  if (textEditingController.text.length != 4) {
-                                    errorController
-                                        .add(ErrorAnimationType.shake);
-                                    return;
-                                  }
-
-                                  if (textEditingController2.text.length != 4) {
-                                    errorController2
-                                        .add(ErrorAnimationType.shake);
-                                    return;
-                                  }
-
-                                  if (textEditingController3.text.length != 4) {
-                                    errorController3
-                                        .add(ErrorAnimationType.shake);
-                                    return;
-                                  }
-
-                                  setState(() => loading = true);
-                                  await AuthHelper.updateTransactionPin(
-                                          old_pin: textEditingController.text,
-                                          new_pin: textEditingController2.text)
-                                      .then((msg) async {
-                                    showCustomToast(
-                                        context: context,
-                                        description: msg,
-                                        type: ToastType.success);
-
-                                    Navigator.pop(context);
-                                  }).catchError((e) {
-                                    showCustomToast(
-                                        context: context,
-                                        description: e.toString());
-                                  });
-
-                                  setState(() => loading = false);
-                                },
-                                loading: loading,
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 25, bottom: 10, left: 15),
+                      child: Text("Enter New PIN", style: get16TextStyle()),
                     ),
-                  ),
+
+                    ////
+                    PinCodeTextField(
+                      appContext: context,
+                      length: 4,
+                      obscureText: false,
+                      textInputAction: TextInputAction.next,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      animationType: AnimationType.fade,
+                      validator: (value) => Validator.validateField(
+                          fieldName: "New PIN", input: value),
+                      pinTheme: getPinTheme(width: 70),
+                      cursorColor: ColorManager.kFormHintText,
+                      cursorWidth: 1.5,
+                      cursorHeight: 20,
+                      animationDuration: const Duration(milliseconds: 50),
+                      enableActiveFill: true,
+                      errorAnimationController: errorController2,
+                      controller: textEditingController2,
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {},
+                    ),
+
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 25, bottom: 10, left: 15),
+                      child: Text("Confirm New Pin", style: get16TextStyle()),
+                    ),
+                    PinCodeTextField(
+                      appContext: context,
+                      length: 4,
+                      obscureText: false,
+                      textInputAction: TextInputAction.done,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      animationType: AnimationType.fade,
+                      validator: (value) => Validator.doesPasswordMatch(
+                        confirmPassword: textEditingController2.text,
+                        password: value,
+                        fieldName: "Confirm Pin",
+                      ),
+                      pinTheme: getPinTheme(width: 70),
+                      cursorColor: ColorManager.kFormHintText,
+                      cursorWidth: 1.5,
+                      cursorHeight: 20,
+                      animationDuration: const Duration(milliseconds: 50),
+                      enableActiveFill: true,
+                      errorAnimationController: errorController3,
+                      controller: textEditingController3,
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {},
+                    ),
+
+                    //
+                    const SizedBox(height: 54),
+                    CustomButton(
+                      text: "Save Pin",
+                      isActive: true,
+                      onTap: () async {
+                        // if (!_formKey.currentState!.validate()) {
+                        //   return;
+                        // }
+
+                        if (textEditingController.text.length != 4) {
+                          errorController.add(ErrorAnimationType.shake);
+                          return;
+                        }
+
+                        if (textEditingController2.text.length != 4) {
+                          errorController2.add(ErrorAnimationType.shake);
+                          return;
+                        }
+
+                        if (textEditingController3.text.length != 4) {
+                          errorController3.add(ErrorAnimationType.shake);
+                          return;
+                        }
+
+                        setState(() => loading = true);
+                        await AuthHelper.updateTransactionPin(
+                                old_pin: textEditingController.text,
+                                new_pin: textEditingController2.text)
+                            .then((msg) async {
+                          showCustomToast(
+                              context: context,
+                              description: msg,
+                              type: ToastType.success);
+
+                          Navigator.pop(context);
+                        }).catchError((e) {
+                          showCustomToast(
+                              context: context, description: e.toString());
+                        });
+
+                        setState(() => loading = false);
+                      },
+                      loading: loading,
+                    ),
+                  ],
                 ),
               ),
             ],

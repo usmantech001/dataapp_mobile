@@ -35,3 +35,21 @@ class Referral {
     );
   }
 }
+
+class ReferralInfo {
+  final String refCode;
+  final String totalEarnings;
+  final String totalReferrals;
+
+  ReferralInfo(
+      {required this.refCode,
+      required this.totalEarnings,
+      required this.totalReferrals});
+
+  factory ReferralInfo.fromJson(Map<String, dynamic> json) {
+    return ReferralInfo(
+        refCode: json['ref_code'].toString(),
+        totalEarnings: json['total_earnings'].toString(),
+        totalReferrals: json['total_referrals'].toString());
+  }
+}

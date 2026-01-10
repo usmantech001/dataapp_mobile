@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/providers/user_provider.dart';
@@ -25,25 +27,13 @@ class CustomNotificationBell extends StatelessWidget {
         await Navigator.pushNamed(context, RoutesManager.allNotifications);
         userProvider.checkUnreadNotification().catchError((_) {});
       },
-      child: Stack(
-        children: [
-          Image.asset(Assets.images.notification.path,
-              width:  22.5, height: 22.5,),
-          const SizedBox(height: 10, width: 30),
-          if (userProvider.unreadNotificationAvailable)
-            Positioned(
-              top: 0,
-              right: 3.5,
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: iconColor ?? ColorManager.kBar2Color),
-                height: 9,
-                width: 9,
-              ),
-            ),
-        ],
-      ),
+      child: CircleAvatar(
+        radius: 20.r,
+        backgroundColor: ColorManager.kWhite,
+        child: Badge(
+          child: Icon(LucideIcons.bell, size: 20, color: ColorManager.kBlack,),
+        ))
+     
     );
   }
 }

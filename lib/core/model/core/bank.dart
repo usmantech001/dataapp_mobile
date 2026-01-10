@@ -2,14 +2,14 @@ class Bank {
   final String id;
   final String name;
   final String code;
-  final String icon;
+  final String? icon;
   final String deleted_at;
 
   Bank({
     required this.id,
     required this.name,
     required this.code,
-    required this.icon,
+     this.icon,
     required this.deleted_at,
   });
 
@@ -18,7 +18,7 @@ class Bank {
       id: map["id"].toString(),
       name: map['name'].toString(),
       code: map["code"].toString(),
-      icon: map["icon"].toString(),
+      icon: map["icon"],
       deleted_at: map["deleted_at"].toString(),
     );
   }

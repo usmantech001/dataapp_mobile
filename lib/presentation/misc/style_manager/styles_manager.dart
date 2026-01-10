@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
@@ -15,6 +16,7 @@ TextStyle _getTextStyle({
     fontFamily: "Geist",
     fontSize: fontSize,
     fontWeight: fontWeight,
+    fontFamilyFallback: const ['Roboto', 'sans-serif'],
     color: color ?? const Color(0xff313146),
   );
 }
@@ -26,13 +28,13 @@ TextStyle get11TextStyle() => _getTextStyle(fontSize: 11);
 TextStyle get12TextStyle() => _getTextStyle(fontSize: 12);
 TextStyle get14TextStyle() => _getTextStyle(fontSize: 14);
 TextStyle get16TextStyle() => _getTextStyle(fontSize: 16, fontWeight: FontWeight.w600);
-TextStyle get18TextStyle() => _getTextStyle(fontSize: 18, fontWeight: FontWeight.w700);
+TextStyle get18TextStyle() => _getTextStyle(fontSize: 18, fontWeight: FontWeight.w600);
 TextStyle get20TextStyle() => _getTextStyle(fontSize: 20, fontWeight: FontWeight.w700);
 TextStyle get22TextStyle() => _getTextStyle(fontSize: 22, fontWeight: FontWeight.w700);
 TextStyle get24TextStyle() => _getTextStyle(fontSize: 24, fontWeight: FontWeight.w600);
 TextStyle get26TextStyle() => _getTextStyle(fontSize: 26, fontWeight: FontWeight.w700);
 TextStyle get28TextStyle() => _getTextStyle(fontSize: 28, fontWeight: FontWeight.w800);
-TextStyle get32TextStyle() => _getTextStyle(fontSize: 32, fontWeight: FontWeight.w700);
+TextStyle get32TextStyle() => _getTextStyle(fontSize: 32.sp, fontWeight: FontWeight.w700);
 
 TextStyle getPrefixTextStyle() => _getTextStyle(fontSize: 16);
 TextStyle getHintTextStyle() => _getTextStyle(

@@ -1,5 +1,8 @@
+import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:in_app_notification/in_app_notification.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -66,4 +69,61 @@ showCustomToast({
     context: context,
     duration: duration,
   );
+}
+
+showCustomErrorTransaction({
+  required BuildContext context,
+  required String errMsg,
+}) {
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: ColorManager.kError,
+          insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Container(
+            // height: 200,
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),
+            decoration: BoxDecoration(
+                color: ColorManager.kWhite,
+                borderRadius: BorderRadius.circular(24.r)),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircleAvatar(
+                  backgroundColor: ColorManager.kErrorEB.withValues(alpha: .08),
+                  radius: 43.r,
+                  child: CircleAvatar(
+                    backgroundColor: ColorManager.kErrorEB,
+                    radius: 30.r,
+                    child: Icon(Icons.close, color: ColorManager.kWhite,),
+                  ),
+                ),
+                Gap(24.h),
+                Text(
+                  'Purchase Failed',
+                  style: get20TextStyle(),
+                ),
+                Gap(12.h),
+                Text(
+                  errMsg,
+                  textAlign: TextAlign.center,
+                  style: get14TextStyle().copyWith(),
+                ),
+                Gap(24.h),
+                CustomButton(
+                    text: 'Okay',
+                    width: 90,
+                    borderRadius: BorderRadius.circular(12.r),
+                    isActive: true,
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    loading: false)
+              ],
+            ),
+          ),
+        );
+      });
 }

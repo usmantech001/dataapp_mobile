@@ -170,7 +170,7 @@ class _HistoryDetailsState extends State<HistoryDetails> {
                                           ServicePurpose.transfer)
                                   ? const SizedBox()
                                   : loadNetworkImage(
-                                      widget.param.meta["provider"]?['logo'] ??
+                                      widget.param.meta.provider?.logo??
                                           Assets.images.dataplugIcon.path,
                                       borderRadius: BorderRadius.circular(50),
                                       width: 24),
@@ -404,12 +404,12 @@ class _HistoryDetailsState extends State<HistoryDetails> {
                     desc: formatCurrency(widget.param.totalAmount)),
                 CustomKeyValueState(
                   title: "Network",
-                  desc: widget.param.meta["provider"]?["name"] ?? "NA",
+                  desc: widget.param.meta.provider?.name ?? "NA",
                 ),
 
                 CustomKeyValueState(
                   title: "Recepient",
-                  desc: widget.param.meta["customer"]?["phone"] ?? "NA",
+                  desc: widget.param.meta.customer?.phone ?? "NA",
                 ),
 
                 Padding(
@@ -513,12 +513,12 @@ class _HistoryDetailsState extends State<HistoryDetails> {
               ),
               CustomKeyValueState(
                 title: "Network",
-                desc: widget.param.meta["provider"]?["name"] ?? "NA",
+                desc: widget.param.meta.provider?.name ?? "NA",
               ),
 
               CustomKeyValueState(
                 title: "Recepient",
-                desc: widget.param.meta["customer"]?["phone"] ?? "NA",
+                desc: widget.param.meta.customer?.phone ?? "NA",
               ),
 
               Padding(
@@ -568,7 +568,7 @@ class _HistoryDetailsState extends State<HistoryDetails> {
               ),
               CustomKeyValueState(
                   title: "Data Plan",
-                  desc: widget.param.meta["product"]?["name"]),
+                  desc: widget.param.meta.product?.name??""),
 
               CustomKeyValueState(
                   title: "Service Charge",
@@ -588,7 +588,7 @@ class _HistoryDetailsState extends State<HistoryDetails> {
 
     // electricity
     if (purpose == ServicePurpose.electricity) {
-      String token = (widget.param.meta["token"] ?? "")
+      String token = (widget.param.meta.token ?? "")
           .replaceAll('Token', '')
           .replaceAll(":", "")
           .trim();
@@ -646,23 +646,23 @@ class _HistoryDetailsState extends State<HistoryDetails> {
               ),
               CustomKeyValueState(
                 title: "Service Provider",
-                desc: widget.param.meta["provider"]?["name"] ?? "NA",
+                desc: widget.param.meta.provider?.name ?? "NA",
               ),
 
               CustomKeyValueState(
                 title: "Meter Number",
-                desc: capitalize(widget.param.meta["customer"]["meter_number"]),
+                desc: capitalize(widget.param.meta.customer?.meterNumber??""),
               ),
 
-              CustomKeyValueState(
-                title: "Meter Name",
-                desc: capitalize(widget.param.meta["customer"]["meter_name"]),
-              ),
+              // CustomKeyValueState(
+              //   title: "Meter Name",
+              //   desc: capitalize(widget.param.meta["customer"]["meter_name"]),
+              // ),
 
-              CustomKeyValueState(
-                title: "Meter Type",
-                desc: capitalize(widget.param.meta["customer"]["meter_type"]),
-              ),
+              // CustomKeyValueState(
+              //   title: "Meter Type",
+              //   desc: capitalize(widget.param.meta["customer"]["meter_type"]),
+              // ),
 
               Padding(
                 padding: EdgeInsets.only(bottom: 15),
@@ -826,21 +826,21 @@ class _HistoryDetailsState extends State<HistoryDetails> {
                 title: "Transaction Time",
                 desc: getTimeFromDate(widget.param.createdAt) ?? "",
               ),
-              CustomKeyValueState(
-                title: "Service Provider",
-                desc: widget.param.meta["provider"]?["name"] ?? "NA",
-              ),
+              // CustomKeyValueState(
+              //   title: "Service Provider",
+              //   desc: widget.param.meta["provider"]?["name"] ?? "NA",
+              // ),
 
-              CustomKeyValueState(
-                title: "Decoder Number",
-                desc: capitalize(
-                    widget.param.meta["customer"]?["smartcard_number"]),
-              ),
+              // CustomKeyValueState(
+              //   title: "Decoder Number",
+              //   desc: capitalize(
+              //       widget.param.meta["customer"]?["smartcard_number"]),
+              // ),
 
-              CustomKeyValueState(
-                title: "Plan",
-                desc: capitalize(widget.param.meta["product"]?["name"]),
-              ),
+              // CustomKeyValueState(
+              //   title: "Plan",
+              //   desc: capitalize(widget.param.meta["product"]?["name"]),
+              // ),
 
               Padding(
                 padding: EdgeInsets.only(bottom: 15),
@@ -903,7 +903,7 @@ class _HistoryDetailsState extends State<HistoryDetails> {
     // education
     if (purpose == ServicePurpose.education) {
       List<String> pins =
-          (widget.param.meta["token"] ?? "").toString().split(",");
+          (widget.param.meta.token?? "").toString().split(",");
       res.addAll([
         CustomContainer(
           margin: const EdgeInsets.only(
@@ -955,16 +955,16 @@ class _HistoryDetailsState extends State<HistoryDetails> {
                 title: "Transaction Time",
                 desc: getTimeFromDate(widget.param.createdAt) ?? "",
               ),
-              CustomKeyValueState(
-                title: "Exam Type",
-                desc: capitalize(widget.param.meta["provider"]["name"]),
-              ),
+              // CustomKeyValueState(
+              //   title: "Exam Type",
+              //   desc: capitalize(widget.param.meta["provider"]["name"]),
+              // ),
 
-              CustomKeyValueState(
-                title: "Candidate Number",
-                desc: capitalize(
-                    widget.param.meta["customer"]["registration_number"]),
-              ),
+              // CustomKeyValueState(
+              //   title: "Candidate Number",
+              //   desc: capitalize(
+              //       widget.param.meta["customer"]["registration_number"]),
+              // ),
 
               Padding(
                 padding: EdgeInsets.only(bottom: 15),
@@ -1066,7 +1066,7 @@ class _HistoryDetailsState extends State<HistoryDetails> {
     // education
     if (purpose == ServicePurpose.betting) {
       List<String> pins =
-          (widget.param.meta["token"] ?? "").toString().split(",");
+          (widget.param.meta.token ?? "").toString().split(",");
       res.addAll([
         CustomContainer(
           margin: const EdgeInsets.only(
@@ -1118,15 +1118,15 @@ class _HistoryDetailsState extends State<HistoryDetails> {
                 title: "Transaction Time",
                 desc: getTimeFromDate(widget.param.createdAt) ?? "",
               ),
-              CustomKeyValueState(
-                title: "Provider",
-                desc: capitalize(widget.param.meta["provider"]["name"]),
-              ),
+              // CustomKeyValueState(
+              //   title: "Provider",
+              //   desc: capitalize(widget.param.meta["provider"]["name"]),
+              // ),
 
-              CustomKeyValueState(
-                title: "Betting ID/Number",
-                desc: capitalize(widget.param.meta["customer"]["customer_id"]),
-              ),
+              // CustomKeyValueState(
+              //   title: "Betting ID/Number",
+              //   desc: capitalize(widget.param.meta["customer"]["customer_id"]),
+              // ),
 
               Padding(
                 padding: EdgeInsets.only(bottom: 15),
@@ -1628,15 +1628,15 @@ class _HistoryDetailsState extends State<HistoryDetails> {
                   desc: getTimeFromDate(widget.param.createdAt) ?? "",
                 ),
                 if (widget.param.provider.toLowerCase() != 'sudo') ...[
-                  CustomKeyValueState(
-                      title: "Bank Name",
-                      desc: widget.param.meta["bank_name"] ?? ''),
-                  CustomKeyValueState(
-                      title: "Bank Account Number",
-                      desc: widget.param.meta["account_number"] ?? "--"),
-                  CustomKeyValueState(
-                      title: "Bank Account Name",
-                      desc: widget.param.meta["account_name"] ?? "--"),
+                  // CustomKeyValueState(
+                  //     title: "Bank Name",
+                  //     desc: widget.param.meta["bank_name"] ?? ''),
+                  // CustomKeyValueState(
+                  //     title: "Bank Account Number",
+                  //     desc: widget.param.meta["account_number"] ?? "--"),
+                  // CustomKeyValueState(
+                  //     title: "Bank Account Name",
+                  //     desc: widget.param.meta["account_name"] ?? "--"),
                   Padding(
                     padding: EdgeInsets.only(bottom: 15),
                     child: Row(

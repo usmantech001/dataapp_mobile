@@ -20,8 +20,10 @@ class User {
   final bool bvn_verified;
   final bool bvn_validated;
   final bool transaction_biometric_activated;
+  final bool login_biometric_activated;
   final bool two_factor_enabled;
   final num wallet_balance;
+  final String? biometricToken;
 
   User({
     this.id,
@@ -47,6 +49,8 @@ class User {
     this.transaction_biometric_activated = false,
     this.two_factor_enabled = false,
     this.wallet_balance = 0,
+    this.login_biometric_activated = false,
+    this.biometricToken
   });
 
   factory User.fromMap(Map<String, dynamic> map) {
@@ -73,10 +77,14 @@ class User {
           bvn_validated: map["bvn_validated"] ?? false,
       transaction_biometric_activated:
           map["transaction_biometric_activated"] ?? false,
+          login_biometric_activated:
+          map["login_biometric_activated"] ?? false,
       two_factor_enabled: map['two_factor_enabled'] ?? false,
       wallet_balance: map["wallet"] == null
           ? 0
           : (num.tryParse("${map["wallet"]["balance"]}") ?? 0),
+          biometricToken: map['biometric_token']
+
     );
   }
 
@@ -105,7 +113,8 @@ class User {
       // TODO:: uncomment
       // 'auth_type': auth_type,
       // 'countryObj': countryObj == null ? null : countryObj?.toMap(),
-      // 'login_biometric_activated': login_biometric_activated,
+      'login_biometric_activated': login_biometric_activated,
+      'biometric_token' : biometricToken
     };
   }
 }

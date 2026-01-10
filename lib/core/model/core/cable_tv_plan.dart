@@ -3,12 +3,14 @@ class CableTvPlan {
   final String name;
   final String code;
   final num amount;
+  final String duration;
 
   CableTvPlan({
     required this.id,
     required this.name,
     required this.code,
     required this.amount,
+    required this.duration,
   });
 
   factory CableTvPlan.fromMap(Map<String, dynamic> map) {
@@ -17,6 +19,7 @@ class CableTvPlan {
       name: map['name'].toString(),
       code: map["code"].toString(),
       amount: map["amount"],
+      duration: map["duration"]
     );
   }
 }

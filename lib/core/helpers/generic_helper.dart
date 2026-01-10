@@ -40,6 +40,7 @@ class GenericHelper {
 
     Map res = json.decode(response.body);
     if (response.statusCode < 400) {
+      print('...bank response is ${res}');
       return (res['data'] as List).map((e) => Bank.fromMap(e)).toList();
     } else {
       throw throwHttpError(res);
@@ -95,6 +96,7 @@ class GenericHelper {
 
     Map res = json.decode(response.body);
     if (response.statusCode < 400) {
+      print('...faq response is ${res}');
       return (res['data'] as List).map((e) => Faq.fromMap(e)).toList();
     }
     throw throwHttpError(res);

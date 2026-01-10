@@ -41,6 +41,8 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSUserTrackingUsageDescription</key>
+    <string>Your app uses IDFA to improve ad personalization.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Allows users to select a phone number from their contact list to easily complete bill payments and transactions.</string>
 	

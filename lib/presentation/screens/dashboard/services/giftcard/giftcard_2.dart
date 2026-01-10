@@ -120,13 +120,13 @@ class Giftcard2 extends StatelessWidget {
                     safeQuantity = 0;
                   }
                   GiftcardTxn _ = await ServicesHelper.buyGiftcard(
-                    amount: double.parse(arg.amount),
+                    amount: arg.amount,
                     pin: transaction_pin,
                     giftcardId: arg.product.id,
-                    payoutMethod: '',
+                   // payoutMethod: '',
                     quantity: safeQuantity,
-                    tradeType: "buy",
-                    cards: [],
+                    //tradeType: "buy",
+                    //cards: [],
                     cardType: arg.type.toName().toString(),
                   );
 

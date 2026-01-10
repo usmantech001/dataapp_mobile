@@ -5,12 +5,14 @@ class EPinProduct extends BaseCustomDropdownButtonFormFieldList {
   final String name;
   final String code;
   final num amount;
+  final String? logo;
 
   EPinProduct({
     required this.id,
     required this.name,
     required this.code,
     required this.amount,
+    this.logo
   });
 
   factory EPinProduct.fromMap(Map<String, dynamic> map) {
@@ -19,6 +21,7 @@ class EPinProduct extends BaseCustomDropdownButtonFormFieldList {
       name: map['name'].toString(),
       code: map["code"].toString(),
       amount: map["amount"],
+      logo: map['logo']
     );
   }
 

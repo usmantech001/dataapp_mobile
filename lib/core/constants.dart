@@ -1,19 +1,23 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:dataplug/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class Constants {
   static const String kBaseurl = 
   // kReleaseMode
-  //     ?
+       //?
        'https://api.dataapp.ng';
-      //  : 
-      //  'https://staging-api.dataapp.ng';
+      // :
+
+      // 'https://staging-api.dataapp.ng';
 
   static const String kBiometricDateStorageKey = "last_biometric_date_shown";
   static const String kBalanceVisibilityKey = "lalanceVisibility";
   static const String kBiometricLoginKey = "login";
   static const String kBiometricTransactionKey = "transaction";
   static const String kCachedAuthKey = "authCred";
+   static const String kGlobalLoginKey = "globalLogin";
 
   static const String serverError = "A server error occured, please try again.";
   static const kConnectionError =

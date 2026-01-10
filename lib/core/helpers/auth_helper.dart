@@ -29,6 +29,7 @@ class AuthHelper {
       required String email,
       required String password,
       required String phone,
+      required String phoneCode,
       String? referrerCode}) async {
     //
 
@@ -38,8 +39,9 @@ class AuthHelper {
       "email": email,
       "password": password,
       "phone": phone,
+      "phone_code": phoneCode
     };
-
+   print('...the registration payload is $_body');
     if ((referrerCode ?? "").trim().isNotEmpty) {
       _body["ref_code"] = referrerCode;
     }
@@ -170,8 +172,10 @@ class AuthHelper {
           addHeaders: {"Accept": "application/json"}).catchError((err) {
         throw OtherErrors(err);
       });
-
+       print('...the login response is ${response.body}');
       Map res = json.decode(response.body);
+
+      print('...the login response is $res');
 
       if (response.statusCode < 400) {
         if (res["data"]["user"]["two_factor_enabled"] == false) {
@@ -185,11 +189,12 @@ class AuthHelper {
             biometric_token: res["data"]["biometric_token"],
           );
         }
-
+   print('..the user data is ${res['data']['user']}');
         return User.fromMap(res['data']['user']);
       }
       throw throwHttpError(res);
     } catch (e) {
+      print('...failed to login ${e.toString()}');
       rethrow;
     }
   }
@@ -200,7 +205,7 @@ class AuthHelper {
       var authCred = pref.getString(Constants.kCachedAuthKey);
       return json.decode(authCred ?? "")['token'];
     }).catchError((_) {});
-
+   print('...while navigating email verified ${user.email_verified}');
     // VERIFY EMAIL
     if (user.email_verified == false) {
       // ignore: use_build_context_synchronously
@@ -243,7 +248,7 @@ class AuthHelper {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     userProvider.updateUser(user);
-    Navigator.pushNamedAndRemoveUntil(context, RoutesManager.dashboardWrapper,
+    Navigator.pushNamedAndRemoveUntil(context, RoutesManager.bottomNav,
         (Route<dynamic> route) => false);
   }
 
@@ -259,6 +264,7 @@ class AuthHelper {
     } catch (_) {}
 
     if (response.statusCode == 200) {
+       print('...the new user data after pin set is ${res["data"]["user"]}');
       return User.fromMap(res["data"]["user"]);
     } else {
       throw throwHttpError(res);
@@ -390,6 +396,16 @@ class AuthHelper {
 
       decodedDt["user"] = user.toMap();
       _prefs!.setString("authCred", json.encode(decodedDt));
+    } catch (_) {
+      print("Error $_");
+    }
+  }
+
+    static saveNextGlobalLogin() async {
+    try {
+      _prefs ??= await SecureStorage.getInstance();
+      String nextGlobalLogin = DateTime.now().add(Duration(days: 15)).toString();
+      _prefs!.setString(Constants.kGlobalLoginKey, nextGlobalLogin);
     } catch (_) {
       print("Error $_");
     }

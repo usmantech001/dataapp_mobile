@@ -161,10 +161,25 @@ class _GenerateAccountBottomSheetState
                         onTap: () async {
                           final date = await showDatePicker(
                             context: context,
+                            locale: const Locale('en', 'GB'),
                             firstDate: DateTime.now()
                                 .subtract(Duration(days: 365 * 100)),
                             lastDate: DateTime.now()
                                 .subtract(Duration(days: 365 * 18)),
+                               builder: (context, child) {
+    return Theme(
+      data: ThemeData.light().copyWith(
+        colorScheme: ColorScheme.light(
+          primary: ColorManager.kPrimary, // Header background and selected date
+          onPrimary: Colors.white, // Text on header
+          surface: Colors.white, // Calendar background
+          onSurface: Colors.black, // Calendar text
+        ),
+        
+      ),
+      child: child!,
+    );
+  },
                           );
                           if (date != null) {
                             setState(() {

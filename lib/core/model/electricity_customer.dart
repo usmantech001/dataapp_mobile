@@ -17,7 +17,7 @@ const ElectricityCustomer({
         customerName: json[ 'customer_name' ] ?? "",
         meterNumber: json["meter_number"]?? "",
         address: json["address"] ?? "",
-        arrears: json["arrears"] ?? "",
+        arrears: json["arrears"].toString() ?? "",
     );
 
     Map<String, dynamic> toJson() => {

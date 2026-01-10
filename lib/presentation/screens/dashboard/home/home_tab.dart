@@ -53,6 +53,7 @@ class HomeTab extends StatefulWidget {
           padding: const EdgeInsets.only(top: 12, bottom: 24),
           child: Row(
             children: [
+              /*
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,6 +80,7 @@ class HomeTab extends StatefulWidget {
                   ],
                 ),
               ),
+              */
 
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -713,7 +715,7 @@ class _HomeTabState extends State<HomeTab> {
                             "This service is not available at the moment.");
                     return;
                   }
-                  Navigator.pushNamed(context, RoutesManager.buyElectricity1);
+                  Navigator.pushNamed(context, RoutesManager.electricityProviders);
                 }, context: context),
               if (genericProvider.serviceStatus?.tv?.status == true ||
                   genericProvider.serviceStatus?.tv?.value?.toLowerCase() ==
@@ -733,7 +735,7 @@ class _HomeTabState extends State<HomeTab> {
                             "This service is not available at the moment.");
                     return;
                   }
-                  Navigator.pushNamed(context, RoutesManager.cableTv1);
+                  Navigator.pushNamed(context, RoutesManager.cableTvProviders);
                 }, context: context),
             ],
           ),
@@ -1122,6 +1124,7 @@ class _HomeTabState extends State<HomeTab> {
     });
 
     User user = userProvider.user;
+    print('....bvn verified ${user.bvn_verified}');
 
     if (!(user.bvn_verified || user.bvn_validated)) {
       // 🚨 If BVN not verified/validated → show static account bottomsheet
@@ -1328,6 +1331,7 @@ class _HomeTabState extends State<HomeTab> {
                                   _showAccountDetailsBottomSheet(
                                       context, userProvider);
                                 } catch (e) {
+                                  print('...the error is ${e.toString()}');
                                   if (!context.mounted) return;
 
                                   showCustomToast(

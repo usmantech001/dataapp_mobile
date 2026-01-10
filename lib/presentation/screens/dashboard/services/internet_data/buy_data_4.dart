@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/contact.dart';
 import 'package:gap/gap.dart';
-import 'package:provider/provider.dart';
-import '../../../../../core/constants.dart';
 import '../../../../../core/enum.dart';
 import '../../../../../core/model/core/data_plans.dart';
 import '../../../../../core/model/core/data_provider.dart';

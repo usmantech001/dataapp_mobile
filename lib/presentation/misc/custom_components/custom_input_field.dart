@@ -84,11 +84,11 @@ class _CustomInputFieldState extends State<CustomInputField> {
       children: [
         widget.formHolderName != null
             ? Padding(
-                padding: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.only(bottom: 8),
                 child: Text(
                   widget.formHolderName!,
-                  style: get14TextStyle().copyWith(
-                      fontWeight: FontWeight.w400,
+                  style: get16TextStyle().copyWith(
+                      fontWeight: FontWeight.w500,
                       color: ColorManager.kFadedTextColor),
                 ),
               )
@@ -108,17 +108,18 @@ class _CustomInputFieldState extends State<CustomInputField> {
           onTap: () {
             if (widget.onTap != null) widget.onTap!();
           },
-          onChanged: (args) {
-            if (args.length > 1) {
-              setState(() => isVisible = true);
-            } else if (args.isEmpty) {
-              setState(() => isVisible = false);
-            } else if (widget.textEditingController!.text.isEmpty) {
-              setState(() => isVisible = false);
-            }
-            if (widget.forceRefresh != null) widget.forceRefresh!();
-            if (widget.onChanged != null) widget.onChanged!(args);
-          },
+          onChanged: widget.onChanged,
+          // (args) {
+          //   if (args.length > 1) {
+          //     setState(() => isVisible = true);
+          //   } else if (args.isEmpty) {
+          //     setState(() => isVisible = false);
+          //   } else if (widget.textEditingController!.text.isEmpty) {
+          //     setState(() => isVisible = false);
+          //   }
+          //   if (widget.forceRefresh != null) widget.forceRefresh!();
+          //   if (widget.onChanged != null) widget.onChanged!(args);
+          // },
           obscureText: widget.isPasswordField! ? _showVisibility : false,
           readOnly: widget.readOnly ?? false,
           decoration: widget.decoration ??
@@ -158,13 +159,13 @@ class _CustomInputFieldState extends State<CustomInputField> {
                 enabledBorder: OutlineInputBorder(
                   borderRadius: borderRadius,
                   borderSide: BorderSide(
-                      color: ColorManager.kFormInactiveBorder, width: 1),
+                      color: ColorManager.kGreyColor.withValues(alpha: .12), width: 1),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: borderRadius,
                   borderSide: BorderSide(
-                    width: 0.57,
-                    color: ColorManager.kTextColor,
+                    width: 1.5,
+                    color: ColorManager.kGreyColor.withValues(alpha: .12),
                   ),
                 ),
                 hintText: widget.hintText,

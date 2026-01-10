@@ -1,6 +1,6 @@
 // ✅ This is your edited BuyData1 screen with working tabs & dynamic bundles based on selected TabBar
 
-import 'package:flutter/gestures.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/contact.dart';
@@ -9,7 +9,6 @@ import 'package:gap/gap.dart';
 import '../../../../../core/enum.dart';
 import '../../../../../core/helpers/generic_helper.dart';
 import '../../../../../core/helpers/service_helper.dart';
-import '../../../../../core/model/core/airtime_provider.dart';
 import '../../../../../core/model/core/data_plans.dart';
 import '../../../../../core/model/core/data_provider.dart';
 import '../../../../../core/utils/utils.dart';

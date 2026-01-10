@@ -49,10 +49,10 @@ class _TransactionPinState extends State<TransactionPin> {
         Provider.of<UserProvider>(context, listen: false);
 
     biometric_token = await AuthHelper.getCacheBiometricToken();
-
+  
     if (biometric_token != null &&
         deviceSupportBiometric &&
-        userProvider.user.transaction_biometric_activated) {
+        userProvider.user.login_biometric_activated) {
       canAuthorizeWithBiometrics = true;
     }
 
@@ -71,6 +71,8 @@ class _TransactionPinState extends State<TransactionPin> {
 
   @override
   Widget build(BuildContext context) {
+    print('... is biometric enabaled ${
+        Provider.of<UserProvider>(context).user.login_biometric_activated}. and the biometric token is $biometric_token');
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Container(

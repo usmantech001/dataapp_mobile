@@ -56,10 +56,10 @@ class SelectDataType extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 16),
+             // const SizedBox(height: 16),
               CustomContainer(
-                width: MediaQuery.sizeOf(context).width * .4,
-                padding: EdgeInsets.all(10),
+                width: MediaQuery.sizeOf(context).width * .43,
+                //padding: EdgeInsets.all(10),
                 onTap: () {
                   Navigator.popAndPushNamed(
                     context, RoutesManager.buyData4,
@@ -80,10 +80,10 @@ class SelectDataType extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: 24,
+                width: 15,
               ),
               CustomContainer(
-                width: MediaQuery.sizeOf(context).width * .4,
+                width: MediaQuery.sizeOf(context).width * .43,
                 onTap: () {
                   Navigator.popAndPushNamed(context, RoutesManager.buyData1,
                       arguments: DataPurchaseType.direct);
@@ -108,7 +108,7 @@ class SelectDataType extends StatelessWidget {
             children: [
               const SizedBox(height: 16),
               CustomContainer(
-                width: MediaQuery.sizeOf(context).width * .4,
+                width: MediaQuery.sizeOf(context).width * .43,
                 onTap: () {
                   Navigator.pushReplacement(
                       context,
@@ -145,10 +145,10 @@ class SelectDataType extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: 24,
+                width: 15,
               ),
               CustomContainer(
-                width: MediaQuery.sizeOf(context).width * .4,
+                width: MediaQuery.sizeOf(context).width * .43,
                 onTap: () {
                   Navigator.pushReplacement(
                       context,

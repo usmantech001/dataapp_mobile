@@ -35,7 +35,7 @@ Widget loadNetworkImage(String url,
         url,
         height: height,
         width: width,
-        fit: fit ?? BoxFit.fill,
+        fit: fit ?? BoxFit.cover,
         placeholderBuilder: (BuildContext? context) {
           return Center(
             child: CircularProgressIndicator(

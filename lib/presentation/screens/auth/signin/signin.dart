@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:dataplug/core/constants.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
@@ -10,6 +11,7 @@ import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
@@ -69,160 +71,127 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
-    return CustomScaffold(
-      backgroundColor: ColorManager.kPrimaryLight,
+    return Scaffold(
+      backgroundColor: ColorManager.kWhite,
       body: SafeArea(
         bottom: false,
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0, top: 24),
-                child: Assets.images.dataplugLogoText
-                    .image(width: 150, height: 30),
-              ),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //
+                Assets.images.dataplugLogoText.image(width: 150, height: 30),
 
-              customDivider(
-                height: 1,
-                margin: const EdgeInsets.only(top: 16, bottom: 6),
-                color: ColorManager.kPrimary.withOpacity(.1),
-              ),
-              Container(
-                color: ColorManager.kPrimaryLight,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          widget.user == null ? "Sign In " : "Welcome Back!",
-                          style: get18TextStyle()
-                              .copyWith(wordSpacing: .1, fontSize: 18),
-                        ),
-                        Gap(10),
-                        RichText(
-                          text: TextSpan(
-                            style: get12TextStyle().copyWith(fontSize: 12),
-                            children: [
-                              const TextSpan(text: "Don’t have an account? "),
-                              TextSpan(
-                                text: "Sign up?",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,
-                                  color: ColorManager.kPrimary,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    Navigator.pushReplacementNamed(
-                                        context, RoutesManager.onboarding1);
-                                  },
-                                //
-                              )
-                            ],
+                Gap(30.h),
+
+                Text(
+                      widget.user == null ? "Log In " : "Welcome Back!",
+                      style: get24TextStyle()
+                          .copyWith(wordSpacing: .1, ),
+                    ),
+                    Gap(12.h),
+                    Text(widget.user == null ? "Log in to access your account and manage your finances easily." : 'Please enter your password to sign in and manage your finances smoothly.', style: get14TextStyle().copyWith(
+                      color: ColorManager.kGreyColor.withValues(alpha: .7)
+                    ),),
+                    Gap(32.h),
+                Form(
+                  key: _formKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Column(
+                    children: [
+                      //
+                      Column(
+                        children: [
+                          if (widget.user == null)
+                            CustomInputField(
+                              formHolderName: "Email",
+                              hintText: "Enter your email",
+                              textEditingController: emailController,
+                              textInputAction: TextInputAction.next,
+                              validator: (val) => Validator.validateEmail(val),
+                              onChanged: (_) => setState(() {}),
+                            ),
+                          if (widget.user == null) spacer,
+
+                        
+                          CustomInputField(
+                            formHolderName: "Password",
+                            hintText: "Enter your password",
+                            textInputAction: TextInputAction.done,
+                            textEditingController: passwordController,
+                            isPasswordField: true,
+                            validator: (v) => Validator.validatePassword(v),
+                            onChanged: (_) => setState(() {}),
                           ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              //
-
-              //
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: ColorManager.kWhite,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                  ),
-                  padding: const EdgeInsets.only(left: 15, right: 15, top: 20),
-                  child: Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    child: Column(
-                      children: [
-                        //
-                        Expanded(
-                          child: ListView(
-                            controller: controller,
-                            children: [
-                              if (widget.user == null)
-                                CustomInputField(
-                                  formHolderName: "Email",
-                                  hintText: "Enter your email",
-                                  textEditingController: emailController,
-                                  textInputAction: TextInputAction.next,
-                                  validator: (val) =>
-                                      Validator.validateEmail(val),
-                                  onChanged: (_) => setState(() {}),
-                                ),
-                              if (widget.user == null) spacer,
-
-                              //
-
-                              //
-
-                              //
-
-                              CustomInputField(
-                                formHolderName: "Password",
-                                hintText: "Enter your password",
-                                textInputAction: TextInputAction.done,
-                                textEditingController: passwordController,
-                                isPasswordField: true,
-                                validator: (v) => Validator.validatePassword(v),
-                                onChanged: (_) => setState(() {}),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 10),
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: CustomTextBtn(
-                                    text: "Forgot Password?",
-                                    isActive: true,
-                                    onTap: () {
-                                      Navigator.pushNamed(context,
-                                          RoutesManager.passwordReset1);
-                                    },
-                                    loading: false,
-                                  ),
-                                ),
-                              ),
-
-                              //
-
-                              if (widget.user != null &&
-                                  biometricAvailable &&
-                                  (widget.user
-                                          ?.transaction_biometric_activated ??
-                                      false))
-                                buildBiometricCard(),
-                              spacer,
-                              spacer,
-                              spacer,
-                              CustomButton(
-                                text: "Proceed",
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: CustomTextBtn(
+                                text: "Forgot Password?",
                                 isActive: true,
                                 onTap: () {
-                                  if (!(_formKey.currentState?.validate() ??
-                                      false)) {
-                                    return;
+                                  Navigator.pushNamed(
+                                      context, RoutesManager.passwordReset1);
+                                },
+                                loading: false,
+                              ),
+                            ),
+                          ),
+
+                          //
+
+                          if (widget.user != null &&
+                              biometricAvailable &&
+                              (widget.user?.login_biometric_activated ?? false))
+                            buildBiometricCard(),
+                          spacer,
+                          
+                          CustomButton(
+                            text: "Proceed",
+                            isActive: true,
+                            onTap: () async {
+                              if (!(_formKey.currentState?.validate() ??
+                                  false)) {
+                                return;
+                              }
+                              String email =
+                                  widget.user?.email ?? emailController.text;
+                              String password = passwordController.text;
+                              if (widget.user != null) {
+                                var nextGlobalLogin =
+                                    await SecureStorage.getInstance()
+                                        .then((pref) => pref.getString(
+                                            Constants.kGlobalLoginKey))
+                                        .catchError((_) => null);
+                                DateTime now = DateTime.now();
+
+                                if (nextGlobalLogin != null) {
+                                  final nextGlobalLoginDate =
+                                      DateTime.parse(nextGlobalLogin);
+                                  final diff =
+                                      nextGlobalLoginDate.difference(now);
+                                  print('...the difference is ${diff.inDays}');
+                                  bool localSiginDue =
+                                      nextGlobalLoginDate.isBefore(now);
+                                  if (localSiginDue) {
+                                    signIn(LoginProvider.password,
+                                            email: email, password: password)
+                                        .catchError((e) {
+                                      // widget.user = null;
+                                      setState(() => loginLoading = false);
+                                      showCustomToast(
+                                          context: context,
+                                          description: e.toString(),
+                                          type: ToastType.error);
+                                    });
+                                  } else {
+                                    localSigin(password);
                                   }
-
-                                  String email = widget.user?.email ??
-                                      emailController.text;
-                                  String password = passwordController.text;
-
+                                } else {
                                   signIn(LoginProvider.password,
                                           email: email, password: password)
                                       .catchError((e) {
@@ -233,50 +202,81 @@ class _SignInState extends State<SignIn> {
                                         description: e.toString(),
                                         type: ToastType.error);
                                   });
-                                },
-                                loading: loginLoading,
-                              ),
-                              if (widget.user != null) ...[
-                                Gap(50),
-                                AltRoute(
-                                    routeTo: () {
-                                      setState(() {
-                                        widget.user = null;
-                                      });
-                                    },
-                                    text1:
-                                        'Not ${widget.user?.firstname ?? ""}? ',
-                                    underline: false,
-                                    text2: 'Switch Account')
-                              ],
-                              if (widget.user == null)
-                                // const Padding(
-                                //   padding: EdgeInsets.only(top: 16),
-                                //   child: Row(
-                                //     mainAxisAlignment:
-                                //         MainAxisAlignment.spaceBetween,
-                                //     children: [
-                                //       //
-                                //       SocialAuth(
-                                //           text: "Continue with Google",
-                                //           image: ImageManager.kGoogleIcon),
-                                //       Gap(16),
-                                //       SocialAuth(
-                                //           text: "Continue with Apple",
-                                //           image: ImageManager.kAppleIcon),
-                                //     ],
-                                //   ),
-                                // ),
-                              const SizedBox(height: 10),
-                            ],
+                                }
+                              } else {
+                                signIn(LoginProvider.password,
+                                        email: email, password: password)
+                                    .catchError((e) {
+                                  // widget.user = null;
+                                  setState(() => loginLoading = false);
+                                  showCustomToast(
+                                      context: context,
+                                      description: e.toString(),
+                                      type: ToastType.error);
+                                });
+                              }
+                            },
+                            loading: loginLoading,
                           ),
-                        ),
-                      ],
-                    ),
+                          if (widget.user != null) ...[
+                            Gap(30.h),
+                            AltRoute(
+                                routeTo: () {
+                                  setState(() {
+                                    widget.user = null;
+                                  });
+                                },
+                                text1: 'Not ${widget.user?.firstname ?? ""}? ',
+                                underline: false,
+                                text2: 'Switch Account')
+                          ],
+                          // if (widget.user == null)
+                          // const Padding(
+                          //   padding: EdgeInsets.only(top: 16),
+                          //   child: Row(
+                          //     mainAxisAlignment:
+                          //         MainAxisAlignment.spaceBetween,
+                          //     children: [
+                          //       //
+                          //       SocialAuth(
+                          //           text: "Continue with Google",
+                          //           image: ImageManager.kGoogleIcon),
+                          //       Gap(16),
+                          //       SocialAuth(
+                          //           text: "Continue with Apple",
+                          //           image: ImageManager.kAppleIcon),
+                          //     ],
+                          //   ),
+                          // ),
+                          //const SizedBox(height: 10),
+                         if (widget.user == null) Padding(
+                           padding: EdgeInsets.only(top: 30.h),
+                           child: RichText(
+                              text: TextSpan(
+                                style: get12TextStyle().copyWith(fontSize: 12),
+                                children: [
+                                   TextSpan(text: "Don’t have an account? ", style: get14TextStyle().copyWith(color: ColorManager.kGreyColor.withValues(alpha: .7))),
+                                  TextSpan(
+                                    text: "Create an Account?",
+                                    style: get14TextStyle().copyWith(color: ColorManager.kPrimary),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Navigator.pushReplacementNamed(
+                                            context, RoutesManager.onboarding1);
+                                      },
+                                    //
+                                  )
+                                ],
+                              ),
+                            ),
+                         )
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -294,27 +294,79 @@ class _SignInState extends State<SignIn> {
           .catchError((_) => {});
 
       String email = authCred["user"]["email"];
-
-      LoginProvider loginProvider =
-          enumFromString(LoginProvider.values, authCred["loginProvider"])!;
       String password = authCred["password"];
-      // String? social_token = authCred["social_token"];
+      var nextGlobalLogin = await SecureStorage.getInstance()
+          .then((pref) => pref.getString(Constants.kGlobalLoginKey))
+          .catchError((_) => null);
+      DateTime now = DateTime.now();
 
-      signIn(loginProvider, email: email, password: password).catchError((_) {
-        // widget.user = null;
-        log("$_", name: "Error");
-        setState(() => loginLoading = false);
-        // AuthHelper.logout(context);
-        showCustomToast(
-            context: context,
-            description:
-                "$_",
-            type: ToastType.error);
-      });
+      if (nextGlobalLogin != null) {
+        final nextGlobalLoginDate = DateTime.parse(nextGlobalLogin);
+        final diff = nextGlobalLoginDate.difference(now);
+        print('...the difference is ${diff.inDays}');
+        bool localSiginDue = nextGlobalLoginDate.isBefore(now);
+        if (!localSiginDue) {
+          signIn(LoginProvider.password, email: email, password: password)
+              .catchError((e) {
+            // widget.user = null;
+            setState(() => loginLoading = false);
+            showCustomToast(
+                context: context,
+                description: e.toString(),
+                type: ToastType.error);
+          });
+        } else {
+          localSigin(password);
+        }
+      } else {
+        signIn(LoginProvider.password, email: email, password: password)
+            .catchError((e) {
+          // widget.user = null;
+          setState(() => loginLoading = false);
+          showCustomToast(
+              context: context,
+              description: e.toString(),
+              type: ToastType.error);
+        });
+      }
+
+      // LoginProvider loginProvider =
+      //     enumFromString(LoginProvider.values, authCred["loginProvider"])!;
+      // String password = authCred["password"];
+      // // String? social_token = authCred["social_token"];
+
+      // signIn(loginProvider, email: email, password: password).catchError((_) {
+      //   // widget.user = null;
+      //   log("$_", name: "Error");
+      //   setState(() => loginLoading = false);
+      //   // AuthHelper.logout(context);
+      //   showCustomToast(
+      //       context: context, description: "$_", type: ToastType.error);
+      // });
     }
   }
 
   bool loginLoading = false;
+  Future<void> localSigin(String password) async {
+    var authCred = await SecureStorage.getInstance()
+        .then((pref) => json.decode(pref.getString("authCred") ?? "{}"))
+        .catchError((_) => {});
+    print('...auth cred $authCred');
+    User user = User.fromMap(authCred['user']);
+    String storedPassword = authCred["password"];
+    if (storedPassword == password) {
+      print('..before navigating email verified is ${user.email_verified}');
+      await AuthHelper.routeAuthenticated(context,
+          user: user, password: password);
+      AuthHelper.updateSavedUserDetails(user);
+    } else {
+      showCustomToast(
+          context: context,
+          description: "Invalid Credentials",
+          type: ToastType.error);
+    }
+  }
+
   Future<void> signIn(LoginProvider loginProvider,
       {required String email, required String password}) async {
     // if (googleSignInLoading || appleSignInLoading || loginLoading) return;
@@ -325,6 +377,11 @@ class _SignInState extends State<SignIn> {
         email: email, password: password);
     await AuthHelper.routeAuthenticated(context,
         user: user, password: password);
+    AuthHelper.updateSavedUserDetails(user);
+    AuthHelper.saveNextGlobalLogin();
+    if (user.biometricToken != null) {
+      AuthHelper.updateBiometricToken(user.biometricToken!);
+    }
 
     setState(() => loginLoading = false);
   }
@@ -334,7 +391,7 @@ class _SignInState extends State<SignIn> {
       behavior: HitTestBehavior.translucent,
       onTap: () => _verifyBiometrics(context),
       child: Container(
-        margin: const EdgeInsets.only(top: 100, bottom: 5, left: 15, right: 15),
+        margin: const EdgeInsets.only(top: 24, bottom: 5, left: 15, right: 15),
         padding: const EdgeInsets.all(12.5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),

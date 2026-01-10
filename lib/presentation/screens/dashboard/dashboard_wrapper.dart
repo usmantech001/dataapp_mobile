@@ -100,26 +100,6 @@ class _DashboardWrapperState extends State<DashboardWrapper> {
     }
   }
 
-  //   static void listenToForegroundMessages() {
-  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //     RemoteNotification? notification = message.notification;
-  //     AndroidNotification? android = message.notification?.android;
-  //     log('Message received: ${message.messageId}');
-  //     log(
-  //       'Notification: ${notification?.title}\n${notification?.body}'
-  //     );
-  //     log('Channel ID: ${channel.id}');
-  //     log('Channel Name: ${channel.name}', isLongMessage: true);
-  //     log(
-  //       'Channel Description: ${channel.description}',
-  //       isLongMessage: true,
-  //     );
-
-  //     if (notification != null && android != null) {
-  //       showNotification(notification);
-  //     }
-  //   });
-  // }
 
   Future<void> setupFlutterNotifications() async {
     if (_isFlutterLocalNotificationsInitialized) {
@@ -235,41 +215,6 @@ class _DashboardWrapperState extends State<DashboardWrapper> {
     }
   }
 
-  // Future<void> setFcmToken() async {
-  // String deviceToken = await getDeviceToken();
-  // debugPrint("###### PRINT DEVICE TOKEN TO USE FOR PUSH NOTIFCIATION ######");
-  // debugPrint(deviceToken);
-  // debugPrint("############################################################");
-
-  // listen for user to click on notification
-  // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage remoteMessage) {
-  //   print("adsakjdak ${remoteMessage.collapseKey}");
-  // });
-
-  // UserHelper.updateFcmToken(deviceToken).catchError((_) {});
-  // }
-
-  // Future getDeviceToken() async {
-  // try {
-  //   FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-  //   await messaging.requestPermission(
-  //     alert: true,
-  //     announcement: false,
-  //     badge: true,
-  //     carPlay: false,
-  //     criticalAlert: false,
-  //     provisional: false,
-  //     sound: true,
-  //   );
-
-  //   String? deviceToken = await messaging.getToken();
-  //   return (deviceToken == null) ? "" : deviceToken;
-  // } catch (e) {
-  //   print("Error $e");
-  // }
-  // }
-
   final List<DashboardTabsItems> pages = DashboardTabsItems.data;
 
   // Replace with the WhatsApp number you want to open
@@ -296,15 +241,7 @@ class _DashboardWrapperState extends State<DashboardWrapper> {
     return SessionTimeoutWrapper(
         child: CustomScaffold(
       backgroundColor: ColorManager.kWhite,
-      //      floatingActionButton: FloatingActionButton(
-      //       shape: RoundedRectangleBorder(
-      //         borderRadius: BorderRadius.circular(180),
-      //       ),
-      //   onPressed: () =>_openWhatsApp(),
-      //   backgroundColor: ColorManager.kPrimary,
-      //   child: Assets.icons.customerService.svg(width: 24, height: 24),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
       body: SafeArea(
         child: Stack(
           children: [
@@ -350,13 +287,13 @@ class _DashboardWrapperState extends State<DashboardWrapper> {
                                         ),
                                       ),
                                       Gap(16),
-                                      Text(
-                                        "Hi, ${userProvider.user.firstname}",
-                                        style: get14TextStyle().copyWith(
-                                          color: ColorManager.kBlack,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
+                                      // Text(
+                                      //   "Hi, ${userProvider.user.firstname}",
+                                      //   style: get14TextStyle().copyWith(
+                                      //     color: ColorManager.kBlack,
+                                      //     fontWeight: FontWeight.w500,
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                   const Spacer(),

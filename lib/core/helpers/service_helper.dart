@@ -150,24 +150,21 @@ class ServicesHelper {
 
   static Future<GiftcardTxn> buyGiftcard({
     required int giftcardId,
-    required double amount,
-    required String tradeType,
+    required String amount,
     required String cardType,
-    required List<String> cards,
     required String pin,
     required int quantity,
-    required String payoutMethod,
   }) async {
     Map<String, dynamic> body = {
       'giftcard_id': giftcardId.toString(),
       'amount': amount.toString(),
-      'trade_type': tradeType.toLowerCase(),
+      'trade_type': 'buy',
       'card_type': cardType.toLowerCase(),
       // 'cards': cards,
       'pin': pin,
       // 'comment': "",
       'quantity': quantity.toString(),
-      'payout_method': payoutMethod,
+      //'payout_method': payoutMethod,
     };
     log(pin.toString(), name: "Amount");
     http.Response response =
@@ -207,6 +204,22 @@ class ServicesHelper {
       return dt.map((e) => intlBillCountries.Country.fromMap(e)).toList();
     } else {
       throw decodedRes["message"];
+    }
+  }
+   static Future<String> getWalletBalance() async {
+    http.Response response =
+        await HttpRequest.get("/wallet").catchError((err) {
+      throw OtherErrors(err);
+    });
+
+    Map res = json.decode(response.body);
+    log(res.toString(), name: "Virtual Accounts");
+
+    if (response.statusCode < 400) {
+      String balance = res['data']['balance'].toString();
+      return balance;
+    } else {
+      throw throwHttpError(res);
     }
   }
 
@@ -417,6 +430,7 @@ class ServicesHelper {
     if (response.statusCode < 400) {
       return VirtualBankDetail.fromMap(res['data']);
     } else {
+      print('..the error is $res');
       throw throwHttpError(res);
     }
   }
@@ -450,6 +464,7 @@ class ServicesHelper {
 
     Map res = json.decode(response.body);
     if (response.statusCode < 400) {
+      print('...airtime provider ${res}');
       return (res['data'] as List)
           .map((e) => AirtimeProvider.fromMap(e))
           .toList();
@@ -519,7 +534,9 @@ class ServicesHelper {
     Map res = json.decode(response.body);
 
     if (response.statusCode == 200) {
+      print('..successfully veryfied neter number ${res}');
       return ElectricityCustomer.fromJson(res['data']);
+      
     }
     throw throwHttpError(res);
   }
@@ -576,6 +593,7 @@ class ServicesHelper {
 
     Map res = json.decode(response.body);
     if (response.statusCode < 400) {
+      print('..epin products $res');
       return (res['data'] as List).map((e) => EPinProduct.fromMap(e)).toList();
     } else {
       throw throwHttpError(res);
@@ -593,8 +611,9 @@ class ServicesHelper {
 
     Map res = json.decode(response.body);
 
-    if (response.statusCode < 400)
+    if (response.statusCode < 400) {
       return res["data"]["customer_name"] ?? res["data"]["name"];
+    }
     throw throwHttpError(res);
   }
 
@@ -649,6 +668,7 @@ class ServicesHelper {
 
     Map res = json.decode(response.body);
     if (response.statusCode < 400) {
+      print('..plans $res');
       if (res['data'] is List && res['data'].isNotEmpty) {
         return (res['data'] as List).map((e) => DataPlan.fromMap(e)).toList();
       } else {
@@ -708,10 +728,10 @@ class ServicesHelper {
       required String provider,
       required String pin,
       required bool isPorted,
-      required DataPurchaseType dataPurchaseType}) async {
-    String url = "/data/direct";
+      required String dataPurchaseType}) async {
+    String url = "/data/$dataPurchaseType";
 
-    if (dataPurchaseType == DataPurchaseType.sme) url = "/data/sme";
+
 
     http.Response response = await HttpRequest.post(url, {
       "phone": phone,
@@ -760,8 +780,9 @@ class ServicesHelper {
     });
 
     Map res = json.decode(response.body);
-    if (response.statusCode < 400)
+    if (response.statusCode < 400) {
       return res["data"]["customer_name"] ?? res["data"]["name"];
+    }
 
     throw throwHttpError(res);
   }
@@ -774,6 +795,7 @@ class ServicesHelper {
 
     Map res = json.decode(response.body);
     if (response.statusCode < 400) {
+      print('....tv plans ${res['data']}');
       return (res['data'] as List).map((e) => CableTvPlan.fromMap(e)).toList();
     } else {
       throw throwHttpError(res);
@@ -832,9 +854,10 @@ class ServicesHelper {
     });
 
     Map res = json.decode(response.body);
-    if (response.statusCode < 400)
+    if (response.statusCode < 400) {
       return res["data"]["username"] ??
           "${res["data"]["firstname"]} ${res["data"]["lastname"]}";
+    }
 
     throw throwHttpError(res);
   }
@@ -925,7 +948,7 @@ class ServicesHelper {
             .catchError((err) {
       throw OtherErrors(err);
     });
-    print(response.body);
+    print("intl data plan ${response.body}");
     Map res = json.decode(response.body);
     if (response.statusCode < 400) {
       return (res['data'] as List).map((e) {
@@ -955,7 +978,7 @@ class ServicesHelper {
   }
 
   static Future<ServiceTxn> buyInternationalAirtime({
-    required double amount,
+    required String amount,
     required String phone,
     required String provider,
     required String pin,
@@ -1035,8 +1058,8 @@ class ServicesHelper {
   }
 
   static Future<GiftcardCategoryProviderResponse> getGiftcardCategories({
-    required String search,
-    required int page,
+   String? search,
+   int page = 1,
     int perPage = 200,
   }) async {
     final url = '/giftcard-categories/buy?page=$page&per_page=$perPage';

@@ -3,6 +3,16 @@ import 'dart:io';
 
 // import 'package:fabspay/presentation/authentication/login/login_view.dart';
 import 'package:dataplug/core/constants.dart';
+import 'package:dataplug/presentation/screens/dashboard/bottom_nav_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/history/history_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/home/home_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/leaderboard/leaderboard_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/referrals/referral/referrals_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/giftcard/buy_giftcard_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/internet_data/buy_data_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/services_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/settings/bank/virtual_accounts_screen.dart';
+import 'package:dataplug/presentation/screens/kyc/generate_account_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -58,18 +68,26 @@ class _SplashViewState extends State<SplashView> {
     //     await Navigator.pushNamed(context, RoutesManager.appUpdateView);
     //   }
     // }
+    //  var _pref = await SecureStorage.getInstance();
+    // await _pref.remove(Constants.kCachedAuthKey);
 
     var authCred = await SecureStorage.getInstance()
         .then((pref) => pref.getString(Constants.kCachedAuthKey))
         .catchError((_) => null);
 
     if (authCred != null) {
+      // print('...the auth cred is $authCred');
       User user = User.fromMap(json.decode(authCred)['user']);
+      //  Navigator.push(context,
+      //      MaterialPageRoute(builder: (context) => LeaderboardScreen()));
       Navigator.pushNamed(context, RoutesManager.signIn, arguments: user);
+      // Navigator.pushNamed(context, RoutesManager.successful);
       return;
     }
-
-    Navigator.pushNamed(context, RoutesManager.signIn);
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder: (context) => BottomNavScreen()));
+     Navigator.pushNamed(context, RoutesManager.signIn);
+    //Navigator.pushNamed(context, RoutesManager.dashboardWrapper);
   }
 
   @override
@@ -78,7 +96,11 @@ class _SplashViewState extends State<SplashView> {
       padding: const EdgeInsets.only(bottom: 0),
       color: ColorManager.kPrimary,
       child: Center(
-        child: Image.asset(Assets.images.dataplugIcon.path, width: 200, height:200,),
+        child: Image.asset(
+          Assets.images.dataplugIcon.path,
+          width: 200,
+          height: 200,
+        ),
       ),
     );
   }

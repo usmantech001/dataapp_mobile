@@ -5,6 +5,7 @@ import 'package:dataplug/core/model/core/user.dart';
 import 'package:dataplug/core/model/core/user_bank.dart';
 import 'package:dataplug/presentation/screens/auth/password_reset/misc/password_reset_3_arg.dart';
 import 'package:dataplug/presentation/screens/auth/verify_email.dart/verify_email.dart';
+import 'package:dataplug/presentation/screens/dashboard/bottom_nav_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/card/card_details.dart';
 import 'package:dataplug/presentation/screens/dashboard/card/card_receipt.dart';
 import 'package:dataplug/presentation/screens/dashboard/card/card_transactions.dart';
@@ -13,12 +14,40 @@ import 'package:dataplug/presentation/screens/dashboard/card/create_card/arg/car
 import 'package:dataplug/presentation/screens/dashboard/card/create_card/enter_address.dart';
 import 'package:dataplug/presentation/screens/dashboard/card/create_card/usd/usd_card.dart';
 import 'package:dataplug/presentation/screens/dashboard/card/fund_card/enter_amount_usd.dart';
+import 'package:dataplug/presentation/screens/dashboard/leaderboard/leaderboard_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/referrals/referral/referrals_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/airtime/airtime_review_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/betting/betting_1.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/betting/betting_provider_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/betting/fund_betting_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/cable_tv/cable_tv_package_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/cable_tv/cable_tv_providers_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/cable_tv/cable_tv_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/electricity/buy_electricity_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/electricity/electricity_providers_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/epin/buy_epin_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/epin/epin_products_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/epin/epin_provider_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/giftcard/all_giftcard_txn.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/giftcard/buy_giftcard_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/giftcard/giftcard_1.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/giftcard/giftcard_categories_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/giftcard/giftcard_countries_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/giftcard/giftcard_main.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/giftcard/giftcard_products_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/international_airtime/buy_intl_airtime_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/international_airtime/intl_airtime_countries_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/international_data/buy_intl_data_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/international_data/international_data_1.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/international_data/intl_data_countries_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/internet_data/buy_data_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/services_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/settings/close_account_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/settings/general_settings_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/wallet/transfer/transfer_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/wallet/withdraw/withdraw_screen.dart';
 import 'package:dataplug/presentation/screens/splash/splash_view.dart';
+import 'package:dataplug/presentation/screens/success/successful_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/model/core/card_data.dart';
@@ -88,6 +117,9 @@ class RoutesManager {
   static const String verifyEmail = "/verifyEmail";
 
   static const String dashboardWrapper = "/dashboardWrapper";
+  static const String bottomNav = "/bottomNav";
+
+  //static const String home = "/homeTa";
 
   static const String profileSettings = "/profileSettings";
   static const String security = "/security";
@@ -109,6 +141,12 @@ class RoutesManager {
   static const String buyAirtime1 = "/buyAirtime1";
   static const String transactionStatus = "/transactionStatus";
   static const String buyElectricity1 = "/buyElectricity1";
+  static const String buyElectricity = "/buyElectricity";
+  static const String electricityProviders = "/electricityProviders";
+  static const String cableTvProviders = "/cableTvProviders";
+  static const String cableTvPackages = "/cableTvPackages";
+  static const String cableTv = "/cableTv";
+  static const String buyUnit = "/buyUnit";
   static const String buyEPin1 = "/buyEPin1";
   static const String cableTv1 = "/cableTv1";
   static const String cableTv2 = "/cableTv2";
@@ -157,8 +195,33 @@ class RoutesManager {
 
   static const String giftcardTransactionStatus = "/giftcardTransactionStatus";
 
-    static const String giftcardHistoryDetailsView =
+  static const String giftcardCategory = "/giftcardCategory";
+  static const String giftcardCountries = "/giftcardCountries";
+  static const String giftcardProducts = "/giftcardProducts";
+  static const String buyGiftCard = "/buyGiftCard";
+  static const String bettingProviders = "/bettingProviders";
+  static const String fundBetting = "/fundBetting";
+  static const String intlAirtimeCountries = "/intlAirtimeCountries";
+  static const String buyIntlAirtime = "/buyIntlAirtime";
+
+  static const String giftcardHistoryDetailsView =
       "/giftcardHistoryDetailsView";
+  static const String reviewDetails = "/reviewDetails";
+
+  static const String transfer = "/transfer";
+  static const String successful = "/successful";
+  static const String buyData = "/buyData";
+  static const String services = "/services";
+  static const String intlDataCountries = "/intlDataCountries";
+  static const String buyIntlData = "/buyIntlData";
+  static const String leaderboard = "/leaderboard";
+  static const String referrals = "/referrals";
+  static const String generalSettings = "/generalSettings";
+  static const String closeAccount = "/closeAccount";
+  static const String withdraw = "/withdraw";
+  static const String epinProviders = "/epinProviders";
+  static const String epinProducts = "/epinProducts";
+  static const String purchaseEPin = "/purchaseEPin";
 }
 
 class RouteGenerator {
@@ -253,12 +316,36 @@ class RouteGenerator {
             builder: (_) => CableTv2(param: settings.arguments as CableTvArg));
       case RoutesManager.betting1:
         return MaterialPageRoute(builder: (_) => const Betting1());
+      case RoutesManager.bettingProviders:
+        return MaterialPageRoute(
+            builder: (_) => const BettingProvidersScreen(), settings: settings);
+      case RoutesManager.fundBetting:
+        return MaterialPageRoute(
+            builder: (_) => const FundBettingScreen(), settings: settings);
       case RoutesManager.giftcardMain:
-        return MaterialPageRoute(builder: (_) =>  GiftCardMain(activeTab: settings.arguments as int,));
+        return MaterialPageRoute(
+            builder: (_) => GiftCardMain(
+                  activeTab: settings.arguments as int,
+                ));
       case RoutesManager.giftcard1:
         return MaterialPageRoute(builder: (_) => const Giftcard1());
-          case RoutesManager.allGiftcardTransactions:
-        return MaterialPageRoute(builder: (_) => const AllGiftCardTransactions());
+      case RoutesManager.giftcardCategory:
+        return MaterialPageRoute(
+            builder: (_) => const GiftcardCategoriesScreen(),
+            settings: settings);
+      case RoutesManager.giftcardCountries:
+        return MaterialPageRoute(
+            builder: (_) => const GiftcardCountriesScreen(),
+            settings: settings);
+      case RoutesManager.giftcardProducts:
+        return MaterialPageRoute(
+            builder: (_) => const GiftcardProductsScreen(), settings: settings);
+      case RoutesManager.buyGiftCard:
+        return MaterialPageRoute(
+            builder: (_) => const BuyGiftcardScreen(), settings: settings);
+      case RoutesManager.allGiftcardTransactions:
+        return MaterialPageRoute(
+            builder: (_) => const AllGiftCardTransactions());
       case RoutesManager.internationalData1:
         return MaterialPageRoute(builder: (_) => const InternationalData1());
       case RoutesManager.internationalAirtime1:
@@ -315,7 +402,7 @@ class RouteGenerator {
             builder: (_) => OpayWalletDetails(
                 param: settings.arguments as OpayWalletDetailsArg));
 
-            case RoutesManager.giftcardHistoryDetailsView:
+      case RoutesManager.giftcardHistoryDetailsView:
         return MaterialPageRoute(
           builder: (_) =>
               GiftcardHistoryDetails(param: settings.arguments as GiftcardTxn),
@@ -364,6 +451,77 @@ class RouteGenerator {
       case RoutesManager.withdrawDollarCard:
         return MaterialPageRoute(
             builder: (_) => WithdrawUsdCard(id: settings.arguments as String));
+      case RoutesManager.reviewDetails:
+        return MaterialPageRoute(
+            builder: (_) => AirtimeReviewScreen(), settings: settings);
+      case RoutesManager.electricityProviders:
+        return MaterialPageRoute(
+            builder: (_) => ElectricityProvidersScreen(), settings: settings);
+      case RoutesManager.buyElectricity:
+        return MaterialPageRoute(
+            builder: (_) => BuyElectricityScreen(), settings: settings);
+      case RoutesManager.cableTvProviders:
+        return MaterialPageRoute(
+            builder: (_) => CableTvProvidersScreen(), settings: settings);
+      case RoutesManager.cableTvPackages:
+        return MaterialPageRoute(
+            builder: (_) => CableTvPackageScreen(), settings: settings);
+
+      case RoutesManager.cableTv:
+        return MaterialPageRoute(
+            builder: (_) => CableTvScreen(), settings: settings);
+      case RoutesManager.intlAirtimeCountries:
+        return MaterialPageRoute(
+            builder: (_) => IntlAirtimeCountriesScreen(), settings: settings);
+      case RoutesManager.buyIntlAirtime:
+        return MaterialPageRoute(
+            builder: (_) => BuyIntlAirtimeScreen(), settings: settings);
+      case RoutesManager.transfer:
+        return MaterialPageRoute(
+            builder: (_) => TransferScreen(), settings: settings);
+
+      case RoutesManager.bottomNav:
+        return MaterialPageRoute(
+            builder: (_) => BottomNavScreen(), settings: settings);
+      case RoutesManager.successful:
+        return MaterialPageRoute(
+            builder: (_) => SuccessfulScreen(), settings: settings);
+      case RoutesManager.buyData:
+        return MaterialPageRoute(
+            builder: (_) => BuyDataScreen(), settings: settings);
+      case RoutesManager.services:
+        return MaterialPageRoute(
+            builder: (_) => ServicesScreen(), settings: settings);
+      case RoutesManager.intlDataCountries:
+        return MaterialPageRoute(
+            builder: (_) => IntlDataCountriesScreen(), settings: settings);
+      case RoutesManager.buyIntlData:
+        return MaterialPageRoute(
+            builder: (_) => BuyIntlDataScreen(), settings: settings);
+      case RoutesManager.leaderboard:
+        return MaterialPageRoute(
+            builder: (_) => LeaderboardScreen(), settings: settings);
+      case RoutesManager.referrals:
+        return MaterialPageRoute(
+            builder: (_) => ReferralsScreen(), settings: settings);
+    case RoutesManager.generalSettings:
+        return MaterialPageRoute(
+            builder: (_) => GeneralSettingsScreen(), settings: settings); 
+   case RoutesManager.closeAccount:
+        return MaterialPageRoute(
+            builder: (_) => CloseAccountScreen(), settings: settings);       
+  case RoutesManager.withdraw:
+        return MaterialPageRoute(
+            builder: (_) => WithdrawScreen(), settings: settings);  
+    case RoutesManager.epinProviders:
+        return MaterialPageRoute(
+            builder: (_) => EpinProvidersScreen(), settings: settings); 
+   case RoutesManager.epinProducts:
+        return MaterialPageRoute(
+            builder: (_) => EpinProductsScreen(), settings: settings);       
+  case RoutesManager.purchaseEPin:
+        return MaterialPageRoute(
+            builder: (_) => BuyEpinScreen(), settings: settings);                             
       default:
         return unDefinedRoute();
     }

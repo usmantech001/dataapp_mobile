@@ -1,9 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dataplug/core/constants.dart';
 import 'package:dataplug/core/model/core/app_notification.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 
 import '../../../../misc/route_manager/routes_manager.dart';
 
@@ -21,27 +25,23 @@ class NotificationTile extends StatelessWidget {
         onTap(param);
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 15),
+        //margin: const EdgeInsets.only(bottom: 15),
         padding: const EdgeInsets.symmetric(
             horizontal: Constants.kHorizontalScreenPadding, vertical: 10),
-        color: param.read ? null : ColorManager.kNotificationUnread,
+        color: param.read ? null : ColorManager.kPrimary.withValues(alpha: .06),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 44,
-              width: 44,
-              margin: const EdgeInsets.only(right: 12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                color: ColorManager.kPrimaryLight,
+            CircleAvatar(
+              radius: 24.r,
+              backgroundColor: ColorManager.kGreyE5,
+              child: Text(
+                '${param.title.split(' ').first[0]} ${param.title.split(' ').first[1].toUpperCase()}',
+                style: get20TextStyle().copyWith(color: ColorManager.kPrimary, wordSpacing: -2),
               ),
-              child: Icon(CupertinoIcons.bell_fill,
-                  size: 18, color: ColorManager.kPrimary),
             ),
-
-            //
-            Expanded(
+            Gap(12.w),
+            Flexible(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -58,31 +58,17 @@ class NotificationTile extends StatelessWidget {
                           color: ColorManager.kTextDark7, height: 1.1),
                     ),
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        param.date.replaceAll("-", "/").toUpperCase(),
-                        style: get14TextStyle().copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: ColorManager.kTextDark7,
-                        ),
-                      ),
-                      customDivider(
-                        width: .5,
-                        height: 13,
-                        color: ColorManager.kBarColor,
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                      ),
-                      Text(
-                        param.time.toUpperCase(),
-                        style: get14TextStyle().copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: ColorManager.kTextDark7,
-                        ),
-                      ),
-                    ],
-                  ),
+                 
                 ],
+              ),
+            ),
+            //Spacer(),
+            Gap(20),
+            Text(
+              param.time.toUpperCase(),
+              style: get14TextStyle().copyWith(
+                fontWeight: FontWeight.w400,
+                color: ColorManager.kTextDark7,
               ),
             ),
           ],
