@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:dataplug/core/utils/app-loader.dart';
+import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
@@ -43,7 +45,8 @@ class _VerifyEmailState extends State<VerifyEmail> {
   //
   bool requestOtpLoading = false;
   Future<void> sendOtp() async {
-    setState(() => requestOtpLoading = true);
+    //setState(() => requestOtpLoading = true);
+    displayLoader(context);
 
     try {
       String msg = "";
@@ -70,7 +73,8 @@ class _VerifyEmailState extends State<VerifyEmail> {
           context: context, description: err.toString(), type: ToastType.error);
     }
 
-    setState(() => requestOtpLoading = false);
+   // setState(() => requestOtpLoading = false);
+   popScreen();
   }
 
   @override
@@ -105,9 +109,15 @@ class _VerifyEmailState extends State<VerifyEmail> {
                 //
                 Gap(12),
                 Text(
-                  "We have sent a verification code to\n${widget.param.user.email}",
+                  "We have sent a verification code to",
                   textAlign: TextAlign.center,
                   style: get14TextStyle().copyWith(),
+                ),
+                Text(
+                  "${widget.param.user.email}",
+                  textAlign: TextAlign.center,
+                  style: get14TextStyle().copyWith(fontWeight: FontWeight.w700),
+                  
                 ),
                 //
                           
@@ -123,9 +133,10 @@ class _VerifyEmailState extends State<VerifyEmail> {
                         obscureText: false,
                         animationType: AnimationType.fade,
                         pinTheme: getPinTheme(),
-                        cursorColor: ColorManager.kFormHintText,
+                        cursorColor: ColorManager.kPrimary,
                         cursorWidth: 1.5,
                         cursorHeight: 20,
+                        textStyle: get18TextStyle().copyWith(fontWeight: FontWeight.w500),
                         animationDuration:
                             const Duration(milliseconds: 50),
                         enableActiveFill: true,
@@ -135,12 +146,13 @@ class _VerifyEmailState extends State<VerifyEmail> {
                         onCompleted: (_) {},
                         onChanged: (_) => setState(() {}),
                         beforeTextPaste: (_) => true,
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Row(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 12.h,
                       children: [
                         Text(
                           "Didn’t receive a code? ",
@@ -155,7 +167,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
                                 behavior: HitTestBehavior.translucent,
                                 onTap: () => sendOtp(),
                                 child: Text(
-                                  "Resend",
+                                  "Resend New Code",
                                   style: get12TextStyle().copyWith(
                                     fontWeight: FontWeight.w500,
                                     color: ColorManager.kPrimary,
@@ -188,32 +200,27 @@ class _VerifyEmailState extends State<VerifyEmail> {
                         
                           if (widget.param.emailVerificationType ==
                               EmailVerificationType.signp) {
-                            setState(() => loading = true);
                             await confirmSignUpOtp(
                                 textEditingController.text);
-                            setState(() => loading = false);
                           }
                         
                           if (widget.param.emailVerificationType ==
                               EmailVerificationType.passordReset) {
-                            setState(() => loading = true);
+                            
                             await verifyPasswordResetOtp(
                                 textEditingController.text);
-                            setState(() => loading = false);
                           }
                         
                           if (widget.param.emailVerificationType ==
                               EmailVerificationType.login) {
-                            setState(() => loading = true);
+                              
                             await confirmLoginOtp();
-                            setState(() => loading = false);
                           }
                         
                           if (widget.param.emailVerificationType ==
                               EmailVerificationType.twoFA) {
-                            setState(() => loading = true);
+                        
                             await confirm2FAOtp();
-                            setState(() => loading = false);
                           }
                         
                           // if (widget.param.emailVerificationType ==
@@ -230,7 +237,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
                           // //     RoutesManager.dashboardWrapper,
                           // //     (Route<dynamic> route) => false);
                         },
-                        loading: loading),
+                        loading: false),
                   ],
                 ),
               ],
@@ -245,8 +252,10 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
   bool loading = false;
   Future<void> confirmSignUpOtp(String code) async {
+    displayLoader(context);
     await AuthHelper.verifyEmail(code: code, token: widget.param.token)
         .then((msg) async {
+          popScreen();
       showCustomToast(
           context: context, description: msg, type: ToastType.success);
       Future.delayed(const Duration(milliseconds: 1000), () {
@@ -259,9 +268,11 @@ class _VerifyEmailState extends State<VerifyEmail> {
   }
 
   Future<void> verifyPasswordResetOtp(String code) async {
+    displayLoader(context);
     String email = widget.param.user.email ?? "";
     await AuthHelper.verifyPasswordResetOtp(email: email, token: code)
         .then((msg) async {
+          popScreen();
       showCustomToast(
           context: context, description: msg, type: ToastType.success);
 
@@ -270,31 +281,37 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
       //
     }).catchError((e) {
+      popScreen();
       showCustomToast(context: context, description: e.toString());
     });
   }
 
   Future<void> confirm2FAOtp() async {
+    displayLoader(context);
     await AuthHelper.completeTwoFa(
       code: textEditingController.text,
       email: widget.param.user.email ?? "",
       password: widget.param.password ?? "",
     ).then((user) async {
+      popScreen();
       UserProvider userProvider =
           Provider.of<UserProvider>(context, listen: false);
       userProvider.updateUser(user);
       Navigator.pushNamedAndRemoveUntil(context, RoutesManager.dashboardWrapper,
           (Route<dynamic> route) => false);
     }).catchError((e) {
+      popScreen();
       showCustomToast(
           context: context, description: e.toString(), type: ToastType.error);
     });
   }
 
   Future<void> confirmLoginOtp() async {
+    displayLoader(context);
     await AuthHelper.verifyEmail(
             code: textEditingController.text, token: widget.param.token)
         .then((msg) async {
+          popScreen();
       showCustomToast(
           context: context, description: msg, type: ToastType.success);
       //
@@ -309,6 +326,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
       Navigator.pushNamedAndRemoveUntil(context, RoutesManager.dashboardWrapper,
           (Route<dynamic> route) => false);
     }).catchError((e) {
+      popScreen();
       showCustomToast(
           context: context, description: e.toString(), type: ToastType.error);
     });

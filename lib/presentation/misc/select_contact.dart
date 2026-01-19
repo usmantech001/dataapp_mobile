@@ -25,6 +25,7 @@ class _SelectFromContactWidgetState extends State<SelectFromContactWidget> {
   final searchParam = TextEditingController();
   List<Contact> _contacts = [];
   void _loadCountries() async {
+    
     if (await FlutterContacts.requestPermission()) {
       setState(() => _loading = true);
       FlutterContacts.getContacts(

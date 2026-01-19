@@ -3,6 +3,7 @@ import 'dart:io';
 
 // import 'package:fabspay/presentation/authentication/login/login_view.dart';
 import 'package:dataplug/core/constants.dart';
+import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/presentation/screens/dashboard/bottom_nav_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/history/history_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/home/home_screen.dart';
@@ -39,11 +40,21 @@ class SplashView extends StatefulWidget {
   State<SplashView> createState() => _SplashViewState();
 }
 
-class _SplashViewState extends State<SplashView> {
+class _SplashViewState extends State<SplashView> with SingleTickerProviderStateMixin {
+   final scale = Tween<double>(
+    begin: 0.0,
+    end: 1.0,
+  ).chain(CurveTween(curve: Curves.easeInOut));
+  late AnimationController controller;
+
   @override
   void initState() {
-    context.read<GenericProvider>().getServiceCharge();
-    context.read<GenericProvider>().getServiceStatus();
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
+    controller.forward();
+    
     Future.delayed(const Duration(milliseconds: 1800), () {
       checkAuth();
     });
@@ -51,25 +62,7 @@ class _SplashViewState extends State<SplashView> {
   }
 
   Future<void> checkAuth() async {
-    // var platform = "";
-    // if (Platform.isAndroid) {
-    //   platform = "ANDVU";
-    // } else if (Platform.isIOS) {
-    //   platform = "IOSVU";
-    // }
 
-    // String? updateVersion =
-    //     await GenericHelper.getCurrentAppVersion(platform: platform)
-    //         .catchError((_) => null);
-
-    // if (updateVersion != null) {
-    //   PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    //   if (!isLatestVersion(packageInfo.version, updateVersion)) {
-    //     await Navigator.pushNamed(context, RoutesManager.appUpdateView);
-    //   }
-    // }
-    //  var _pref = await SecureStorage.getInstance();
-    // await _pref.remove(Constants.kCachedAuthKey);
 
     var authCred = await SecureStorage.getInstance()
         .then((pref) => pref.getString(Constants.kCachedAuthKey))
@@ -80,13 +73,13 @@ class _SplashViewState extends State<SplashView> {
       User user = User.fromMap(json.decode(authCred)['user']);
       //  Navigator.push(context,
       //      MaterialPageRoute(builder: (context) => LeaderboardScreen()));
-      Navigator.pushNamed(context, RoutesManager.signIn, arguments: user);
+       popAndPushScreen( RoutesManager.signIn, arguments: user);
       // Navigator.pushNamed(context, RoutesManager.successful);
       return;
     }
     // Navigator.push(
     //     context, MaterialPageRoute(builder: (context) => BottomNavScreen()));
-     Navigator.pushNamed(context, RoutesManager.signIn);
+     popAndPushScreen(RoutesManager.signIn);
     //Navigator.pushNamed(context, RoutesManager.dashboardWrapper);
   }
 
@@ -96,10 +89,13 @@ class _SplashViewState extends State<SplashView> {
       padding: const EdgeInsets.only(bottom: 0),
       color: ColorManager.kPrimary,
       child: Center(
-        child: Image.asset(
-          Assets.images.dataplugIcon.path,
-          width: 200,
-          height: 200,
+        child: ScaleTransition(
+          scale: scale.animate(controller),
+          child: Image.asset(
+            Assets.images.dataplugIcon.path,
+            width: 200,
+            height: 200,
+          ),
         ),
       ),
     );

@@ -48,6 +48,7 @@ class ColorManager {
   static const kGreyE8 = Color(0xFFE8E8EB);
   static const kGreyF8 = Color(0xFFF8F9FA);
   static const kGreyE2 = Color(0xFFE2E8F0);
+  static const kGreyEB = Color(0xFFEBECEC);
   static Color kDividerColor = HexColor.fromHex("#C8CED7").withOpacity(.49);
   static const Color kYellow = Color(0xFFFEE685);
   static const Color kLightYellow = Color(0xFFFEF3C6);

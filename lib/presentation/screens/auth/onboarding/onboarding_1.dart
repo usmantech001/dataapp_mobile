@@ -53,6 +53,7 @@ class _Onboarding1State extends State<Onboarding1> {
   Widget build(BuildContext context) {
     return Scaffold(
       //backgroundColor: ColorManager.kPrimaryLight,
+       backgroundColor: ColorManager.kWhite,
       body: SafeArea(
         bottom: false,
         child: Column(

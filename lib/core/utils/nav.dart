@@ -27,5 +27,8 @@ void removeAllAndPushScreen(String routeName, {Object? arguments}){
 void removeUntilAndPushScreen(String routeName,String routeToKeep ,{Object? arguments}){
    final context = navigatorKey.currentContext!;
   Navigator.pushNamedAndRemoveUntil(
-          context, routeName, (Route<dynamic> route) => route.settings.name == routeToKeep, arguments: arguments);
+          context, routeName, (Route<dynamic> route) {
+            print('....route ${route.settings.name}. route to keep $routeToKeep');
+            return route.settings.name == routeToKeep;
+          }, arguments: arguments);
 }

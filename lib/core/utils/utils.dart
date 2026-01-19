@@ -431,3 +431,4 @@ bool isSmallScreen(BuildContext context) {
 num? parseNum(String val) {
   return num.tryParse(val.replaceAll(",", ""));
 }
+

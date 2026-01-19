@@ -1,19 +1,17 @@
+import 'package:dataplug/core/model/core/auth_success_model.dart';
+import 'package:dataplug/core/utils/app-loader.dart';
+import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
+import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../../core/enum.dart';
 import '../../../../../../core/helpers/user_helper.dart';
 import '../../../../../../core/utils/validators.dart';
 import '../../../../../misc/color_manager/color_manager.dart';
-import '../../../../../misc/custom_components/custom_back_icon.dart';
 import '../../../../../misc/custom_components/custom_btn.dart';
-import '../../../../../misc/custom_components/custom_elements.dart';
 import '../../../../../misc/custom_components/custom_input_field.dart';
-import '../../../../../misc/custom_components/custom_scaffold.dart';
 import '../../../../../misc/custom_snackbar.dart';
-import '../../../../../misc/image_manager/image_manager.dart';
-import '../../../../../misc/style_manager/styles_manager.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
@@ -39,6 +37,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        backgroundColor: ColorManager.kWhite,
         appBar: CustomAppbar(title: 'Change Password'),
         body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
@@ -120,17 +119,23 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   bool loading = false;
   Future<void> updatePassword() async {
-    setState(() => loading = true);
+    displayLoader(context);
     await UserHelper.updatePassword(
             old_password: oldPasswordController.text,
             password: newPasswordController.text)
         .then((msg) {
-      if (mounted) {
-        showCustomToast(
-            context: context, description: msg, type: ToastType.success);
-        Navigator.pop(context);
-      }
+      popScreen();
+      removeUntilAndPushScreen(
+          RoutesManager.authSuccessful, RoutesManager.security,
+          arguments: AuthSuccessModel(
+              title: 'Password Changed Successful',
+              description: 'Your new password has been set successfully',
+              onTap: () {
+                popScreen();
+              },
+              btnText: 'Back to Security'));
     }).catchError((err) {
+      popScreen();
       if (mounted) {
         showCustomToast(context: context, description: err.toString());
       }

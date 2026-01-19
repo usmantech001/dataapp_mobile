@@ -1,6 +1,5 @@
 import 'package:dataplug/core/model/core/custom_network_image.dart';
 import 'package:dataplug/core/providers/betting_controller.dart';
-import 'package:dataplug/core/providers/electricity_controller.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
@@ -52,8 +51,10 @@ class _BettingProvidersScreenState extends State<BettingProvidersScreen> {
                 LucideIcons.search,
                 color: ColorManager.kGreyColor.withValues(alpha: .7),
               ),
-              //textEditingController: firstnameController,
-              onChanged: (_) {},
+              textEditingController: bettingController.searchController,
+              onChanged: (query) {
+                bettingController.filterProviders(query);
+              },
             ),
           ),
           Expanded(
@@ -63,8 +64,10 @@ class _BettingProvidersScreenState extends State<BettingProvidersScreen> {
                       padding:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                       itemBuilder: (context, index) {
-                        final provider =
-                            bettingController.bettingProviders[index];
+                        final provider = bettingController
+                                .searchController.text.isNotEmpty
+                            ? bettingController.filteredbettingProviders[index]
+                            : bettingController.bettingProviders[index];
                         return InkWell(
                           onTap: () {
                             bettingController.onSelectProvider(provider);
@@ -95,7 +98,10 @@ class _BettingProvidersScreenState extends State<BettingProvidersScreen> {
                         );
                       },
                       separatorBuilder: (context, index) => Gap(8),
-                      itemCount: bettingController.bettingProviders.length))
+                      itemCount: bettingController
+                              .searchController.text.isNotEmpty
+                          ? bettingController.filteredbettingProviders.length
+                          : bettingController.bettingProviders.length))
         ],
       ),
     );

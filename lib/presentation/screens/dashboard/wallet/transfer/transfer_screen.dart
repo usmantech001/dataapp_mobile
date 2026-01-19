@@ -1,20 +1,19 @@
 import 'package:dataplug/core/model/core/review_model.dart';
-import 'package:dataplug/core/providers/betting_controller.dart';
-import 'package:dataplug/core/providers/electricity_controller.dart';
+import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/providers/transfer_controller.dart';
 import 'package:dataplug/core/utils/custom_verifying.dart';
 import 'package:dataplug/core/utils/formatters.dart';
+import 'package:dataplug/core/utils/review_bottomsheet.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/amount_suggestion.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
-import 'package:dataplug/presentation/misc/custom_components/meter_selector.dart';
-import 'package:dataplug/presentation/misc/custom_components/summary_container.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
 import 'package:dataplug/presentation/misc/custom_snackbar.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/airtime/buy_airtime_1.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -81,14 +80,17 @@ class _TransferScreenState extends State<TransferScreen> {
                 );
                 return;
               }
-      
+                    final generalController = context.read<GeneralController>();
+              num serviceCharge = generalController.serviceCharge?.transfer??0;
+              num totalAmount = calculateTotalAmount(amount: formatUseableAmount(
+                        controller.amountController.text.trim()), charge: serviceCharge);
                final summaryItems = [
                 SummaryItem(title: 'Name', name: controller.attachedName ?? "Akanji Usman"),
-                SummaryItem(
-                  title: 'Phone Number',
-                  name: "07067766333",
+                // SummaryItem(
+                //   title: 'Phone Number',
+                //   name: "07067766333",
                   
-                ),
+                // ),
                 SummaryItem(
                   title: 'Attached Name',
                   name: controller.attachedName??'',
@@ -97,9 +99,9 @@ class _TransferScreenState extends State<TransferScreen> {
                 SummaryItem(
                     title: 'Transfer Amount', name: controller.amountController.text.trim()),
                 SummaryItem(
-                    title: 'Transfer fee', name: "₦0.00", hasDivider: true,),    
-                // SummaryItem(
-                //     title: 'Total Amount', name: controller.amountController.text.trim()),     
+                    title: 'Transfer fee', name: formatCurrency(serviceCharge), hasDivider: true,),    
+                SummaryItem(
+                    title: 'Total Amount', name: formatCurrency(totalAmount)),     
               ];
               final reviewModel = ReviewModel(
                   summaryItems: summaryItems,
@@ -145,8 +147,7 @@ class _TransferScreenState extends State<TransferScreen> {
                     } ,);
                    
                   });
-              Navigator.pushNamed(context, RoutesManager.reviewDetails,
-                  arguments: reviewModel);
+             showReviewBottomShhet(context, reviewDetails: reviewModel);
       
       
             }),

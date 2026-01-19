@@ -14,6 +14,7 @@ import 'package:dataplug/presentation/screens/dashboard/card/create_card/arg/car
 import 'package:dataplug/presentation/screens/dashboard/card/create_card/enter_address.dart';
 import 'package:dataplug/presentation/screens/dashboard/card/create_card/usd/usd_card.dart';
 import 'package:dataplug/presentation/screens/dashboard/card/fund_card/enter_amount_usd.dart';
+import 'package:dataplug/presentation/screens/success/auth_successful_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/leaderboard/leaderboard_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/referrals/referral/referrals_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/airtime/airtime_review_screen.dart';
@@ -41,13 +42,14 @@ import 'package:dataplug/presentation/screens/dashboard/services/international_d
 import 'package:dataplug/presentation/screens/dashboard/services/international_data/international_data_1.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/international_data/intl_data_countries_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/internet_data/buy_data_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/internet_data/buy_smile_data_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/services_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/settings/close_account_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/settings/general_settings_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/wallet/transfer/transfer_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/wallet/withdraw/withdraw_screen.dart';
 import 'package:dataplug/presentation/screens/splash/splash_view.dart';
-import 'package:dataplug/presentation/screens/success/successful_screen.dart';
+import 'package:dataplug/presentation/screens/success/transaction_successful_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/model/core/card_data.dart';
@@ -210,6 +212,7 @@ class RoutesManager {
 
   static const String transfer = "/transfer";
   static const String successful = "/successful";
+  static const String authSuccessful = "/authSuccessful";
   static const String buyData = "/buyData";
   static const String services = "/services";
   static const String intlDataCountries = "/intlDataCountries";
@@ -222,29 +225,30 @@ class RoutesManager {
   static const String epinProviders = "/epinProviders";
   static const String epinProducts = "/epinProducts";
   static const String purchaseEPin = "/purchaseEPin";
+  static const String buyOtherData = "/buyOtherData";
 }
 
 class RouteGenerator {
   static Route<dynamic> getRoute(RouteSettings settings) {
     switch (settings.name) {
       case RoutesManager.splash:
-        return MaterialPageRoute(builder: (_) => const SplashView());
+        return MaterialPageRoute(builder: (_) => const SplashView(), settings: settings);
       case RoutesManager.versionUpdate:
-        return MaterialPageRoute(builder: (_) => const VersionUpdate());
+        return MaterialPageRoute(builder: (_) => const VersionUpdate(), settings: settings);
 
       case RoutesManager.passwordReset1:
-        return MaterialPageRoute(builder: (_) => const PasswordReset1());
+        return MaterialPageRoute(builder: (_) => const PasswordReset1(), settings: settings);
 
       case RoutesManager.passwordReset3:
         return MaterialPageRoute(
             builder: (_) =>
-                PasswordReset3(param: settings.arguments as PasswordReset3Arg));
+                PasswordReset3(param: settings.arguments as PasswordReset3Arg), settings: settings);
 
       case RoutesManager.signIn:
         return MaterialPageRoute(
-            builder: (_) => SignIn(user: settings.arguments as User?));
+            builder: (_) => SignIn(user: settings.arguments as User?), settings: settings);
       case RoutesManager.onboarding1:
-        return MaterialPageRoute(builder: (_) => const Onboarding1());
+        return MaterialPageRoute(builder: (_) => const Onboarding1(), settings: settings);
       case RoutesManager.verifyEmail:
         return MaterialPageRoute(
           builder: (_) =>
@@ -252,27 +256,27 @@ class RouteGenerator {
         );
 
       case RoutesManager.dashboardWrapper:
-        return MaterialPageRoute(builder: (_) => const DashboardWrapper());
+        return MaterialPageRoute(builder: (_) => const DashboardWrapper(), settings: settings);
 
       case RoutesManager.profileSettings:
-        return MaterialPageRoute(builder: (_) => const ProfileSettings());
+        return MaterialPageRoute(builder: (_) => const ProfileSettings(), settings: settings);
       case RoutesManager.security:
-        return MaterialPageRoute(builder: (_) => const Security());
+        return MaterialPageRoute(builder: (_) => const Security(), settings: settings);
       case RoutesManager.setTransactionPin:
-        return MaterialPageRoute(builder: (_) => const SetTransactionPin());
+        return MaterialPageRoute(builder: (_) => const SetTransactionPin(), settings: settings);
       case RoutesManager.changeTransactionPin:
-        return MaterialPageRoute(builder: (_) => const ChangeTransactionPin());
+        return MaterialPageRoute(builder: (_) => const ChangeTransactionPin(), settings: settings);
       case RoutesManager.changePassword:
-        return MaterialPageRoute(builder: (_) => const ChangePassword());
+        return MaterialPageRoute(builder: (_) => const ChangePassword(), settings: settings);
       // case RoutesManager.activate2FA:
       //   return MaterialPageRoute(builder: (_) => const Activate2FA());
       case RoutesManager.support:
-        return MaterialPageRoute(builder: (_) => const Support());
+        return MaterialPageRoute(builder: (_) => const Support(), settings: settings);
       case RoutesManager.faqs:
-        return MaterialPageRoute(builder: (_) => const Faqs());
+        return MaterialPageRoute(builder: (_) => const Faqs(), settings: settings);
       case RoutesManager.faqDetails:
         return MaterialPageRoute(
-            builder: (_) => FaqDetails(param: settings.arguments as FaqData));
+            builder: (_) => FaqDetails(param: settings.arguments as FaqData), settings: settings);
       case RoutesManager.addedBanks:
         return MaterialPageRoute(builder: (_) => const AddedBanks());
       case RoutesManager.addBank:
@@ -485,10 +489,16 @@ class RouteGenerator {
             builder: (_) => BottomNavScreen(), settings: settings);
       case RoutesManager.successful:
         return MaterialPageRoute(
-            builder: (_) => SuccessfulScreen(), settings: settings);
+            builder: (_) => TransactionSuccessfulScreen(), settings: settings);
+       case RoutesManager.authSuccessful:
+        return MaterialPageRoute(
+            builder: (_) => AuthSuccessfulScreen(), settings: settings);      
       case RoutesManager.buyData:
         return MaterialPageRoute(
             builder: (_) => BuyDataScreen(), settings: settings);
+       case RoutesManager.buyOtherData:
+        return MaterialPageRoute(
+            builder: (_) => BuyOtherDataScreen(), settings: settings);      
       case RoutesManager.services:
         return MaterialPageRoute(
             builder: (_) => ServicesScreen(), settings: settings);
@@ -518,7 +528,8 @@ class RouteGenerator {
             builder: (_) => EpinProvidersScreen(), settings: settings); 
    case RoutesManager.epinProducts:
         return MaterialPageRoute(
-            builder: (_) => EpinProductsScreen(), settings: settings);       
+            builder: (_) => EpinProductsScreen(), settings: settings);   
+                
   case RoutesManager.purchaseEPin:
         return MaterialPageRoute(
             builder: (_) => BuyEpinScreen(), settings: settings);                             

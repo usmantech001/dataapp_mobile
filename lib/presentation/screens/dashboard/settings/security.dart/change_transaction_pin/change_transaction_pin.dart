@@ -1,20 +1,20 @@
 import 'dart:async';
 
+import 'package:dataplug/core/model/core/auth_success_model.dart';
+import 'package:dataplug/core/providers/auth_controller.dart';
+import 'package:dataplug/core/utils/app-loader.dart';
+import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
+import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-
-import '../../../../../../core/enum.dart';
-import '../../../../../../core/helpers/auth_helper.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../core/utils/validators.dart';
 import '../../../../../misc/color_manager/color_manager.dart';
-import '../../../../../misc/custom_components/custom_back_icon.dart';
 import '../../../../../misc/custom_components/custom_btn.dart';
-import '../../../../../misc/custom_components/custom_elements.dart';
-import '../../../../../misc/custom_components/custom_scaffold.dart';
 import '../../../../../misc/custom_snackbar.dart';
-import '../../../../../misc/image_manager/image_manager.dart';
+
 import '../../../../../misc/style_manager/styles_manager.dart';
 
 class ChangeTransactionPin extends StatefulWidget {
@@ -175,6 +175,26 @@ class _ChangeTransactionPinState extends State<ChangeTransactionPin> {
                           return;
                         }
 
+                        if(textEditingController2.text!=textEditingController3.text){
+                          showCustomToast(context: context, description: 'Please ensure your new pain match');
+                          return;
+                        }
+
+                        displayLoader(context);
+                        final controller = context.read<AuthController>();
+                        controller.changeTransactionPin(oldPin: textEditingController.text, newPin: textEditingController2.text, onSuccess: () {
+                          
+                          removeUntilAndPushScreen(RoutesManager.authSuccessful, RoutesManager.security, arguments: AuthSuccessModel(title: 'PIN Change Successful', description: 'Your Transaction PIN Change successful. Thank you.', onTap: (){
+                            popScreen();
+                          }, btnText: 'Go to Security'));
+                        },
+                        onError: (error) {
+                          popScreen();
+                          showCustomToast(
+                              context: context, description: error);
+                        },
+                        );
+                        /*
                         setState(() => loading = true);
                         await AuthHelper.updateTransactionPin(
                                 old_pin: textEditingController.text,
@@ -192,8 +212,9 @@ class _ChangeTransactionPinState extends State<ChangeTransactionPin> {
                         });
 
                         setState(() => loading = false);
+                        */
                       },
-                      loading: loading,
+                      loading: false,
                     ),
                   ],
                 ),

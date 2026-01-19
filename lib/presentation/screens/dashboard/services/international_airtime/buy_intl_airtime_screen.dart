@@ -1,5 +1,6 @@
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/intl_airtime_controller.dart';
+import 'package:dataplug/core/utils/review_bottomsheet.dart';
 import 'package:dataplug/core/utils/summary_info.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
@@ -78,7 +79,6 @@ class _BuyIntlAirtimeScreenState extends State<BuyIntlAirtimeScreen> {
                 amount: controller.amountController.text.trim(),
                 shortInfo: 'International Airtime',
                 onPinCompleted: (pin) async {
-                  print('...on pin completed $pin');
                   controller.buyInternationalAirtime(
                     pin,
                     onSuccess: (transactionInfo) {
@@ -102,8 +102,7 @@ class _BuyIntlAirtimeScreenState extends State<BuyIntlAirtimeScreen> {
                     },
                   );
                 });
-            Navigator.pushNamed(context, RoutesManager.reviewDetails,
-                arguments: reviewModel);
+           showReviewBottomShhet(context, reviewDetails: reviewModel);
           }),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(vertical: 24.h),

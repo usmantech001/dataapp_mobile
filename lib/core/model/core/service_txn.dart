@@ -71,10 +71,12 @@ class ServiceTxn {
   static ServicePurpose walletServiceToEnum(String purpose) {
     if (purpose == "electricity") return ServicePurpose.electricity;
     if (purpose == "education") return ServicePurpose.education;
-    if (purpose == "international-airtime")
+    if (purpose == "international-airtime") {
       return ServicePurpose.internationalAirtime;
-    if (purpose == "international-data")
+    }
+    if (purpose == "international-data") {
       return ServicePurpose.internationalData;
+    }
     if (purpose == "airtime") return ServicePurpose.airtime;
     if (purpose == "data") return ServicePurpose.data;
     if (purpose == "betting") return ServicePurpose.betting;

@@ -26,11 +26,8 @@ class Security extends StatefulWidget {
 }
 
 class _SecurityState extends State<Security> {
-
-
   @override
   Widget build(BuildContext context) {
-
     UserProvider userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: CustomAppbar(title: 'Security'),
@@ -47,14 +44,14 @@ class _SecurityState extends State<Security> {
                 },
                 text: "Change Transaction PIN",
                 shortDesc: 'Update your transaction PIN',
-                img: Assets.images.profileIcon.path),
+                img: 'lock-icon'),
             SettingsIconTab(
                 onTap: () {
                   Navigator.pushNamed(context, RoutesManager.changePassword);
                 },
                 text: "Change Password",
                 shortDesc: 'Update your Password',
-                img: Assets.images.securityMenuIcon.path),
+                img: 'key'),
             SettingsIconTab(
               onTap: () {
                 //
@@ -62,7 +59,7 @@ class _SecurityState extends State<Security> {
               },
               text: "Face ID/Touch ID",
               shortDesc: "Enable Face ID/Touch ID",
-              img: Assets.images.supportMenu.path,
+              img: 'face-id',
               suffix: Transform.scale(
                 transformHitTests: false,
                 scale: .65,
@@ -81,39 +78,35 @@ class _SecurityState extends State<Security> {
               ),
             ),
             SettingsIconTab(
-                onTap: () {
-                  //Navigator.pushNamed(context, RoutesManager.addedBanks);
-                },
-                text: "Activate Login 2FA",
-                shortDesc: "Activate 2FA to secure your account",
-                img: Assets.images.bankMenuIcon.path,
-                suffix: Transform.scale(
-                                transformHitTests: false,
-                                scale: .65,
-                                child: CupertinoSwitch(
-                                  activeColor: ColorManager.kPrimary,
-                                  value:
-                                      userProvider.user!.two_factor_enabled,
-                                  onChanged: (_) async {
-                                    try {
-                                      User user = await UserHelper
-                                          .toggleTwoFAStatus();
-                                      userProvider.updateUser(user);
-                                      showCustomToast(
-                                        context: context,
-                                        description:
-                                            "2FA toggled successfully",
-                                        type: ToastType.success,
-                                      );
-                                    } catch (err) {
-                                      showCustomToast(
-                                          context: context,
-                                          description: err.toString());
-                                    }
-                                  },
-                                ),
-                              ),
+              onTap: () {
+                //Navigator.pushNamed(context, RoutesManager.addedBanks);
+              },
+              text: "Activate Login 2FA",
+              shortDesc: "Activate 2FA to secure your account",
+              img: 'security',
+              suffix: Transform.scale(
+                transformHitTests: false,
+                scale: .65,
+                child: CupertinoSwitch(
+                  activeColor: ColorManager.kPrimary,
+                  value: userProvider.user!.two_factor_enabled,
+                  onChanged: (_) async {
+                    try {
+                      User user = await UserHelper.toggleTwoFAStatus();
+                      userProvider.updateUser(user);
+                      showCustomToast(
+                        context: context,
+                        description: "2FA toggled successfully",
+                        type: ToastType.success,
+                      );
+                    } catch (err) {
+                      showCustomToast(
+                          context: context, description: err.toString());
+                    }
+                  },
                 ),
+              ),
+            ),
           ],
         ),
       ),

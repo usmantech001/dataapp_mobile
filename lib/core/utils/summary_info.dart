@@ -35,6 +35,24 @@ List<SummaryItem> getSummaryItems(ServiceTxn transInfo, TransactionType type){
     items = [...cableItems, ...paymentInfoItems];
   }
 
+  if(type == TransactionType.betting){
+    List<SummaryItem> bettingItems = [
+      SummaryItem(title: 'Service Provider', name: transInfo.meta.provider?.name??""),
+      SummaryItem(title: 'Bet ID / Phone Number', name: transInfo.meta.customer?.phone??"", hasDivider: true,),
+      //SummaryItem(title: 'Bet ID / Phone Number', name: transInfo.meta.customer.??"", hasDivider: true,),
+    ];
+    items = [...bettingItems, ...paymentInfoItems];
+  }
+
+  if(type == TransactionType.epin){
+    List<SummaryItem> bettingItems = [
+      SummaryItem(title: 'Service Provider', name: transInfo.meta.provider?.name??""),
+      SummaryItem(title: 'Number', name: transInfo.meta.customer?.phone??"", hasDivider: true,),
+      //SummaryItem(title: 'Bet ID / Phone Number', name: transInfo.meta.customer.??"", hasDivider: true,),
+    ];
+    items = [...bettingItems, ...paymentInfoItems];
+  }
+
   return items;
 
 }

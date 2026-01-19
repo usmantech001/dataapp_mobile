@@ -2,6 +2,7 @@ import 'package:dataplug/core/model/core/custom_network_image.dart';
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/giftcard_controller.dart';
 import 'package:dataplug/core/utils/formatters.dart';
+import 'package:dataplug/core/utils/review_bottomsheet.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
@@ -102,8 +103,7 @@ class BuyGiftcardScreen extends StatelessWidget {
                   } ,);
                  
                 });
-            Navigator.pushNamed(context, RoutesManager.reviewDetails,
-                arguments: reviewModel);
+            showReviewBottomShhet(context, reviewDetails: reviewModel);
 
 
           }),

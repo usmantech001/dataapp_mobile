@@ -1,7 +1,9 @@
 import 'package:dataplug/core/utils/custom_image.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
+import 'package:dataplug/presentation/misc/custom_components/custom_bottom_sheet.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
+import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -88,10 +90,89 @@ class CloseAccountScreen extends StatelessWidget {
               ),
               Gap(20.h),
               CustomButton(
-                text: 'text',
+                text: '',
                 isActive: true,
                 backgroundColor: ColorManager.kError,
-                onTap: () {},
+                onTap: () {
+                  showCustomBottomSheet(
+                      context: context,
+                      isDismissible: true,
+                      screen: Container(
+                        // height: 200,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 15.w, vertical: 20.h),
+                        width: double.infinity,
+                        decoration: BoxDecoration(color: ColorManager.kWhite),
+                        child: SafeArea(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Delete Account',
+                                    style: get18TextStyle(),
+                                  ),
+                                  InkWell(
+                                    onTap: () => Navigator.pop(context),
+                                    child: CircleAvatar(
+                                      radius: 20,
+                                      backgroundColor: ColorManager.kGreyF8,
+                                      child: Icon(Icons.close),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Gap(20.h),
+                              CircleAvatar(
+                                radius: 35.r,
+                                backgroundColor:
+                                    ColorManager.kError.withValues(alpha: .12),
+                                child: Icon(
+                                  Icons.delete_sharp,
+                                  size: 30,
+                                  color: ColorManager.kError,
+                                ),
+                              ),
+                              Text(
+                                'Close Account',
+                                style: get18TextStyle(),
+                              ),
+                              Gap(32.h),
+                              CustomInputField(
+                                formHolderName: 'Please write “DELETE” below',
+                              ),
+                              Gap(20.h),
+                              CustomButton(
+                                text: 'text',
+                                isActive: true,
+                                onTap: () {},
+                                loading: false,
+                                backgroundColor: ColorManager.kError,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  spacing: 8.w,
+                                  children: [
+                                    Icon(
+                                      Icons.delete,
+                                      color: ColorManager.kWhite,
+                                    ),
+                                    Text(
+                                      'Delete My Account',
+                                      style: get16TextStyle().copyWith(
+                                          color: ColorManager.kWhite,
+                                          fontWeight: FontWeight.w500),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ));
+                },
                 loading: false,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -101,7 +182,12 @@ class CloseAccountScreen extends StatelessWidget {
                       Icons.delete,
                       color: ColorManager.kWhite,
                     ),
-                    Text('Delete My Account', style: get16TextStyle().copyWith(color: ColorManager.kWhite, fontWeight: FontWeight.w500),)
+                    Text(
+                      'Delete My Account',
+                      style: get16TextStyle().copyWith(
+                          color: ColorManager.kWhite,
+                          fontWeight: FontWeight.w500),
+                    )
                   ],
                 ),
               )

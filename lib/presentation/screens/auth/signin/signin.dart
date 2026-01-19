@@ -1,11 +1,7 @@
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:dataplug/core/constants.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_scaffold.dart';
 import 'package:dataplug/presentation/misc/image_manager/image_manager.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
@@ -21,13 +17,11 @@ import '../../../../core/helpers/auth_helper.dart';
 import '../../../../core/model/core/user.dart';
 import '../../../../core/providers/user_provider.dart';
 import '../../../../core/services/secure_storage.dart';
-import '../../../../core/utils/utils.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../misc/custom_components/custom_input_field.dart';
 import '../../../misc/custom_components/custom_text_btn.dart';
 import '../../../misc/custom_snackbar.dart';
-import '../misc/social_auth.dart';
 
 class SignIn extends StatefulWidget {
   User? user;

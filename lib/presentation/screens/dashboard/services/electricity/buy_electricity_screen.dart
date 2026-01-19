@@ -1,9 +1,11 @@
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/electricity_controller.dart';
+import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/utils/app-loader.dart';
 import 'package:dataplug/core/utils/custom_verifying.dart';
 import 'package:dataplug/core/utils/formatters.dart';
 import 'package:dataplug/core/utils/nav.dart';
+import 'package:dataplug/core/utils/review_bottomsheet.dart';
 import 'package:dataplug/core/utils/summary_info.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/amount_suggestion.dart';
@@ -16,6 +18,7 @@ import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
 import 'package:dataplug/presentation/misc/custom_snackbar.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/airtime/buy_airtime_1.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -81,6 +84,11 @@ class _BuyElectricityScreenState extends State<BuyElectricityScreen> {
               return;
             }
 
+               final generalController = context.read<GeneralController>();
+              num serviceCharge = generalController.serviceCharge?.electricity??0;
+              num totalAmount = calculateTotalAmount(amount: formatUseableAmount(
+                        controller.amountController.text.trim()), charge: serviceCharge);
+
             final summaryItems = [
               SummaryItem(
                   title: 'Electricity Provider',
@@ -90,9 +98,17 @@ class _BuyElectricityScreenState extends State<BuyElectricityScreen> {
                 name: controller.meterNumberController.text.trim(),
                 hasDivider: true,
               ),
+              if(serviceCharge!=0) SummaryItem(
+                  title: 'Service Charge',
+                  name: formatCurrency(serviceCharge),
+                  
+                ),
               SummaryItem(
                   title: 'Recharge Amount',
                   name: controller.amountController.text.trim()),
+                  SummaryItem(
+                  title: 'Total Amount',
+                  name: formatCurrency(totalAmount)),
             ];
             String meterType = controller.isPrepaid ? 'prepaid' : 'postpaid';
             final reviewModel = ReviewModel(
@@ -133,8 +149,7 @@ class _BuyElectricityScreenState extends State<BuyElectricityScreen> {
                     },
                   );
                 });
-            Navigator.pushNamed(context, RoutesManager.reviewDetails,
-                arguments: reviewModel);
+           showReviewBottomShhet(context, reviewDetails: reviewModel);
           }),
       body: Consumer<ElectricityController>(
           builder: (context, electricityController, child) {

@@ -1,9 +1,5 @@
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_container.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_scaffold.dart';
-import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,11 +7,8 @@ import 'package:gap/gap.dart';
 
 import '../../../../../core/helpers/generic_helper.dart';
 import '../../../../../core/model/core/faq.dart';
-import '../../../../misc/custom_components/custom_back_icon.dart';
 import '../../../../misc/custom_components/loading.dart';
 import '../../../../misc/custom_snackbar.dart';
-import '../../../../misc/image_manager/image_manager.dart';
-import '../misc/settings_icon_tab.dart';
 
 class Faqs extends StatefulWidget {
   const Faqs({super.key});
@@ -53,39 +46,33 @@ class _FaqsState extends State<Faqs> {
       appBar: CustomAppbar(title: 'FAQs'),
       body: SafeArea(
         bottom: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              children: [
-                loading
-                    ? buildLoading()
-                    : ListView.builder(
+        child: loading
+            ? 
+            Center(child: CircularProgressIndicator())
+            
+            // buildLoading()
+            : ListView.builder(
+              shrinkWrap: true,
+              padding:
+                   EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
+              itemCount: faqs.length,
+              itemBuilder: (context, indexx) {
+                return Column(
+                  spacing: 12,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                   if(faqs[indexx].data.isNotEmpty) Text(faqs[indexx].name, style: get16TextStyle().copyWith(fontWeight: FontWeight.w500, color: ColorManager.kGreyColor),),
+                   faqs[indexx].data.isNotEmpty? ListView.separated(
+                    
                       shrinkWrap: true,
-                      padding:
-                           EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
-                      itemCount: faqs.length,
-                      itemBuilder: (context, indexx) {
-                        return Column(
-                          spacing: 12,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                           if(faqs[indexx].data.isNotEmpty) Text(faqs[indexx].name, style: get16TextStyle().copyWith(fontWeight: FontWeight.w500, color: ColorManager.kGreyColor),),
-                           faqs[indexx].data.isNotEmpty? ListView.separated(
-                            
-                              shrinkWrap: true,
-                              itemBuilder: (context, index){
-                              final faq = faqs[indexx].data[index];
-                              return FAQsWidget(question: faq.question, answer: faq.answer);
-                            }, separatorBuilder: (context, index)=> Gap(10), itemCount: faqs[indexx].data.length): SizedBox()
-                          ],
-                        );
-                      },
-                    ),
-              ],
+                      itemBuilder: (context, index){
+                      final faq = faqs[indexx].data[index];
+                      return FAQsWidget(question: faq.question, answer: faq.answer);
+                    }, separatorBuilder: (context, index)=> Gap(10), itemCount: faqs[indexx].data.length): SizedBox()
+                  ],
+                );
+              },
             ),
-          ],
-        ),
       ),
     );
   }

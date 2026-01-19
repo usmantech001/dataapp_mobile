@@ -2,6 +2,7 @@ import 'package:dataplug/core/helpers/service_helper.dart';
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/model/core/service_txn.dart';
 import 'package:dataplug/core/providers/airtime_controller.dart';
+import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/utils/app-loader.dart';
 import 'package:dataplug/core/utils/formatters.dart';
 import 'package:dataplug/core/utils/nav.dart';
@@ -75,6 +76,10 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                 );
                 return;
               }
+              final generalController = context.read<GeneralController>();
+              num serviceCharge = generalController.serviceCharge?.airtime??0;
+              num totalAmount = calculateTotalAmount(amount: formatUseableAmount(
+                        controller.amountController.text.trim()), charge: serviceCharge);
               final summaryItems = [
                 SummaryItem(
                     title: 'Network',
@@ -84,10 +89,14 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                   name: controller.phoneNumberController.text.trim(),
                   hasDivider: true,
                 ),
+               if(serviceCharge!=0) SummaryItem(
+                  title: 'Service Charge',
+                  name: formatCurrency(serviceCharge),
+                  
+                ),
                 SummaryItem(
                     title: 'Amount',
-                    name: formatCurrency(num.tryParse(formatUseableAmount(
-                        controller.amountController.text.trim())), decimal: 0)),
+                    name: formatCurrency(totalAmount, decimal: 0)),
               ];
               final reviewDetails = ReviewModel(
                   summaryItems: summaryItems,
@@ -281,4 +290,11 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
       );
     });
   }
+}
+
+
+
+num calculateTotalAmount({required String amount,required num charge }){
+  final total = (num.tryParse(amount)??0) + charge;
+  return total;
 }

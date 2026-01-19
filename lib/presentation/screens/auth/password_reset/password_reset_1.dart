@@ -1,5 +1,7 @@
 import 'package:dataplug/core/enum.dart';
 import 'package:dataplug/core/model/core/user.dart';
+import 'package:dataplug/core/utils/app-loader.dart';
+import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/gen/assets.gen.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
@@ -113,8 +115,9 @@ class _PasswordReset1State extends State<PasswordReset1> {
   //
   bool loading = false;
   Future<void> getResetPasswordOtp(String email) async {
-    setState(() => loading = true);
+    displayLoader(context);
     await AuthHelper.resendPasswordResetOtp(email: email).then((value) {
+      popScreen();
       Navigator.pushNamed(
         context,
         RoutesManager.verifyEmail,
@@ -125,6 +128,7 @@ class _PasswordReset1State extends State<PasswordReset1> {
         ),
       );
     }).catchError((_) {
+      popScreen();
       showCustomToast(
           context: context, description: _.toString(), type: ToastType.error);
     });

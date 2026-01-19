@@ -1,10 +1,12 @@
 import 'package:dataplug/core/providers/airtime_controller.dart';
+import 'package:dataplug/core/providers/auth_controller.dart';
 import 'package:dataplug/core/providers/bank_controller.dart';
 import 'package:dataplug/core/providers/betting_controller.dart';
 import 'package:dataplug/core/providers/cable_tv_controller.dart';
 import 'package:dataplug/core/providers/data_controller.dart';
 import 'package:dataplug/core/providers/electricity_controller.dart';
 import 'package:dataplug/core/providers/epin_controller.dart';
+import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/providers/giftcard_controller.dart';
 import 'package:dataplug/core/providers/history_controller.dart';
 import 'package:dataplug/core/providers/intl_airtime_controller.dart';
@@ -42,6 +44,8 @@ class ProviderIndex {
       ChangeNotifierProvider(create: (_) => getIt<IntlDataController>()),
       ChangeNotifierProvider(create: (_) => getIt<BankController>()),
       ChangeNotifierProvider(create: (_) => getIt<EpinController>()),
+      ChangeNotifierProvider(create: (_) => getIt<GeneralController>()),
+      ChangeNotifierProvider(create: (_) => getIt<AuthController>()),
     ];
   }
 }

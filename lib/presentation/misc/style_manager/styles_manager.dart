@@ -48,19 +48,20 @@ TextStyle getBtnTextStyle() => _getTextStyle(fontSize: 14, fontWeight: FontWeigh
 PinTheme getPinTheme({double? width}) => PinTheme(
   activeColor: ColorManager.kWhite,
   inactiveFillColor: ColorManager.kWhite,
-  selectedColor: ColorManager.kWhite,
-  activeFillColor: ColorManager.kFormBg,
+  selectedColor: ColorManager.kPrimary,
+  activeFillColor: ColorManager.kPrimary.withValues(alpha: .08),
   selectedFillColor: ColorManager.kFormBg,
   errorBorderColor: Colors.black,
-  inactiveColor: ColorManager.kBlack,
+  inactiveColor: ColorManager.kGreyColor.withValues(alpha: .12),
+  
   shape: PinCodeFieldShape.box,
   borderWidth: 0.5,
-  activeBorderWidth: .5,
-  inactiveBorderWidth: .5,
+  activeBorderWidth: 0.5,
+  inactiveBorderWidth: 0.5,
   borderRadius: BorderRadius.circular(10),
   fieldHeight: 53,
-  fieldWidth: width ?? 45,
-  fieldOuterPadding: const EdgeInsets.only(left: 15),
+  fieldWidth: width ?? 53,
+  fieldOuterPadding: const EdgeInsets.only(left: 8),
 );
 
 // Icons

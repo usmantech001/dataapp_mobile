@@ -1,11 +1,13 @@
 import 'package:dataplug/core/helpers/service_helper.dart';
 import 'package:dataplug/core/providers/airtime_controller.dart';
+import 'package:dataplug/core/providers/auth_controller.dart';
 import 'package:dataplug/core/providers/bank_controller.dart';
 import 'package:dataplug/core/providers/betting_controller.dart';
 import 'package:dataplug/core/providers/cable_tv_controller.dart';
 import 'package:dataplug/core/providers/data_controller.dart';
 import 'package:dataplug/core/providers/electricity_controller.dart';
 import 'package:dataplug/core/providers/epin_controller.dart';
+import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/providers/giftcard_controller.dart';
 import 'package:dataplug/core/providers/history_controller.dart';
 import 'package:dataplug/core/providers/intl_airtime_controller.dart';
@@ -14,12 +16,14 @@ import 'package:dataplug/core/providers/rewards_controller.dart';
 import 'package:dataplug/core/providers/transfer_controller.dart';
 import 'package:dataplug/core/providers/wallet_controller.dart';
 import 'package:dataplug/core/repository/airtime_repo.dart';
+import 'package:dataplug/core/repository/auth_repo.dart';
 import 'package:dataplug/core/repository/bank_repo.dart';
 import 'package:dataplug/core/repository/betting_repo.dart';
 import 'package:dataplug/core/repository/cable_tv_repo.dart';
 import 'package:dataplug/core/repository/data_repo.dart';
 import 'package:dataplug/core/repository/electricity_repo.dart';
 import 'package:dataplug/core/repository/epin_repo.dart';
+import 'package:dataplug/core/repository/general_repo.dart';
 import 'package:dataplug/core/repository/giftcard_repo.dart';
 import 'package:dataplug/core/repository/history_repo.dart';
 import 'package:dataplug/core/repository/intl_airtime_repo.dart';
@@ -49,6 +53,8 @@ void setUpLocator() async {
   getIt.registerLazySingleton(() => IntlDataRepo());
   getIt.registerLazySingleton(() => BankRepo());
   getIt.registerLazySingleton(() => EpinRepo());
+  getIt.registerLazySingleton(() => GeneralRepo());
+  getIt.registerLazySingleton(() => AuthRepo());
   //injection of controllers
 
   getIt.registerLazySingleton(
@@ -79,5 +85,10 @@ void setUpLocator() async {
    getIt.registerLazySingleton(
       () => BankController(bankRepo: getIt<BankRepo>()));  
     getIt.registerLazySingleton(
-      () => EpinController(epinRepo: getIt<EpinRepo>()));          
+      () => EpinController(epinRepo: getIt<EpinRepo>())); 
+
+     getIt.registerLazySingleton(
+      () => GeneralController(generalRepo: getIt<GeneralRepo>()));   
+  getIt.registerLazySingleton(
+      () => AuthController(authRepo: getIt<AuthRepo>()));                        
 }

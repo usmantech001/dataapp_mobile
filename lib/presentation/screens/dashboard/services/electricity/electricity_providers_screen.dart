@@ -14,25 +14,27 @@ class ElectricityProvidersScreen extends StatefulWidget {
   const ElectricityProvidersScreen({super.key});
 
   @override
-  State<ElectricityProvidersScreen> createState() => _ElectricityProvidersScreenState();
+  State<ElectricityProvidersScreen> createState() =>
+      _ElectricityProvidersScreenState();
 }
 
-class _ElectricityProvidersScreenState extends State<ElectricityProvidersScreen> {
+class _ElectricityProvidersScreenState
+    extends State<ElectricityProvidersScreen> {
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ElectricityController>().getElectricityProviders();
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final electricityController = context.watch<ElectricityController>();
@@ -47,40 +49,59 @@ class _ElectricityProvidersScreenState extends State<ElectricityProvidersScreen>
               formHolderName: "Select Service Provider",
               hintText: "Search",
               textInputAction: TextInputAction.next,
-              suffixIcon: Icon(LucideIcons.search, color: ColorManager.kGreyColor.withValues(alpha: .7),),
-              //textEditingController: firstnameController,
-              onChanged: (_) {},
+              suffixIcon: Icon(
+                LucideIcons.search,
+                color: ColorManager.kGreyColor.withValues(alpha: .7),
+              ),
+              textEditingController: electricityController.searchController,
+              onChanged: (query) {
+                electricityController.filterProviders(query);
+              },
             ),
           ),
-          Expanded(child: electricityController.gettingProviders? Center(child: CircularProgressIndicator()): ListView.separated(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-            itemBuilder: (context, index){
-              final provider = electricityController.electricityProviders[index];
-            return InkWell(
-              onTap: (){
-                electricityController.onSelectProvider(provider);
-                // if(fromReview!=null){
-
-                // }
-                  Navigator.pushNamed(context, RoutesManager.buyElectricity);
-                
-              },
-              child: Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: ColorManager.kWhite,
-                  borderRadius: BorderRadius.circular(16)
-                ),
-                child: Row(
-                  children: [
-                    CustomNetworkImage(imageUrl: provider.logo),
-                      Gap(12),
-                      Text(provider.name, style: get16TextStyle().copyWith(fontWeight: FontWeight.w400),)
-                  ],
-                ),
-              ),
-            );
-          }, separatorBuilder: (context, index)=> Gap(8), itemCount: electricityController.electricityProviders.length))
+          Expanded(
+              child: electricityController.gettingProviders
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView.separated(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                      itemBuilder: (context, index) {
+                        final provider = electricityController
+                                .searchController.text.isNotEmpty
+                            ? electricityController
+                                .filteredElectricityProviders[index]
+                            : electricityController.electricityProviders[index];
+                        return InkWell(
+                          onTap: () {
+                            electricityController.onSelectProvider(provider);
+                            Navigator.pushNamed(
+                                context, RoutesManager.buyElectricity);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                                color: ColorManager.kWhite,
+                                borderRadius: BorderRadius.circular(16)),
+                            child: Row(
+                              children: [
+                                CustomNetworkImage(imageUrl: provider.logo),
+                                Gap(12),
+                                Text(
+                                  provider.name,
+                                  style: get16TextStyle()
+                                      .copyWith(fontWeight: FontWeight.w400),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) => Gap(8),
+                      itemCount: electricityController
+                              .searchController.text.isNotEmpty
+                          ? electricityController
+                              .filteredElectricityProviders.length
+                          : electricityController.electricityProviders.length))
         ],
       ),
     );

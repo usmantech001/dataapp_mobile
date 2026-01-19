@@ -1,24 +1,23 @@
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/betting_controller.dart';
-import 'package:dataplug/core/providers/electricity_controller.dart';
+import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/utils/custom_verifying.dart';
 import 'package:dataplug/core/utils/formatters.dart';
+import 'package:dataplug/core/utils/review_bottomsheet.dart';
 import 'package:dataplug/core/utils/summary_info.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/amount_suggestion.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
-import 'package:dataplug/presentation/misc/custom_components/meter_selector.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_container.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
 import 'package:dataplug/presentation/misc/custom_snackbar.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/airtime/buy_airtime_1.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 
 class FundBettingScreen extends StatefulWidget {
@@ -83,7 +82,11 @@ class _FundBettingScreenState extends State<FundBettingScreen> {
                 );
                 return;
               }
-      
+       final generalController = context.read<GeneralController>();
+              num serviceCharge = generalController.serviceCharge?.betting??0;
+              num totalAmount = calculateTotalAmount(amount: formatUseableAmount(
+                        controller.amountController.text.trim()), charge: serviceCharge);
+
                final summaryItems = [
                 SummaryItem(title: 'Betting Provider', name: controller.selectedProvider?.name ?? ""),
                 SummaryItem(
@@ -98,15 +101,14 @@ class _FundBettingScreenState extends State<FundBettingScreen> {
                 ),
                 SummaryItem(
                     title: 'Amount', name: controller.amountController.text.trim()),
+               if(serviceCharge!=0) SummaryItem(
+                    title: 'Service Charge', name: formatCurrency(serviceCharge), hasDivider: true,),    
                 SummaryItem(
-                    title: 'Service Charge', name: "₦0.00", hasDivider: true,),    
-                SummaryItem(
-                    title: 'Total Amount', name: controller.amountController.text.trim()),     
+                    title: 'Total Amount', name: formatCurrency(totalAmount)),     
               ];
               final reviewModel = ReviewModel(
                   summaryItems: summaryItems,
                   amount: formatUseableAmount(controller.amountController.text),
-                  shortInfo: 'Fund Betting',
                   providerType: 'Electricity',
                   providerName: controller.selectedProvider?.name,
                   logo: controller.selectedProvider?.logo,
@@ -131,8 +133,7 @@ class _FundBettingScreenState extends State<FundBettingScreen> {
                     } ,);
                    
                   });
-              Navigator.pushNamed(context, RoutesManager.reviewDetails,
-                  arguments: reviewModel);
+                showReviewBottomShhet(context, reviewDetails: reviewModel);
       
       
             }),

@@ -1,19 +1,8 @@
-import 'package:dataplug/core/constants.dart';
-import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_container.dart';
-import 'package:dataplug/presentation/misc/image_manager/image_manager.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
-
-import '../../../../core/helpers/auth_helper.dart';
-import '../../../../gen/assets.gen.dart';
 import '../../../misc/custom_components/custom_bottom_sheet.dart';
-import '../../../misc/style_manager/styles_manager.dart';
-import 'delete_account_confirmation/delete_account.dart';
 import 'logout_confirmation/logout_confirmation.dart';
 import 'misc/settings_icon_tab.dart';
 

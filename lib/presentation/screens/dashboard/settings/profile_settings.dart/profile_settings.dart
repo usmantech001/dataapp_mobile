@@ -21,17 +21,14 @@ import '../../../../../core/model/core/user.dart';
 import '../../../../../core/providers/user_provider.dart';
 import '../../../../../core/utils/utils.dart';
 import '../../../../../core/utils/validators.dart';
-import '../../../../misc/custom_components/custom_back_icon.dart';
 import '../../../../misc/custom_components/custom_bottom_sheet.dart';
 import '../../../../misc/custom_components/custom_dialog_popup.dart';
 import '../../../../misc/custom_components/custom_input_field.dart';
 import '../../../../misc/custom_components/custom_selectable_btn_with_dot.dart';
 import '../../../../misc/custom_snackbar.dart';
-import '../../../../misc/image_manager/image_manager.dart';
 import '../../../../misc/popups/confirmation_popup.dart';
 import '../../../../misc/select_country.dart';
 import '../../../../misc/select_state.dart';
-import '../misc/settings_icon_tab.dart';
 
 class ProfileSettings extends StatefulWidget {
   const ProfileSettings({super.key});
@@ -250,12 +247,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                   textEditingController: firstnameController,
                   validator: (val) => Validator.validateField(
                       fieldName: "First name", input: val),
-                  onChanged: (_) {
-                    setState(() {});
-                  },
-                ),
-                //
-                              
+                ),             
                 spacer,
                 CustomInputField(
                   formHolderName: "Last Name",

@@ -11,7 +11,7 @@ class DataController extends ChangeNotifier {
 
   DataController({required this.dataRepo});
 
-  List<String> dataTypes = ['Cheap', 'Direct' ];
+  List<String> dataTypes = ['Cheap', 'Direct'];
 
   List<DataProvider> providers = [];
   List<DataPlan> allPlans = [];
@@ -25,7 +25,7 @@ class DataController extends ChangeNotifier {
   bool gettingPlans = false;
   bool isPorted = false;
 
- //,, String selectedType = 'Direct';
+  //,, String selectedType = 'Direct';
   String selectedDuration = 'All';
 
   final phoneNumberController = TextEditingController();
@@ -38,23 +38,23 @@ class DataController extends ChangeNotifier {
 
   String? type;
 
-  String get getDataType{
+  String get getDataType {
     switch (selectedTypeIndex) {
       case 0:
-        return type??"";
+        return type ?? "";
       case 1:
-        return 'direct';  
+        return 'direct';
       default:
-      return 'direct';
+        return 'direct';
     }
   }
 
   void onSelectDataType(int index) {
-   // selectedDataType = type;
-   selectedTypeIndex = index;
-    if(selectedTypeIndex==0){
-     getDataPlanTypes();
-    }else{
+    // selectedDataType = type;
+    selectedTypeIndex = index;
+    if (selectedTypeIndex == 0) {
+      getDataPlanTypes();
+    } else {
       getDataPlans();
     }
     notifyListeners();
@@ -63,65 +63,73 @@ class DataController extends ChangeNotifier {
   void onSelectProvider(DataProvider provider, {bool isPreSelect = true}) {
     selectedProvider = provider;
     selectedDuration = 'All';
-    if(!isPreSelect){
-      if(getDataType=='direct'){
+    if (!isPreSelect) {
+      if (getDataType == 'direct') {
         getDataPlans();
-      }else{
+      } else {
         getDataPlanTypes();
       }
-      
     }
     notifyListeners();
   }
 
-  void onPlanSelected(DataPlan plan){
+  void onPlanSelected(DataPlan plan) {
     selectedPlan = plan;
   }
 
   void groupPlansByDays(List<DataPlan> plans) {
     plansByDays = {};
-   
-    plansByDays.putIfAbsent('All', ()=> plans);
+
+    plansByDays.putIfAbsent('All', () => plans);
     final res = groupBy(plans, (DataPlan e) => e.duration);
-    
+
     plansByDays.addAll(res);
     //filterAllPlansByDuration(selectedDuration);
-    
-    
+
     notifyListeners();
   }
 
-  void filterAllPlansByDuration(String duration){
-  durationPlans = allPlans.where((plan)=> plan.duration == duration).toList();
-  notifyListeners();
+  void filterAllPlansByDuration(String duration) {
+    durationPlans =
+        allPlans.where((plan) => plan.duration == duration).toList();
+    notifyListeners();
   }
 
-  void onDurationChanged(String duration){
+  void onDurationChanged(String duration) {
     selectedDuration = duration;
     filterAllPlansByDuration(duration);
     notifyListeners();
   }
 
-  void onSelectPlanType(String selectedType){
+  void onSelectPlanType(String selectedType) {
     type = selectedType;
     getDataPlans();
     notifyListeners();
   }
 
-  Future<void> getDataProviders() async {
+  Future<void> getDataProviders({String? id, String? code}) async {
     gettingProviders = true;
     notifyListeners();
     try {
       final res = await dataRepo.getDataProviders();
-     final providerList = res.where((service) =>
-              service.code != 'smile' && service.code != 'spectranet').toList();
-              providers = [];
+      final providerList = res
+          .where((service) =>
+              service.code != 'smile' && service.code != 'spectranet')
+          .toList();
+      providers = [];
       providers.addAll(providerList);
-      onSelectProvider(providerList.first);
+      if (code != null) {
+        final provider =
+            res.where((service) => service.code == code).toList().first;
+        onSelectProvider(provider);
+        getDataPlans(dataType: 'direct');
+      } else {
+        onSelectProvider(res.first);
+        getDataPlanTypes();
+      }
+
       gettingProviders = false;
-      //getDataPlans();
-      getDataPlanTypes();
-      
+
       notifyListeners();
     } catch (e) {
       gettingProviders = false;
@@ -129,17 +137,18 @@ class DataController extends ChangeNotifier {
     }
   }
 
-  Future<void> getDataPlans() async {
+  Future<void> getDataPlans({String? dataType}) async {
     gettingPlans = true;
     //getDataPlanTypes();
-    print('...the data type is $getDataType');
+    allPlans = [];
+    print('...the data type is $dataType');
     notifyListeners();
     try {
       final res = await dataRepo.getDataPlans(
-          provider: selectedProvider?.id ?? "", type: getDataType);
-          allPlans = [];
+          provider: selectedProvider?.id ?? "", type: dataType ?? getDataType);
+
       allPlans.addAll(res);
-      
+
       gettingPlans = false;
       groupPlansByDays(allPlans);
       notifyListeners();
@@ -149,21 +158,20 @@ class DataController extends ChangeNotifier {
     }
   }
 
-  Future<void> getDataPlanTypes() async{
+  Future<void> getDataPlanTypes() async {
     try {
-      final response = await dataRepo.getDataPlanTypes(selectedProvider?.code??"");
-      print('....data types response $response');
-       dataPlanTypes = response.reversed.toList();
+      final response =
+          await dataRepo.getDataPlanTypes(selectedProvider?.code ?? "");
+      dataPlanTypes = response.reversed.toList();
       String type = dataPlanTypes.first.split(" ").last.toLowerCase();
       onSelectPlanType(type);
       getDataPlans();
-       notifyListeners();
-    } catch (e) {
-      
-    }
+      notifyListeners();
+    } catch (e) {}
   }
 
-  Future<void> buyData(String pin, {Function(ServiceTxn)? onSuccess, Function(String)? onError}) async {
+  Future<void> buyData(String pin,
+      {Function(ServiceTxn)? onSuccess, Function(String)? onError}) async {
     try {
       final response = await dataRepo.buyData(
           phone: phoneNumberController.text.trim(),
@@ -172,8 +180,7 @@ class DataController extends ChangeNotifier {
           pin: pin,
           isPorted: isPorted,
           dataPurchaseType: getDataType);
-          onSuccess?.call(response);
-
+      onSuccess?.call(response);
     } catch (e) {
       onError?.call(e.toString());
     }

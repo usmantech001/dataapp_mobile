@@ -12,6 +12,7 @@ class ElectricityController extends ChangeNotifier {
   }
 
   List<ElectricityProvider> electricityProviders = [];
+  List<ElectricityProvider> filteredElectricityProviders = [];
   bool gettingProviders = false;
   bool verifyingMeterNo = false;
   ElectricityProvider? selectedProvider;
@@ -21,6 +22,7 @@ class ElectricityController extends ChangeNotifier {
   TextEditingController meterNumberController = TextEditingController();
   TextEditingController amountController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   String? meterNoErrMsg;
   String? attachedMeterName;
@@ -35,6 +37,17 @@ class ElectricityController extends ChangeNotifier {
     meterNumberController.clear();
     amountController.clear();
     notifyListeners();
+  }
+
+   void filterProviders(String query){
+    filteredElectricityProviders = [];
+    for (ElectricityProvider provider in electricityProviders) {
+        if ((provider.name.toLowerCase()).contains(query.toLowerCase())) {
+          filteredElectricityProviders.add(provider);
+          notifyListeners();
+        }
+      }
+      
   }
 
   void onFocusChanged() {
@@ -66,6 +79,7 @@ class ElectricityController extends ChangeNotifier {
   Future<void> getElectricityProviders() async {
     gettingProviders = true;
     electricityProviders = [];
+    searchController.clear();
     notifyListeners();
     await electricityRepo.getProviders().then((value) {
       if (value.isNotEmpty) {

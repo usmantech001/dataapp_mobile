@@ -4,6 +4,7 @@ import 'package:dataplug/core/providers/intl_data_controller.dart';
 import 'package:dataplug/core/utils/app-loader.dart';
 import 'package:dataplug/core/utils/formatters.dart';
 import 'package:dataplug/core/utils/nav.dart';
+import 'package:dataplug/core/utils/review_bottomsheet.dart';
 import 'package:dataplug/core/utils/summary_info.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
@@ -243,9 +244,7 @@ class _BuyIntlDataScreenState extends State<BuyIntlDataScreen> {
                                 },
                               );
                             });
-                        Navigator.pushNamed(
-                            context, RoutesManager.reviewDetails,
-                            arguments: reviewModel);
+                        showReviewBottomShhet(context, reviewDetails: reviewModel);
                       },
                       child: Stack(
                         children: [

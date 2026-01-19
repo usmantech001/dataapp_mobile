@@ -13,7 +13,7 @@ class ServicesScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppbar(
         title: 'All Services',
-        canPop: Navigator.canPop(context)? true: false,
+        canPop: Navigator.canPop(context) ? true : false,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
@@ -46,36 +46,48 @@ class ServicesScreen extends StatelessWidget {
                   iconPath: 'betting-icon',
                   onTap: () => Navigator.pushNamed(
                       context, RoutesManager.bettingProviders)),
-              ServiceTypeContainer(name: 'E-Pin', 
-              iconPath: 'epin-icon',
-              onTap: ()=> pushNamed(RoutesManager.epinProviders)),
+              ServiceTypeContainer(
+                  name: 'E-Pin',
+                  iconPath: 'epin-icon',
+                  onTap: () => pushNamed(RoutesManager.epinProviders)),
+              ServiceTypeContainer(
+                  name: 'Smile Data',
+                  iconPath: 'smile-data-icon',
+                  onTap: () => Navigator.pushNamed(
+                      context, RoutesManager.buyOtherData,
+                      arguments: 'smile')),
+              ServiceTypeContainer(
+                  name: 'Spectranet',
+                  iconPath: 'kirani-data-icon',
+                  onTap: () => pushNamed(RoutesManager.buyOtherData,
+                      arguments: 'spectranet')),
             ]),
             ServiceContainer(title: 'Wallet Activities', serviceTypes: [
-              ServiceTypeContainer(name: 'Withdraw', 
-              iconPath: 'withdraw-green',
-              onTap: () {}),
+              ServiceTypeContainer(
+                  name: 'Withdraw', iconPath: 'withdraw-green', onTap: ()=> pushNamed(RoutesManager.withdraw)),
               ServiceTypeContainer(
                   name: 'Transfer',
                   iconPath: 'transfer-green',
                   onTap: () =>
-                      Navigator.pushNamed(context, RoutesManager.buyAirtime1)),
-              ServiceTypeContainer(name: 'Top Up', 
-              iconPath: 'topup-green',
-              onTap: () {}),
+                      Navigator.pushNamed(context, RoutesManager.transfer)),
+              ServiceTypeContainer(
+                  name: 'Top Up', iconPath: 'topup-green', onTap: () {}),
             ]),
             ServiceContainer(title: 'Others', serviceTypes: [
-               ServiceTypeContainer(
-                                      name: 'Int\'t Data',
-                                      iconPath: 'intl-data-icon',
-                                       onTap: ()=>  pushNamed(RoutesManager.intlDataCountries)),
-                                  ServiceTypeContainer(
-                                      name: 'Int\'t Airtime', 
-                                      iconPath: 'intl-airtime-icon',
-                                      onTap: ()=> Navigator.pushNamed(context, RoutesManager.intlAirtimeCountries)),
-                                  ServiceTypeContainer(
-                                      name: 'GiftCard', 
-                                      iconPath: 'giftcard-icon',
-                                      onTap: ()=> Navigator.pushNamed(context, RoutesManager.giftcardCategory)),
+              ServiceTypeContainer(
+                  name: 'Int\'t Data',
+                  iconPath: 'intl-data-icon',
+                  onTap: () => pushNamed(RoutesManager.intlDataCountries)),
+              ServiceTypeContainer(
+                  name: 'Int\'t Airtime',
+                  iconPath: 'intl-airtime-icon',
+                  onTap: () => Navigator.pushNamed(
+                      context, RoutesManager.intlAirtimeCountries)),
+              ServiceTypeContainer(
+                  name: 'GiftCard',
+                  iconPath: 'giftcard-icon',
+                  onTap: () => Navigator.pushNamed(
+                      context, RoutesManager.giftcardCategory)),
             ]),
           ],
         ),

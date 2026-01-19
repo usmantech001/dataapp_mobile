@@ -1,20 +1,22 @@
 import 'dart:async';
 
+import 'package:dataplug/core/model/core/auth_success_model.dart';
+import 'package:dataplug/core/providers/auth_controller.dart';
+import 'package:dataplug/core/utils/app-loader.dart';
+import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_scaffold.dart';
+import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/enum.dart';
 import '../../../../core/helpers/auth_helper.dart';
 import '../../../../core/utils/validators.dart';
-import '../../../misc/custom_components/custom_back_icon.dart';
 import '../../../misc/custom_components/custom_input_field.dart';
 import '../../../misc/custom_snackbar.dart';
 import 'misc/password_reset_3_arg.dart';
@@ -48,7 +50,10 @@ class _PasswordReset3State extends State<PasswordReset3> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorManager.kWhite,
-      appBar: CustomAppbar(title: '', hasLogo: true,),
+      appBar: CustomAppbar(
+        title: '',
+        hasLogo: true,
+      ),
       body: SafeArea(
         bottom: false,
         child: GestureDetector(
@@ -59,24 +64,22 @@ class _PasswordReset3State extends State<PasswordReset3> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                    "Set a new password",
-                    style: get24TextStyle().copyWith(
-                      wordSpacing: .1,
-                    ),
+                  "Set a new password",
+                  style: get24TextStyle().copyWith(
+                    wordSpacing: .1,
                   ),
-                  Gap(12.h),
-                  Text(
-                    'Create a strong password to secure your account',
-                    style: get14TextStyle().copyWith(
-                        color: ColorManager.kGreyColor.withValues(alpha: .7)),
-                  ),
-            
+                ),
+                Gap(12.h),
+                Text(
+                  'Create a strong password to secure your account',
+                  style: get14TextStyle().copyWith(
+                      color: ColorManager.kGreyColor.withValues(alpha: .7)),
+                ),
                 Gap(32.h),
                 Form(
                   key: _formKey,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   child: Column(
-                  
                     children: [
                       CustomInputField(
                         formHolderName: "New Password",
@@ -84,8 +87,7 @@ class _PasswordReset3State extends State<PasswordReset3> {
                         textInputAction: TextInputAction.next,
                         isPasswordField: true,
                         textEditingController: passController,
-                        validator: (val) =>
-                            Validator.validatePassword(val),
+                        validator: (val) => Validator.validatePassword(val),
                         onChanged: (_) => setState(() {}),
                       ),
                       spacer,
@@ -108,15 +110,41 @@ class _PasswordReset3State extends State<PasswordReset3> {
                         text: "Complete",
                         isActive: true,
                         onTap: () async {
-                          if (!(_formKey.currentState?.validate() ??
-                              false)) {
+                          if (!(_formKey.currentState?.validate() ?? false)) {
                             return;
                           }
-                          setState(() => loading = true);
-                          await resetPassword();
-                          setState(() => loading = false);
+                          displayLoader(context);
+                          final authController = context.read<AuthController>();
+
+                          authController.resetPassword(
+                            email: widget.param.email,
+                            otp: widget.param.otp,
+                            password: passController.text,
+                            onSuccess: () {
+                              popScreen();
+                              removeUntilAndPushScreen(
+                                  RoutesManager.authSuccessful,
+                                  RoutesManager.signIn,
+                                  arguments: AuthSuccessModel(
+                                      title: 'Successful',
+                                      description:
+                                          'Your new password has been set successfully',
+                                      onTap: () {
+                                        popScreen();
+                                      },
+                                      btnText: 'Back to Sign In'));
+                                     
+                            },
+                            onError: (error) {
+                              popScreen();
+                              showCustomToast(
+                                  context: context, description: error);
+                            },
+                          );
+                          
+                          
                         },
-                        loading: loading,
+                        loading: false,
                       ),
                     ],
                   ),
@@ -129,21 +157,5 @@ class _PasswordReset3State extends State<PasswordReset3> {
     );
   }
 
-  //
-  bool loading = false;
-  Future<void> resetPassword() async {
-    await AuthHelper.completePasswordReset(
-      email: widget.param.email,
-      otp: widget.param.otp,
-      password: passController.text,
-    ).then((msg) async {
-      showCustomToast(
-          context: context, description: msg, type: ToastType.success);
-      Navigator.pop(context);
-      Navigator.pop(context);
-      Navigator.pop(context);
-    }).catchError((e) {
-      showCustomToast(context: context, description: e.toString());
-    });
-  }
+  
 }

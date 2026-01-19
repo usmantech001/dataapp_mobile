@@ -1,5 +1,6 @@
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/bank_controller.dart';
+import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/providers/wallet_controller.dart';
 import 'package:dataplug/core/utils/app-loader.dart';
 import 'package:dataplug/core/utils/custom_verifying.dart';
@@ -18,6 +19,7 @@ import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
 import 'package:dataplug/presentation/misc/custom_snackbar.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/airtime/buy_airtime_1.dart';
 import 'package:dataplug/presentation/screens/dashboard/wallet/transfer/transfer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -83,6 +85,12 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
               );
               return;
             }
+           
+            final generalController = context.read<GeneralController>();
+              num serviceCharge = generalController.serviceCharge?.withdrawal??0;
+              num totalAmount = calculateTotalAmount(amount: formatUseableAmount(
+                        walletController.amountController.text.trim()), charge: serviceCharge);
+
 
             final summaryItems = [
               SummaryItem(
@@ -96,6 +104,10 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
               SummaryItem(
                   title: 'Withdrawal Amount',
                   name: walletController.amountController.text.trim()),
+                  SummaryItem(
+                    title: 'Withdrawal fee', name: formatCurrency(serviceCharge), hasDivider: true,),    
+                SummaryItem(
+                    title: 'Total Amount', name: formatCurrency(totalAmount)),  
                   
             ];
             final reviewDetails = ReviewModel(
@@ -129,7 +141,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       popScreen();
                       showCustomErrorTransaction(
                           context: context, errMsg: error);
-                    },
+                      },
                   );
                 });
 

@@ -11,7 +11,9 @@ class BettingController extends ChangeNotifier{
     focusNode.addListener(onFocusChanged);
   }
 
-   List<BettingProvider> bettingProviders = [];
+  List<BettingProvider> bettingProviders = [];
+  List<BettingProvider> filteredbettingProviders = [];
+
   bool gettingProviders = false;
   bool verifyingBettingNo = false;
   BettingProvider? selectedProvider;
@@ -20,6 +22,7 @@ class BettingController extends ChangeNotifier{
   //Text editing controllers
   TextEditingController bettingNumberController = TextEditingController();
   TextEditingController amountController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   String? bettingNoErrMsg;
   String? attachedName;
@@ -33,6 +36,17 @@ class BettingController extends ChangeNotifier{
     bettingNumberController.clear();
     amountController.clear();
     notifyListeners();
+  }
+
+   void filterProviders(String query){
+    filteredbettingProviders = [];
+    for (BettingProvider provider in bettingProviders) {
+        if ((provider.name.toLowerCase()).contains(query.toLowerCase())) {
+          filteredbettingProviders.add(provider);
+          notifyListeners();
+        }
+      }
+      
   }
 
 
@@ -61,6 +75,7 @@ class BettingController extends ChangeNotifier{
    Future<void> getBettingProviders() async {
     gettingProviders = true;
     bettingProviders = [];
+    searchController.clear();
     notifyListeners();
     await bettingRepo.getProviders().then((value) {
       if (value.isNotEmpty) {

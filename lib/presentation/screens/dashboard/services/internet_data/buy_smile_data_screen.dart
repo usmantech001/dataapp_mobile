@@ -1,7 +1,6 @@
 import 'package:dataplug/core/model/core/data_plans.dart';
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/data_controller.dart';
-import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/utils/app-loader.dart';
 import 'package:dataplug/core/utils/formatters.dart';
 import 'package:dataplug/core/utils/nav.dart';
@@ -9,43 +8,33 @@ import 'package:dataplug/core/utils/review_bottomsheet.dart';
 import 'package:dataplug/core/utils/summary_info.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_bottom_sheet.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
-import 'package:dataplug/presentation/misc/custom_components/operator_selector.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
-import 'package:dataplug/presentation/misc/custom_components/toggle_selector_widget.dart';
 import 'package:dataplug/presentation/misc/custom_snackbar.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
-import 'package:dataplug/presentation/misc/select_contact.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
-import 'package:dataplug/presentation/screens/dashboard/services/airtime/buy_airtime_1.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 
-class BuyDataScreen extends StatefulWidget {
-  const BuyDataScreen({super.key});
+class BuyOtherDataScreen extends StatefulWidget {
+  const BuyOtherDataScreen({super.key});
 
   @override
-  State<BuyDataScreen> createState() => _BuyDataScreenState();
+  State<BuyOtherDataScreen> createState() => _BuyOtherDataScreenState();
 }
 
-class _BuyDataScreenState extends State<BuyDataScreen> {
-  // Map<String, String> dataTypes = {
-  //   'direct': 'Direct',
-  //   'sme' : 'SME/CG',
-  //   'direct' : 'Smile',
-  //   'direct' : ''
-  // }
+class _BuyOtherDataScreenState extends State<BuyOtherDataScreen> {
+ 
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+    final code =  ModalRoute.of(context)?.settings.arguments as String;
       final controller = context.read<DataController>();
-      controller.getDataProviders();
+      controller.getDataProviders(code: code);
     });
     super.initState();
   }
@@ -54,63 +43,15 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
   Widget build(BuildContext context) {
     return Consumer<DataController>(builder: (context, controller, child) {
       return Scaffold(
-        appBar: CustomAppbar(title: 'Buy Data'),
+        appBar: CustomAppbar(title: 'Smile Data'),
         body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(vertical: 24.h),
           child: Column(
             spacing: 24,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ToggleSelectorWidget(
-                tabIndex: controller.selectedTypeIndex,
-                tabText: controller.dataTypes,
-                onTap: (index) {
-                  controller.onSelectDataType(index);
-                },
-              ),
-              controller.gettingProviders
-                  ? SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.symmetric(horizontal: 15.w),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          spacing: 8.w,
-                          children: List.generate(
-                              4, (index) => OperatorSelectorShimmer())),
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: Text(
-                            'Select Operator',
-                            style: get16TextStyle(),
-                          ),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            spacing: MediaQuery.sizeOf(context).width * 0.02,
-                            children: List.generate(controller.providers.length,
-                                (index) {
-                              final operator = controller.providers[index];
-                              return OperatorSelector(
-                                  name: operator.name,
-                                  logo: operator.logo ?? "",
-                                  isSelected: operator.name ==
-                                      controller.selectedProvider?.name,
-                                  onTap: () {
-                                    controller.onSelectProvider(operator,
-                                        isPreSelect: false);
-                                  });
-                            }),
-                          ),
-                        ),
-                      ],
-                    ),
+              
+             
               Padding(
                 padding: EdgeInsetsGeometry.symmetric(horizontal: 15.w),
                 child: Column(
@@ -122,27 +63,25 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
                       textInputType: TextInputType.number,
                       suffixIcon: InkWell(
                         onTap: () async {
-                          bool permissionGranted =
-                              await FlutterContacts.requestPermission();
-                          if (permissionGranted) {
-                            Contact? res = await showCustomBottomSheet(
-                              context: context,
-                              isDismissible: true,
-                              screen: SelectFromContactWidget(),
-                            );
-                            if (res != null) {
-                              print('...response from contact is $res');
-                              // phoneController.text = res
-                              //     .phones.first.number
-                              //     .replaceAll(" ", "")
-                              //     .replaceAll("(", "")
-                              //     .replaceAll(")", "")
-                              //     .replaceAll("+234", "0")
-                              //     .replaceAll("-", "")
-                              //     .trim();
-                              setState(() {});
-                            }
-                          }
+                          /*
+                                                  Contact? res =
+                                                      await showCustomBottomSheet(
+                                                    context: context,
+                                                    isDismissible: true,
+                                                    screen: SelectFromContactWidget(),
+                                                  );
+                                                  if (res != null) {
+                                                    phoneController.text = res
+                                                        .phones.first.number
+                                                        .replaceAll(" ", "")
+                                                        .replaceAll("(", "")
+                                                        .replaceAll(")", "")
+                                                        .replaceAll("+234", "0")
+                                                        .replaceAll("-", "")
+                                                        .trim();
+                                                    setState(() {});
+                                                  }
+                                                  */
                         },
                         child: Icon(
                           Icons.person,
@@ -169,41 +108,7 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 8.h,
                       children: [
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: Row(
-                            spacing: 8.w,
-                            children: controller.selectedTypeIndex == 0
-                                ? List.generate(controller.dataPlanTypes.length,
-                                    (index) {
-                                    final type =
-                                        controller.dataPlanTypes[index];
-                                    return PlanTab(
-                                      planType: type,
-                                      isSelected: controller.type ==
-                                          type.split(" ").last.toLowerCase(),
-                                      onTap: () {
-                                        controller.onSelectPlanType(
-                                            type.split(" ").last.toLowerCase());
-                                      },
-                                    );
-                                  })
-                                : List.generate(controller.plansByDays.length,
-                                    (index) {
-                                    final duration = controller.plansByDays.keys
-                                        .toList()[index];
-                                    return PlanTab(
-                                      duration: duration,
-                                      isSelected: controller.selectedDuration ==
-                                          duration,
-                                      onTap: () {
-                                        controller.onDurationChanged(duration);
-                                      },
-                                    );
-                                  }),
-                          ),
-                        ),
+                        
                         GridView.count(
                           // controller: ,
                           padding: EdgeInsets.symmetric(horizontal: 15.w),
@@ -213,12 +118,8 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
                           crossAxisSpacing: 10,
                           physics: NeverScrollableScrollPhysics(),
                           children: List.generate(
-                              controller.selectedDuration == 'All'
-                                  ? controller.allPlans.length
-                                  : controller.durationPlans.length, (index) {
-                            final plan = controller.selectedDuration == 'All'
-                                ? controller.allPlans[index]
-                                : controller.durationPlans[index];
+                               controller.allPlans.length, (index) {
+                            final plan = controller.allPlans[index];
                             return PlanBox(
                               plan: plan,
                               onTap: () {
@@ -231,13 +132,6 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
                                   return;
                                 }
                                 controller.onPlanSelected(plan);
-                                final generalController =
-                                    context.read<GeneralController>();
-                                num serviceCharge =
-                                    generalController.serviceCharge?.data ?? 0;
-                                num totalAmount = calculateTotalAmount(
-                                    amount: plan.amount.toString(),
-                                    charge: serviceCharge);
                                 final summaryItems = [
                                   SummaryItem(
                                       title: 'Network',
@@ -249,14 +143,9 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
                                         .trim(),
                                     hasDivider: true,
                                   ),
-                                  if (serviceCharge != 0)
-                                    SummaryItem(
-                                      title: 'Service Charge',
-                                      name: formatCurrency(serviceCharge),
-                                    ),
                                   SummaryItem(
                                       title: 'Amount',
-                                      name: formatCurrency(totalAmount)),
+                                      name: plan.amount.toString()),
                                 ];
                                 final reviewDetails = ReviewModel(
                                     summaryItems: summaryItems,

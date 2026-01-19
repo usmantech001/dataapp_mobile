@@ -1,3 +1,4 @@
+import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/providers/wallet_controller.dart';
 import 'package:dataplug/core/utils/custom_image.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
@@ -8,7 +9,6 @@ import 'package:dataplug/presentation/screens/dashboard/rewards/rewards_screen.d
 import 'package:dataplug/presentation/screens/dashboard/services/services_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/settings/settings_tab.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class BottomNavScreen extends StatefulWidget {
@@ -40,10 +40,12 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
        final walletController = context.read<WalletController>();
-      // final serviceController = context.read<ServiceController>();
+       final generalController = context.read<GeneralController>();
+
       Future.wait([
         walletController.getWalletBalance(),
          walletController.getBanners(),
+         generalController.getServicesCharge()
         // serviceController.getServicesStatus()
       ]);
     });
