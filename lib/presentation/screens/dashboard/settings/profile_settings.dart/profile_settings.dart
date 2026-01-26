@@ -90,6 +90,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       UserProvider userProvider =
           Provider.of<UserProvider>(context, listen: false);
+          print('..user ${userProvider.user.firstname}');
       setController(userProvider.user!);
     });
 
@@ -244,6 +245,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                   formHolderName: "First Name",
                   hintText: "Enter your first name",
                   textInputAction: TextInputAction.next,
+                  readOnly: true,
                   textEditingController: firstnameController,
                   validator: (val) => Validator.validateField(
                       fieldName: "First name", input: val),
@@ -254,6 +256,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                   hintText: "Enter your last name",
                   textInputAction: TextInputAction.next,
                   textEditingController: lastnameController,
+                  readOnly: true,
                   validator: (val) => Validator.validateField(
                       fieldName: "Last Name", input: val),
                   onChanged: (_) {
@@ -268,6 +271,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     formHolderName: "Email",
                     hintText: "Enter your email",
                     textInputAction: TextInputAction.next,
+                    readOnly: true,
                     textEditingController: TextEditingController(
                         text: userProvider.user?.email ?? ""),
                   ),

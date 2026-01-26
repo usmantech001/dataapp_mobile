@@ -165,11 +165,11 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                               style: get16TextStyle(),
                             ),
                           ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
+                          Padding(
+                           // scrollDirection: Axis.horizontal,
                             padding: EdgeInsets.symmetric(horizontal: 15.w),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               spacing: 8.w,
                               children: List.generate(
                                   controller.airtimeProviders.length, (index) {

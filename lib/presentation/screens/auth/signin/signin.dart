@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:dataplug/core/constants.dart';
+import 'package:dataplug/core/utils/app-loader.dart';
+import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/image_manager/image_manager.dart';
@@ -365,7 +367,8 @@ class _SignInState extends State<SignIn> {
       {required String email, required String password}) async {
     // if (googleSignInLoading || appleSignInLoading || loginLoading) return;
 
-    setState(() => loginLoading = true);
+    //setState(() => loginLoading = true);
+    displayLoader(context);
     await Future.delayed(const Duration(seconds: 1));
     User user = await AuthHelper.signIn(loginProvider,
         email: email, password: password);
@@ -376,8 +379,8 @@ class _SignInState extends State<SignIn> {
     if (user.biometricToken != null) {
       AuthHelper.updateBiometricToken(user.biometricToken!);
     }
-
-    setState(() => loginLoading = false);
+  //popScreen();
+    //setState(() => loginLoading = false);
   }
 
   Widget buildBiometricCard() {

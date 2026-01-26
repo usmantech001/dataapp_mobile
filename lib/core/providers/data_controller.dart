@@ -16,14 +16,18 @@ class DataController extends ChangeNotifier {
   List<DataProvider> providers = [];
   List<DataPlan> allPlans = [];
   List<DataPlan> durationPlans = [];
+  List<DataPlan> recommendedPlans = [];
 
   DataProvider? selectedProvider;
   DataPlan? selectedPlan;
+  DataPlan? selectedRecommendedPlan;
   //String selectedDataType ='Direct';
 
   bool gettingProviders = false;
   bool gettingPlans = false;
+  bool gettingRecommendedPlans = false;
   bool isPorted = false;
+  String? plansErrMsg;
 
   //,, String selectedType = 'Direct';
   String selectedDuration = 'All';
@@ -63,6 +67,8 @@ class DataController extends ChangeNotifier {
   void onSelectProvider(DataProvider provider, {bool isPreSelect = true}) {
     selectedProvider = provider;
     selectedDuration = 'All';
+    gettingPlans = true;
+    notifyListeners();
     if (!isPreSelect) {
       if (getDataType == 'direct') {
         getDataPlans();
@@ -73,11 +79,16 @@ class DataController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void onPlanSelected(DataPlan plan) {
-    selectedPlan = plan;
+  void onPlanSelected(DataPlan plan, {bool isRecommended = false}) {
+    if (isRecommended) {
+      selectedRecommendedPlan = plan;
+    } else {
+      selectedPlan = plan;
+    }
   }
 
   void groupPlansByDays(List<DataPlan> plans) {
+    print('....grouping plans');
     plansByDays = {};
 
     plansByDays.putIfAbsent('All', () => plans);
@@ -90,6 +101,8 @@ class DataController extends ChangeNotifier {
   }
 
   void filterAllPlansByDuration(String duration) {
+    print('..the duration is $duration');
+    durationPlans = [];
     durationPlans =
         allPlans.where((plan) => plan.duration == duration).toList();
     notifyListeners();
@@ -111,18 +124,19 @@ class DataController extends ChangeNotifier {
     gettingProviders = true;
     notifyListeners();
     try {
+      providers = [];
       final res = await dataRepo.getDataProviders();
       final providerList = res
           .where((service) =>
               service.code != 'smile' && service.code != 'spectranet')
           .toList();
-      providers = [];
+      
       providers.addAll(providerList);
       if (code != null) {
         final provider =
             res.where((service) => service.code == code).toList().first;
         onSelectProvider(provider);
-        getDataPlans(dataType: 'direct');
+        //getDataPlans(dataType: 'direct');
       } else {
         onSelectProvider(res.first);
         getDataPlanTypes();
@@ -138,27 +152,31 @@ class DataController extends ChangeNotifier {
   }
 
   Future<void> getDataPlans({String? dataType}) async {
+    print('....getting plans');
     gettingPlans = true;
     //getDataPlanTypes();
+    plansErrMsg = null;
     allPlans = [];
-    print('...the data type is $dataType');
     notifyListeners();
     try {
       final res = await dataRepo.getDataPlans(
           provider: selectedProvider?.id ?? "", type: dataType ?? getDataType);
-
+      allPlans = [];
       allPlans.addAll(res);
-
       gettingPlans = false;
       groupPlansByDays(allPlans);
       notifyListeners();
     } catch (e) {
       gettingPlans = false;
+      print('...failed to get plans ${e.toString()}');
+      plansErrMsg = e.toString();
       notifyListeners();
     }
   }
 
   Future<void> getDataPlanTypes() async {
+    gettingPlans = true;
+    notifyListeners();
     try {
       final response =
           await dataRepo.getDataPlanTypes(selectedProvider?.code ?? "");
@@ -166,23 +184,52 @@ class DataController extends ChangeNotifier {
       String type = dataPlanTypes.first.split(" ").last.toLowerCase();
       onSelectPlanType(type);
       getDataPlans();
-      notifyListeners();
-    } catch (e) {}
+      gettingPlans = false;
+    notifyListeners();
+    } catch (e) {
+      plansErrMsg = e.toString();
+        gettingPlans = false;
+    notifyListeners();
+    }
   }
 
   Future<void> buyData(String pin,
-      {Function(ServiceTxn)? onSuccess, Function(String)? onError}) async {
+      {Function(ServiceTxn)? onSuccess,
+      Function(String)? onError,
+      bool isRecommended = false}) async {
     try {
       final response = await dataRepo.buyData(
           phone: phoneNumberController.text.trim(),
-          code: selectedPlan?.code ?? "",
-          provider: selectedProvider!.code,
+          code: isRecommended
+              ? selectedRecommendedPlan?.code ?? ""
+              : selectedPlan?.code ?? "",
+          provider: isRecommended
+              ? selectedRecommendedPlan!.provider!.code
+              : selectedProvider!.code,
           pin: pin,
           isPorted: isPorted,
-          dataPurchaseType: getDataType);
+          dataPurchaseType: isRecommended
+              ? selectedRecommendedPlan?.type.toLowerCase() ?? ""
+              : getDataType);
       onSuccess?.call(response);
     } catch (e) {
       onError?.call(e.toString());
+    }
+  }
+
+  Future<void> getRecommendedDataPlans() async {
+    gettingRecommendedPlans = true;
+    notifyListeners();
+    try {
+      final plans = await dataRepo.getRecommendedDataPlans();
+      recommendedPlans = [];
+      recommendedPlans.addAll(plans);
+      gettingRecommendedPlans = false;
+      notifyListeners();
+    } catch (e) {
+      gettingRecommendedPlans = false;
+      notifyListeners();
+      print('....failed to get Recommended data plans ${e.toString()}');
     }
   }
 }

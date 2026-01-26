@@ -14,6 +14,13 @@ import 'package:dataplug/presentation/screens/dashboard/card/create_card/arg/car
 import 'package:dataplug/presentation/screens/dashboard/card/create_card/enter_address.dart';
 import 'package:dataplug/presentation/screens/dashboard/card/create_card/usd/usd_card.dart';
 import 'package:dataplug/presentation/screens/dashboard/card/fund_card/enter_amount_usd.dart';
+import 'package:dataplug/presentation/screens/dashboard/fund/add_fund_payment_method_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/fund/quick_fund_amount_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/fund/virtual_acctount_details_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/kyc/verify_bvn_nin_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/kyc/verify_bvn_otp_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/internet_data/buy_recommended_data_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/settings/bank/virtual_accounts_screen.dart';
 import 'package:dataplug/presentation/screens/success/auth_successful_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/leaderboard/leaderboard_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/referrals/referral/referrals_screen.dart';
@@ -49,6 +56,7 @@ import 'package:dataplug/presentation/screens/dashboard/settings/general_setting
 import 'package:dataplug/presentation/screens/dashboard/wallet/transfer/transfer_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/wallet/withdraw/withdraw_screen.dart';
 import 'package:dataplug/presentation/screens/splash/splash_view.dart';
+import 'package:dataplug/presentation/screens/success/receipt_screen.dart';
 import 'package:dataplug/presentation/screens/success/transaction_successful_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -212,6 +220,7 @@ class RoutesManager {
 
   static const String transfer = "/transfer";
   static const String successful = "/successful";
+  static const String receipt = "/receipt";
   static const String authSuccessful = "/authSuccessful";
   static const String buyData = "/buyData";
   static const String services = "/services";
@@ -226,6 +235,13 @@ class RoutesManager {
   static const String epinProducts = "/epinProducts";
   static const String purchaseEPin = "/purchaseEPin";
   static const String buyOtherData = "/buyOtherData";
+  static const String verifyBvnNin = "/verifyBvnNin";
+  static const String verifyBvnNinOtp = "/verifyBvnNinOtp";
+  static const String virtualAccounts = "/virtualAccounts";
+  static const String quickFund = "/quickFund";
+  static const String buyRecommendedData = "/buyRecommendedData";
+  static const String addFundPaymentMethods = "/addFundPaymentMethods";
+  static const String virtualAcctountDetails = "/virtualAcctountDetails"; 
 }
 
 class RouteGenerator {
@@ -532,7 +548,31 @@ class RouteGenerator {
                 
   case RoutesManager.purchaseEPin:
         return MaterialPageRoute(
-            builder: (_) => BuyEpinScreen(), settings: settings);                             
+            builder: (_) => BuyEpinScreen(), settings: settings);
+ case RoutesManager.verifyBvnNin:
+        return MaterialPageRoute(
+            builder: (_) => VerifyBvnNinScreen(), settings: settings);
+ case RoutesManager.verifyBvnNinOtp:
+        return MaterialPageRoute(
+            builder: (_) => VerifyBvnOtpScreen(), settings: settings);                               
+ case RoutesManager.virtualAccounts:
+        return MaterialPageRoute(
+            builder: (_) => VirtualAccountsScreen(), settings: settings); 
+case RoutesManager.buyRecommendedData:
+        return MaterialPageRoute(
+            builder: (_) => BuyRecommendedDataScreen(), settings: settings);    
+case RoutesManager.addFundPaymentMethods:
+        return MaterialPageRoute(
+            builder: (_) => AddFundPaymentMethodScreen(), settings: settings);                      
+ case RoutesManager.quickFund:
+        return MaterialPageRoute(
+            builder: (_) => QuickFundAmountScreen(), settings: settings); 
+  case RoutesManager.virtualAcctountDetails:
+        return MaterialPageRoute(
+            builder: (_) => VirtualAcctountDetailsScreen(), settings: settings);    
+  case RoutesManager.receipt:
+        return MaterialPageRoute(
+            builder: (_) => ReceiptScreen(), settings: settings);                                                                  
       default:
         return unDefinedRoute();
     }

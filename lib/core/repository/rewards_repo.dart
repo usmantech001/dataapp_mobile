@@ -1,5 +1,6 @@
 import 'package:dataplug/core/enum.dart';
 import 'package:dataplug/core/helpers/user_helper.dart';
+import 'package:dataplug/core/model/core/leaderboard.dart';
 import 'package:dataplug/core/model/core/referral.dart';
 
 class RewardsRepo {
@@ -10,5 +11,10 @@ class RewardsRepo {
 
   Future<ReferralInfo> getReferralInfo() async{
     return await UserHelper.getReferralInfo();
+  }
+
+  Future<List<LeaderboardItem>> getLeaderboards(String filter) async{
+    final res = await UserHelper.getLeaderboard(filter);
+    return res.data;
   }
 }

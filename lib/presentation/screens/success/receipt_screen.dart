@@ -1,7 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/utils/custom_image.dart';
 import 'package:dataplug/core/utils/nav.dart';
+import 'package:dataplug/core/utils/receipt_generator.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
+import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/dashed_divider.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
@@ -10,37 +14,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
-class TransactionSuccessfulScreen extends StatelessWidget {
-  const TransactionSuccessfulScreen({super.key});
+class ReceiptScreen extends StatelessWidget {
+  const ReceiptScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final reviewDetails =
         ModalRoute.of(context)?.settings.arguments as ReceiptModel;
     return Scaffold(
+      appBar: CustomAppbar(title: 'Receipt'),
       body: SafeArea(
           child: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Center(child: customImage(imgPath: 'assets/images/animated-success.gif', height: 100)),
-            Gap(20.h),
-            Text(
-              'Successful',
-              style: get24TextStyle(),
-            ),
-            Gap(12.h),
-            Text(
-              'Your payment was successful. Thank you for your purchase!',
-              textAlign: TextAlign.center,
-              style: get16TextStyle().copyWith(
-                  color: ColorManager.kGreyColor.withValues(
-                    alpha: .7,
-                  ),
-                  fontWeight: FontWeight.w400),
-            ),
-            Gap(16.h),
+            
+         
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(16),
@@ -52,22 +42,35 @@ class TransactionSuccessfulScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Center(
-                    child: Text(
-                      '₦${reviewDetails.amount}',
-                      style:
-                          get32TextStyle().copyWith(fontWeight: FontWeight.w500),
+                    child: CircleAvatar(
+                      radius: 30.r,
+                      backgroundColor: ColorManager.kPrimary.withValues(alpha: .08),
+                      child: svgImage(imgPath: 'assets/icons/receipt.svg'),
                     ),
                   ),
-                  Gap(4),
+                  Gap(16.h),
                   Center(
                     child: Text(
-                      reviewDetails.shortInfo,
-                      style: get16TextStyle().copyWith(
-                          color: ColorManager.kGreyColor.withValues(alpha: .7),
-                          fontWeight: FontWeight.w400),
+                      'Transaction Receipt',
+                      style: get20TextStyle().copyWith(color: ColorManager.kGreyColor, fontWeight: FontWeight.w600),
                     ),
                   ),
-                  Gap(24.h),
+                  Gap(5.h),
+                  Center(
+                    child: Text(
+                      '₦${reviewDetails.amount}',
+                      style: get32TextStyle()
+                          .copyWith(fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                   Text(
+                    reviewDetails.shortInfo,
+                    style:
+                        get16TextStyle().copyWith(fontWeight: FontWeight.w500),
+                  ),
+                  
+                  
+                  Gap(20.h),
                   Text(
                     'Summary',
                     style:
@@ -83,14 +86,26 @@ class TransactionSuccessfulScreen extends StatelessWidget {
             ),
             Gap(24.h),
             CustomButton(
-          text: 'Generate Receipt', isActive: true, onTap: (){
-            pushNamed(RoutesManager.receipt, arguments: reviewDetails);
-          }, loading: false),
-          Gap(12.h),
+                text: 'Download Receipt',
+                isActive: true,
+                onTap: () {},
+                loading: false),
+            Gap(12.h),
             CustomButton(
-          text: 'Back Home', isActive: true, onTap: (){
-            removeAllAndPushScreen(RoutesManager.bottomNav);
-          }, loading: false, backgroundColor: ColorManager.kWhite, textStyle: get16TextStyle().copyWith(color: ColorManager.kGreyColor.withValues(alpha: .7), fontWeight: FontWeight.w400),),
+              text: 'Share Receipt',
+              isActive: true,
+              onTap: () {
+                generateReceiptPdfFromModel(reviewDetails).then((Uint8List pdfBytes) {
+                          
+                          sharePdf(pdfBytes, '94949494949');
+                        });
+              },
+              loading: false,
+              backgroundColor: ColorManager.kWhite,
+              textStyle: get16TextStyle().copyWith(
+                  color: ColorManager.kGreyColor.withValues(alpha: .7),
+                  fontWeight: FontWeight.w400),
+            ),
           ],
         ),
       )),

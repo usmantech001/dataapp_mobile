@@ -200,8 +200,8 @@ class UserProvider with ChangeNotifier {
     await ServicesHelper.getServiceTxns(
       page: (forceRefresh) ? 1 : _filterTxnPage,
       cashFlowType: cashFlowType,
-      status: status,
-      purpose: purpose,
+      //status: status,
+      //purpose: purpose,
       startDate: startDate,
       endDate: endDate,
     ).then((dt) {

@@ -1,3 +1,4 @@
+import 'package:dataplug/core/providers/data_controller.dart';
 import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/providers/wallet_controller.dart';
 import 'package:dataplug/core/utils/custom_image.dart';
@@ -41,11 +42,12 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
        final walletController = context.read<WalletController>();
        final generalController = context.read<GeneralController>();
-
+       final dataController = context.read<DataController>();
       Future.wait([
         walletController.getWalletBalance(),
          walletController.getBanners(),
-         generalController.getServicesCharge()
+         generalController.getServicesCharge(),
+         dataController.getRecommendedDataPlans()
         // serviceController.getServicesStatus()
       ]);
     });

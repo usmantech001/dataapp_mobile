@@ -1,12 +1,16 @@
+import 'package:dataplug/core/enum.dart';
 import 'package:dataplug/core/model/bar%20graph/bar_data.dart';
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/model/core/service_txn.dart';
+import 'package:dataplug/core/model/core/spending_analysis_response.dart';
 import 'package:dataplug/core/providers/history_controller.dart';
+import 'package:dataplug/core/utils/custom_image.dart';
 import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/core/utils/summary_info.dart';
 import 'package:dataplug/core/utils/utils.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
+import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/loading.dart';
 import 'package:dataplug/presentation/misc/custom_components/toggle_selector_widget.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
@@ -41,6 +45,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
       appBar: CustomAppbar(
         title: 'Transaction History',
         canPop: false,
+        suffix: InkWell(
+          onTap: () {
+            showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return FilterBottomSheet();
+                });
+          },
+          child: CircleAvatar(
+            radius: 20,
+            backgroundColor: ColorManager.kWhite,
+            child: Icon(
+              Icons.tune,
+              size: 25,
+              color: ColorManager.kGreyColor,
+            ),
+          ),
+        ),
       ),
       body: Consumer<HistoryController>(builder: (context, controller, child) {
         return Padding(
@@ -56,7 +78,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
               Expanded(
                   child: controller.currentTabIndex == 1
-                      ? SpendingAnalysis()
+                      ? controller.gettingAnalysis? Center(child: CircularProgressIndicator()) : controller.analysisError!=null?Text(controller.analysisError!): SpendingAnalysis(
+                        spendingAnalysisData: controller.selectedPeriodIndex==0? controller.weeklyAnalysis! : controller.monthlyAnalysis!,
+                      )
                       : controller.gettingHistory
                           ? buildLoading(wrapWithExpanded: false)
                           : ListView.separated(
@@ -78,168 +102,160 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 }
 
+
+
 class SpendingAnalysis extends StatelessWidget {
-  SpendingAnalysis({super.key});
-  final List<double> weeklySummary = [40.4, 2.5, 42.3, 10, 100.50, 40, 10.7];
+  const SpendingAnalysis({super.key, required this.spendingAnalysisData});
+
+  final SpendingAnalysisData spendingAnalysisData;
+
   @override
   Widget build(BuildContext context) {
-    Map<int, double> weeklyTotals = {
-      1: 0, // Mon
-      2: 0, // Tue
-      3: 0,
-      4: 0,
-      5: 0,
-      6: 0,
-      7: 0, // Sun
-    };
+    final charts = spendingAnalysisData.chart;
+    final isWeekly = spendingAnalysisData.period == "weekly";
+    print('...period is ${spendingAnalysisData.period} ${charts[0].label}');
 
-    BarData barData = BarData(
-        sunAmount: weeklySummary[0],
-        monAmount: weeklySummary[1],
-        tueAmount: weeklySummary[2],
-        wedAmount: weeklySummary[3],
-        thurAmount: weeklySummary[4],
-        friAmount: weeklySummary[5],
-        satAmount: weeklySummary[6]);
-    barData.initializeBarData();
-// for (final tx in transactions) {
-//   weeklyTotals[tx.date.weekday] =
-//       (weeklyTotals[tx.date.weekday] ?? 0) + tx.amount;
-// }
+    final maxY = charts
+        .map((e) => e.amount)
+        .reduce((a, b) => a > b ? a : b)
+        .toDouble();
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 20),
-            margin: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
-            decoration: BoxDecoration(
-                color: ColorManager.kWhite,
-                borderRadius: BorderRadius.circular(16.sp)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Spending Analysis',
-                      style: get18TextStyle(),
-                    ),
-                    Row(
-                      spacing: 10,
-                      children: [
-                        MonthlyWeeklySelector(
-                          text: 'Weekly',
-                          isSelected: true,
-                        ),
-                        MonthlyWeeklySelector(text: 'Monthly')
-                      ],
-                    )
-                  ],
-                ),
-                Gap(24.h),
-                Text(
-                  'Total Spending',
-                  style: get14TextStyle().copyWith(
-                      color: ColorManager.kGreyColor.withValues(alpha: .7)),
-                ),
-                Gap(16.h),
-                Text(
-                  '₦67,545.23',
-                  style: get28TextStyle(),
-                ),
-                Gap(24.h),
-                SizedBox(
-                  height: 200.h,
-                  child: BarChart(
-                    BarChartData(
-                      maxY: 100,
-                      minY: 0,
-                      gridData: FlGridData(
-                        show: true,
-                        drawVerticalLine: false,
-                        getDrawingHorizontalLine: (value) => FlLine(
-                          strokeWidth: 0.8,
-                          color: ColorManager.kGreyEB,
-                        ),
-                      ),
-                      borderData: FlBorderData(show: false),
-                      titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 40,
-                            getTitlesWidget: (value, meta) {
-                              return Text('₦${value.toInt()}');
-                            },
-                          ),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (value, meta) {
-                              const days = [
-                                'Mon',
-                                'Tue',
-                                'Wed',
-                                'Thu',
-                                'Fri',
-                                'Sat',
-                                'Sun'
-                              ];
-                              return Text(
-                                days[value.toInt() - 1],
-                                style: get12TextStyle().copyWith(
-                                    color: ColorManager.kGreyColor
-                                        .withValues(alpha: .7)),
-                              );
-                            },
-                          ),
-                        ),
-                        topTitles:
-                            AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        rightTitles:
-                            AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      ),
-                      barGroups: barData.barData.map((data) {
-                        final isToday = DateTime.now().weekday == data.x;
-                        return BarChartGroupData(x: data.x, barRods: [
-                          BarChartRodData(
-                              toY: data.y,
-                              color: isToday
-                                  ? ColorManager.kPrimary
-                                  : ColorManager.kGreyEB,
-                              width: 32.w,
-                              borderRadius: BorderRadius.circular(5.r)),
-                        ]);
-                      }).toList(),
-                    ),
-                  ),
-                ),
-                Gap(32.h),
-                Column(
-                  spacing: 24.h,
-                  children: [
-                    PercentageAnalysisWidget(
-                        name: 'Buy Data', percent: '40', amount: '20,000'),
-                    PercentageAnalysisWidget(
-                        name: 'Buy Airtime', percent: '20', amount: '10,000'),
-                    PercentageAnalysisWidget(
-                        name: 'Transfer', percent: '8', amount: '2,000'),
-                         PercentageAnalysisWidget(
-                        name: 'Others', percent: '2', amount: '500'),
-                  ],
-                )
-              ],
-            ),
+    final barGroups = charts.asMap().entries.map((entry) {
+      final index = entry.key;
+      final item = entry.value;
+
+      final isToday = isWeekly &&
+          DateTime.parse(item.date).weekday == DateTime.now().weekday;
+
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: item.amount.toDouble(),
+            color: isToday ? ColorManager.kPrimary : ColorManager.kGreyEB,
+            width: 32.w,
+            borderRadius: BorderRadius.circular(5.r),
           ),
         ],
-      ),
+      );
+    }).toList();
+
+    return Consumer<HistoryController>(
+      builder: (context, controller, child) {
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+                margin: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
+                decoration: BoxDecoration(
+                  color: ColorManager.kWhite,
+                  borderRadius: BorderRadius.circular(16.sp),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Spending Analysis', style: get18TextStyle()),
+                        Row(
+                          spacing: 10.w,
+                          children:  [
+                            MonthlyWeeklySelector(text: 'Weekly', isSelected: controller.selectedPeriodIndex==0, onTap: () {
+                              controller.onPeriodTabChanged(0);
+                            },),
+                            MonthlyWeeklySelector(text: 'Monthly', isSelected:  controller.selectedPeriodIndex==1,onTap: () {
+                              controller.onPeriodTabChanged(1);
+                            },),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Gap(24.h),
+                    Text(
+                      'Total Spending',
+                      style: get14TextStyle()
+                          .copyWith(color: ColorManager.kGreyColor.withValues(alpha: .7)),
+                    ),
+                    Gap(16.h),
+                    Text(
+                      '₦${spendingAnalysisData.summary.totalSpent}',
+                      style: get28TextStyle(),
+                    ),
+                    Gap(24.h),
+                    SizedBox(
+                      height: 200.h,
+                      child: BarChart(
+                        BarChartData(
+                          maxY: maxY == 0 ? 100 : maxY,
+                          minY: 0,
+                          gridData: FlGridData(
+                            show: true,
+                            drawVerticalLine: false,
+                            getDrawingHorizontalLine: (value) => FlLine(
+                              strokeWidth: 0.8,
+                              color: ColorManager.kGreyEB,
+                            ),
+                          ),
+                          borderData: FlBorderData(show: false),
+                          titlesData: FlTitlesData(
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 40,
+                                getTitlesWidget: (value, meta) =>
+                                    Text('₦${value.toInt()}'),
+                              ),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, meta) {
+                                  final index = value.toInt();
+                                  if (index < 0 || index >= charts.length) {
+                                    return const SizedBox();
+                                  }
+                                  return Text(
+                                    charts[index].label, // Mon, Tue... or Feb 2025
+                                    style: get12TextStyle().copyWith(
+                                      color: ColorManager.kGreyColor.withValues(alpha: .7),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          ),
+                          barGroups: barGroups,
+                        ),
+                      ),
+                    ),
+                    Gap(32.h),
+                    Column(
+                      children: spendingAnalysisData.serviceBreakdown.map((e) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 24.h),
+                          child: PercentageAnalysisWidget(
+                            name: e.service,
+                            percent: e.percentage.toStringAsFixed(0),
+                            amount: e.amount.toString(),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }
     );
   }
 }
+
 
 class PercentageAnalysisWidget extends StatelessWidget {
   const PercentageAnalysisWidget(
@@ -301,7 +317,7 @@ class HistoryTile extends StatelessWidget {
             summaryItems: summaryItems,
             amount: transInfo.amount.toString(),
             shortInfo: "");
-        pushNamed(RoutesManager.successful, arguments: details);
+        pushNamed(RoutesManager.receipt, arguments: details);
       },
       child: Container(
         padding: EdgeInsets.all(12.r),
@@ -315,9 +331,11 @@ class HistoryTile extends StatelessWidget {
             Container(
               height: 48.h,
               width: 48.w,
+              padding: EdgeInsets.all(13.r),
               decoration: BoxDecoration(
                   color: ColorManager.kPrimary.withValues(alpha: .08),
                   borderRadius: BorderRadius.circular(12.r)),
+                child:   svgImage(imgPath: 'assets/icons/${getIcon(transInfo.purpose)}.svg', height: 24.h, width: 24.w)
             ),
             Gap(12.w),
             Column(
@@ -360,15 +378,45 @@ class HistoryTile extends StatelessWidget {
   }
 }
 
+String getIcon(ServicePurpose purpose){
+  switch (purpose) {
+    case ServicePurpose.airtime:
+     return 'airtime-icon';
+    case ServicePurpose.data:
+     return 'data-icon';
+    case ServicePurpose.electricity:
+     return 'electricity-icon';
+    case ServicePurpose.tvSubscription:
+     return 'cable-icon';
+    case ServicePurpose.internationalAirtime:
+     return 'intl-airtime-icon';
+    case ServicePurpose.internationalData:
+     return 'intl-data-icon';
+    case ServicePurpose.education:
+     return 'epin-icon';
+    case ServicePurpose.betting:
+     return 'betting-icon';
+     case ServicePurpose.withdrawal:
+     return 'withdraw-green';  
+     case ServicePurpose.transfer:
+     return 'transfer-green';  
+     case ServicePurpose.deposit:
+     return 'topup-green';          
+    default:
+    return 'airtime-icon'; 
+  }
+}
+
 class MonthlyWeeklySelector extends StatelessWidget {
   const MonthlyWeeklySelector(
-      {super.key, required this.text, this.isSelected = false});
+      {super.key, required this.text, this.isSelected = false, required this.onTap});
   final String text;
   final bool isSelected;
+  final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => null,
+      onTap: onTap,
       child: Center(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.5),
@@ -387,5 +435,150 @@ class MonthlyWeeklySelector extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class FilterBottomSheet extends StatelessWidget {
+  const FilterBottomSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<HistoryController>(builder: (context, controller, child) {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        decoration: BoxDecoration(
+            color: ColorManager.kWhite,
+            borderRadius: BorderRadius.circular(24.r)),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Filter',
+                    style: get18TextStyle(),
+                  ),
+                  InkWell(
+                    onTap: () => Navigator.pop(context),
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: ColorManager.kGreyF8,
+                      child: Icon(Icons.close),
+                    ),
+                  )
+                ],
+              ),
+              Gap(24.h),
+              Text(
+                'Category',
+                style: get16TextStyle().copyWith(fontWeight: FontWeight.w400),
+              ),
+              Gap(12.h),
+              Wrap(
+                spacing: 12.w,
+                runSpacing: 12.h,
+                children: List.generate(controller.categoryFilterList.length,
+                    (index) {
+                  final filter = controller.categoryFilterList[index];
+                  return InkWell(
+                    onTap: () {
+                      controller.onFilterChanged(index);
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                          color: controller.selectedCategoryIndex == index
+                              ? ColorManager.kPrimary
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(100.sp),
+                          border: Border.all(
+                              color: ColorManager.kGreyColor
+                                  .withValues(alpha: .08))),
+                      child: Text(
+                        filter,
+                        style: get14TextStyle().copyWith(
+                            color: controller.selectedCategoryIndex == index
+                                ? ColorManager.kWhite
+                                : ColorManager.kGreyColor.withValues(alpha: .7)),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+              Gap(24.h),
+              Text(
+                'Status',
+                style: get16TextStyle().copyWith(fontWeight: FontWeight.w400),
+              ),
+              Gap(12.h),
+              Wrap(
+                spacing: 12.w,
+                runSpacing: 12.h,
+                children:
+                    List.generate(controller.statusFilterList.length, (index) {
+                  final filter = controller.statusFilterList[index];
+                  return InkWell(
+                    onTap: () {
+                      controller.onFilterChanged(index, isStatus: true);
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100.sp),
+                          color: controller.selectedStatusIndex == index
+                              ? ColorManager.kPrimary
+                              : Colors.transparent,
+                          border: Border.all(
+                              color: ColorManager.kGreyColor
+                                  .withValues(alpha: .08))),
+                      child: Text(
+                        filter,
+                        style: get14TextStyle().copyWith(
+                            color: controller.selectedStatusIndex == index
+                                ? ColorManager.kWhite
+                                : ColorManager.kGreyColor.withValues(alpha: .7)),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+              Gap(32.h),
+              Row(
+                spacing: 10.w,
+                children: [
+                  Expanded(
+                      child: CustomButton(
+                          text: 'Clear Filter',
+                          isActive: true,
+                          onTap: () {},
+                          loading: false,
+                          backgroundColor: ColorManager.kWhite,
+                          border: Border.all(
+                            color: ColorManager.kGreyColor.withValues(alpha:  .12)
+                          ),
+                          textColor: ColorManager.kGreyColor.withValues(alpha: .7),
+                          ),
+                          ),
+                  Expanded(
+                      child: CustomButton(
+                          text: 'Apply Filter',
+                          isActive: true,
+                          onTap: () {
+                            controller.getServiceTxnsHistory();
+                            popScreen();
+                          },
+                          loading: false)),
+                ],
+              )
+            ],
+          ),
+        ),
+      );
+    });
   }
 }

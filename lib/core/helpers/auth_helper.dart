@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:dataplug/core/utils/nav.dart';
 import 'package:flutter/cupertino.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
@@ -194,6 +195,7 @@ class AuthHelper {
       }
       throw throwHttpError(res);
     } catch (e) {
+      popScreen();
       print('...failed to login ${e.toString()}');
       rethrow;
     }

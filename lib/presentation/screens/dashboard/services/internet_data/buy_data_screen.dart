@@ -10,6 +10,7 @@ import 'package:dataplug/core/utils/summary_info.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_bottom_sheet.dart';
+import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
 import 'package:dataplug/presentation/misc/custom_components/operator_selector.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
@@ -25,6 +26,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class BuyDataScreen extends StatefulWidget {
   const BuyDataScreen({super.key});
@@ -34,13 +36,6 @@ class BuyDataScreen extends StatefulWidget {
 }
 
 class _BuyDataScreenState extends State<BuyDataScreen> {
-  // Map<String, String> dataTypes = {
-  //   'direct': 'Direct',
-  //   'sme' : 'SME/CG',
-  //   'direct' : 'Smile',
-  //   'direct' : ''
-  // }
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -88,11 +83,11 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
                             style: get16TextStyle(),
                           ),
                         ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
+                        Padding(
+                          // scrollDirection: Axis.horizontal,
                           padding: EdgeInsets.symmetric(horizontal: 15.w),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             spacing: MediaQuery.sizeOf(context).width * 0.02,
                             children: List.generate(controller.providers.length,
                                 (index) {
@@ -164,145 +159,212 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
                   style: get16TextStyle(),
                 ),
               ),
-              controller.allPlans.isNotEmpty
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 8.h,
-                      children: [
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
+              controller.gettingPlans
+                  ? GridView.count(
+                      padding: EdgeInsets.symmetric(horizontal: 15.w),
+                      shrinkWrap: true,
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: List.generate(9, (index) {
+                        return PlanBoxShimmer();
+                      }),
+                    )
+                  : controller.plansErrMsg != null
+                      ? Padding(
                           padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: Row(
-                            spacing: 8.w,
-                            children: controller.selectedTypeIndex == 0
-                                ? List.generate(controller.dataPlanTypes.length,
-                                    (index) {
-                                    final type =
-                                        controller.dataPlanTypes[index];
-                                    return PlanTab(
-                                      planType: type,
-                                      isSelected: controller.type ==
-                                          type.split(" ").last.toLowerCase(),
+                          child: Column(
+                            spacing: 30.h,
+                            children: [
+                              Text(controller.plansErrMsg ?? "", textAlign: TextAlign.center,),
+                              CustomButton(
+                                text: 'Retry',
+                                width: 180.w,
+                                isActive: true,
+                                onTap: () {
+                                  if(controller.selectedTypeIndex==0){
+                                    controller.getDataPlans();
+                                  }else{
+                                    controller.getDataPlanTypes();
+                                  }
+                                },
+                                loading: false,
+                                border: Border.all(
+                                  color: ColorManager.kPrimary,
+                                ),
+                                textColor: ColorManager.kPrimary,
+                                backgroundColor: ColorManager.kGreyF5,
+                              )
+                            ],
+                          ),
+                        )
+                      : controller.allPlans.isNotEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              spacing: 8.h,
+                              children: [
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.w),
+                                  child: Row(
+                                    spacing: 8.w,
+                                    children: controller.selectedTypeIndex == 0
+                                        ? List.generate(
+                                            controller.dataPlanTypes.length,
+                                            (index) {
+                                            final type =
+                                                controller.dataPlanTypes[index];
+                                            return PlanTab(
+                                              planType: type,
+                                              isSelected: controller.type ==
+                                                  type
+                                                      .split(" ")
+                                                      .last
+                                                      .toLowerCase(),
+                                              onTap: () {
+                                                controller.onSelectPlanType(type
+                                                    .split(" ")
+                                                    .last
+                                                    .toLowerCase());
+                                              },
+                                            );
+                                          })
+                                        : List.generate(
+                                            controller.plansByDays.length,
+                                            (index) {
+                                            final duration = controller
+                                                .plansByDays.keys
+                                                .toList()[index];
+                                            return PlanTab(
+                                              duration: duration,
+                                              isSelected:
+                                                  controller.selectedDuration ==
+                                                      duration,
+                                              onTap: () {
+                                                controller.onDurationChanged(
+                                                    duration);
+                                              },
+                                            );
+                                          }),
+                                  ),
+                                ),
+                                GridView.count(
+                                  // controller: ,
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.w),
+                                  shrinkWrap: true,
+                                  crossAxisCount: 3,
+                                  mainAxisSpacing: 10,
+                                  crossAxisSpacing: 10,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  children: List.generate(
+                                      controller.selectedDuration == 'All'
+                                          ? controller.allPlans.length
+                                          : controller.durationPlans.length,
+                                      (index) {
+                                    final plan =
+                                        controller.selectedDuration == 'All'
+                                            ? controller.allPlans[index]
+                                            : controller.durationPlans[index];
+                                    print('..the plan is $plan');
+                                    return PlanBox(
+                                      plan: plan,
                                       onTap: () {
-                                        controller.onSelectPlanType(
-                                            type.split(" ").last.toLowerCase());
-                                      },
-                                    );
-                                  })
-                                : List.generate(controller.plansByDays.length,
-                                    (index) {
-                                    final duration = controller.plansByDays.keys
-                                        .toList()[index];
-                                    return PlanTab(
-                                      duration: duration,
-                                      isSelected: controller.selectedDuration ==
-                                          duration,
-                                      onTap: () {
-                                        controller.onDurationChanged(duration);
+                                        if (controller.phoneNumberController
+                                            .text.isEmpty) {
+                                          showCustomToast(
+                                              context: context,
+                                              description:
+                                                  'Please enter a phone number');
+                                          return;
+                                        }
+                                        controller.onPlanSelected(plan);
+                                        final generalController =
+                                            context.read<GeneralController>();
+                                        num serviceCharge = generalController
+                                                .serviceCharge?.data ??
+                                            0;
+                                        num totalAmount = calculateTotalAmount(
+                                            amount: plan.amount.toString(),
+                                            charge: serviceCharge);
+                                        final summaryItems = [
+                                          SummaryItem(
+                                              title: 'Network',
+                                              name: controller
+                                                      .selectedProvider?.name ??
+                                                  ""),
+                                          SummaryItem(
+                                            title: 'Phone number',
+                                            name: controller
+                                                .phoneNumberController.text
+                                                .trim(),
+                                            hasDivider: true,
+                                          ),
+                                          if (serviceCharge != 0)
+                                            SummaryItem(
+                                              title: 'Service Charge',
+                                              name:
+                                                  formatCurrency(serviceCharge),
+                                            ),
+                                          SummaryItem(
+                                              title: 'Amount',
+                                              name:
+                                                  formatCurrency(totalAmount)),
+                                        ];
+                                        final reviewDetails = ReviewModel(
+                                            summaryItems: summaryItems,
+                                            amount: plan.amount.toString(),
+                                            providerName: controller
+                                                .selectedProvider?.name,
+                                            logo: controller
+                                                .selectedProvider?.logo,
+                                            shortInfo:
+                                                '${controller.selectedProvider?.name ?? ""} Data',
+                                            onPinCompleted: (pin) async {
+                                              displayLoader(context);
+                                              controller.buyData(
+                                                pin,
+                                                onSuccess: (transactionInfo) {
+                                                  popScreen();
+                                                  final items = getSummaryItems(
+                                                      transactionInfo,
+                                                      TransactionType.data);
+                                                  final review = ReceiptModel(
+                                                      summaryItems: items,
+                                                      amount: transactionInfo
+                                                          .amount
+                                                          .toString(),
+                                                      shortInfo:
+                                                          '${transactionInfo.meta.provider?.name ?? ""} Airtime');
+                                                  Navigator
+                                                      .pushNamedAndRemoveUntil(
+                                                          context,
+                                                          RoutesManager
+                                                              .successful,
+                                                          (Route<dynamic>
+                                                                  route) =>
+                                                              false,
+                                                          arguments: review);
+                                                },
+                                                onError: (error) {
+                                                  popScreen();
+                                                  showCustomErrorTransaction(
+                                                      context: context,
+                                                      errMsg: error);
+                                                },
+                                              );
+                                            });
+                                        showReviewBottomShhet(context,
+                                            reviewDetails: reviewDetails);
                                       },
                                     );
                                   }),
-                          ),
-                        ),
-                        GridView.count(
-                          // controller: ,
-                          padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          shrinkWrap: true,
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                          physics: NeverScrollableScrollPhysics(),
-                          children: List.generate(
-                              controller.selectedDuration == 'All'
-                                  ? controller.allPlans.length
-                                  : controller.durationPlans.length, (index) {
-                            final plan = controller.selectedDuration == 'All'
-                                ? controller.allPlans[index]
-                                : controller.durationPlans[index];
-                            return PlanBox(
-                              plan: plan,
-                              onTap: () {
-                                if (controller
-                                    .phoneNumberController.text.isEmpty) {
-                                  showCustomToast(
-                                      context: context,
-                                      description:
-                                          'Please enter a phone number');
-                                  return;
-                                }
-                                controller.onPlanSelected(plan);
-                                final generalController =
-                                    context.read<GeneralController>();
-                                num serviceCharge =
-                                    generalController.serviceCharge?.data ?? 0;
-                                num totalAmount = calculateTotalAmount(
-                                    amount: plan.amount.toString(),
-                                    charge: serviceCharge);
-                                final summaryItems = [
-                                  SummaryItem(
-                                      title: 'Network',
-                                      name: controller.selectedProvider?.name ??
-                                          ""),
-                                  SummaryItem(
-                                    title: 'Phone number',
-                                    name: controller.phoneNumberController.text
-                                        .trim(),
-                                    hasDivider: true,
-                                  ),
-                                  if (serviceCharge != 0)
-                                    SummaryItem(
-                                      title: 'Service Charge',
-                                      name: formatCurrency(serviceCharge),
-                                    ),
-                                  SummaryItem(
-                                      title: 'Amount',
-                                      name: formatCurrency(totalAmount)),
-                                ];
-                                final reviewDetails = ReviewModel(
-                                    summaryItems: summaryItems,
-                                    amount: plan.amount.toString(),
-                                    providerName:
-                                        controller.selectedProvider?.name,
-                                    logo: controller.selectedProvider?.logo,
-                                    shortInfo:
-                                        '${controller.selectedProvider?.name ?? ""} Data',
-                                    onPinCompleted: (pin) async {
-                                      displayLoader(context);
-                                      controller.buyData(
-                                        pin,
-                                        onSuccess: (transactionInfo) {
-                                          popScreen();
-                                          final items = getSummaryItems(
-                                              transactionInfo,
-                                              TransactionType.data);
-                                          final review = ReceiptModel(
-                                              summaryItems: items,
-                                              amount: transactionInfo.amount
-                                                  .toString(),
-                                              shortInfo:
-                                                  '${transactionInfo.meta.provider?.name ?? ""} Airtime');
-                                          Navigator.pushNamedAndRemoveUntil(
-                                              context,
-                                              RoutesManager.successful,
-                                              (Route<dynamic> route) => false,
-                                              arguments: review);
-                                        },
-                                        onError: (error) {
-                                          popScreen();
-                                          showCustomErrorTransaction(
-                                              context: context, errMsg: error);
-                                        },
-                                      );
-                                    });
-                                showReviewBottomShhet(context,
-                                    reviewDetails: reviewDetails);
-                              },
-                            );
-                          }),
-                        )
-                      ],
-                    )
-                  : Center(child: Text('No Package is available')),
+                                )
+                              ],
+                            )
+                          : controller.allPlans.isEmpty? Center(child: Text('')): SizedBox(),
             ],
           ),
         ),
@@ -348,7 +410,46 @@ class PlanBox extends StatelessWidget {
         ),
       ),
     );
-    ;
+  }
+}
+
+class PlanBoxShimmer extends StatelessWidget {
+  const PlanBoxShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: Colors.grey.withOpacity(.07)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _line(width: 60.w, height: 14.h),
+            Gap(6),
+            _line(width: 40.w, height: 10.h),
+            Gap(12),
+            _line(width: 70.w, height: 14.h),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _line({required double width, required double height}) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6.r),
+      ),
+    );
   }
 }
 

@@ -206,6 +206,7 @@ class Customer {
   String? meterAddress;
   String? registrationNumber;
   String? phone;
+  String? customer_id;
 
   Customer(
       {this.smartcardNumber,
@@ -214,7 +215,9 @@ class Customer {
       this.meterNumber,
       this.meterAddress,
       this.registrationNumber,
-      this.phone});
+      this.phone,
+      
+      this.customer_id});
 
   Customer.fromJson(Map<String, dynamic> json) {
     smartcardNumber = json['smartcard_number'];
@@ -224,6 +227,7 @@ class Customer {
     meterAddress = json['meter_address'];
     registrationNumber = json['registration_number'];
     phone = json['phone'];
+    customer_id = json['customer_id'];
   }
 
   Map<String, dynamic> toJson() {

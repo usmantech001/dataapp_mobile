@@ -16,6 +16,7 @@ showCustomMessageBottomSheet({
 }) {
   return showModalBottomSheet(
       context: context,
+      isDismissible: false,
       builder: (context) {
         return Container(
           padding:
@@ -44,7 +45,7 @@ showCustomMessageBottomSheet({
               ),
               Gap(20),
               CustomButton(
-                  text: 'Continue',
+                  text:isSuccess? 'Continue' : 'Try Again',
                   isActive: true,
                   width: 120.w,
                   backgroundColor: isSuccess? ColorManager.kPrimary : ColorManager.kError,

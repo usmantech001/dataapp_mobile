@@ -1,3 +1,4 @@
+import 'package:dataplug/core/enum.dart';
 import 'package:dataplug/core/model/core/service_txn.dart';
 import 'package:dataplug/core/utils/utils.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
@@ -11,43 +12,57 @@ List<SummaryItem> getSummaryItems(ServiceTxn transInfo, TransactionType type){
     SummaryItem(title: 'Payment Status', name: transInfo.status.name??"", hasDivider: true,),
     SummaryItem(title: 'Amount', name: '₦${transInfo.amount}')
   ];
-  if(type == TransactionType.airtime || type == TransactionType.data){
+  if(transInfo.purpose == ServicePurpose.airtime){
     List<SummaryItem> airtimeItems = [
       SummaryItem(title: 'Network', name: transInfo.meta.provider?.name??""),
       SummaryItem(title: 'Phone Number', name: transInfo.meta.customer?.phone??"", hasDivider: true,),
     ];
     items = [...airtimeItems, ...paymentInfoItems];
   }
+  if(transInfo.purpose == ServicePurpose.data){
+    List<SummaryItem> airtimeItems = [
+      SummaryItem(title: 'Network', name: transInfo.meta.provider?.name??""),
+      SummaryItem(title: 'Phone Number', name: transInfo.meta.customer?.phone??""),
+      SummaryItem(title: 'Data Plan', name: transInfo.meta.product?.name??"", hasDivider: true,),
+    ];
+    items = [...airtimeItems, ...paymentInfoItems];
+  }
 
-  if(type == TransactionType.electricity){
+  if(transInfo.purpose == ServicePurpose.electricity){
+     String token = (transInfo.meta.token ?? "")
+          .replaceAll('Token', '')
+          .replaceAll(":", "")
+          .trim();
     List<SummaryItem> electricityItems = [
       SummaryItem(title: 'Electricity Provider', name: transInfo.meta.provider?.name??""),
-      SummaryItem(title: 'Meter Number', name: transInfo.meta.customer?.meterNumber??"", hasDivider: true,),
+      SummaryItem(title: 'Meter Number', name: transInfo.meta.customer?.meterNumber??"",),
+      SummaryItem(title: 'Token', name: token, hasDivider: true,),
     ];
     items = [...electricityItems, ...paymentInfoItems];
   }
 
-  if(type == TransactionType.cable){
+  if(transInfo.purpose == ServicePurpose.tvSubscription){
     List<SummaryItem> cableItems = [
       SummaryItem(title: 'TC/Cable Provider', name: transInfo.meta.provider?.name??""),
-      SummaryItem(title: 'Package Type', name: transInfo.meta.customer?.meterNumber??"", hasDivider: true,),
+      SummaryItem(title: 'Product', name: transInfo.meta.product?.name??"",),
+      SummaryItem(title: 'Smartcard Number', name: transInfo.meta.customer?.smartcardNumber??"", hasDivider: true,),
     ];
     items = [...cableItems, ...paymentInfoItems];
   }
 
-  if(type == TransactionType.betting){
+  if(transInfo.purpose == ServicePurpose.betting){
     List<SummaryItem> bettingItems = [
       SummaryItem(title: 'Service Provider', name: transInfo.meta.provider?.name??""),
-      SummaryItem(title: 'Bet ID / Phone Number', name: transInfo.meta.customer?.phone??"", hasDivider: true,),
+      SummaryItem(title: 'Bet ID / Phone Number', name: transInfo.meta.customer?.customer_id??"", hasDivider: true,),
       //SummaryItem(title: 'Bet ID / Phone Number', name: transInfo.meta.customer.??"", hasDivider: true,),
     ];
     items = [...bettingItems, ...paymentInfoItems];
   }
 
-  if(type == TransactionType.epin){
+  if(transInfo.purpose == ServicePurpose.education){
     List<SummaryItem> bettingItems = [
       SummaryItem(title: 'Service Provider', name: transInfo.meta.provider?.name??""),
-      SummaryItem(title: 'Number', name: transInfo.meta.customer?.phone??"", hasDivider: true,),
+      SummaryItem(title: 'Number', name: transInfo.meta.customer?.registrationNumber??"", hasDivider: true,),
       //SummaryItem(title: 'Bet ID / Phone Number', name: transInfo.meta.customer.??"", hasDivider: true,),
     ];
     items = [...bettingItems, ...paymentInfoItems];

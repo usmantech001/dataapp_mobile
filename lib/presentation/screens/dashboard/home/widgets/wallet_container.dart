@@ -15,6 +15,8 @@ class WalletContainer extends StatelessWidget {
       builder: (context, controller, child) {
         return Container(
           margin: EdgeInsets.only(top: 24.h, bottom: 12.h),
+          height: 107.h,
+          //height: 
           width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
           decoration: BoxDecoration(
@@ -22,6 +24,7 @@ class WalletContainer extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.r)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 5.h,
             children: [
               Text(
                 'WALLET BALANCE',

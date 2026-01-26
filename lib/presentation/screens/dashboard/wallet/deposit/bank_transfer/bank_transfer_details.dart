@@ -98,7 +98,7 @@ class _BankTransferDetailsState extends State<BankTransferDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return Scaffold(
       backgroundColor: ColorManager.kPrimary,
       body: SafeArea(
         bottom: false,

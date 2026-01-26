@@ -55,8 +55,10 @@ class _IntlDataCountriesScreenState
                 LucideIcons.search,
                 color: ColorManager.kGreyColor.withValues(alpha: .7),
               ),
-              //textEditingController: firstnameController,
-              onChanged: (_) {},
+               textEditingController: intlDataController.searchController,
+              onChanged: (query) {
+                intlDataController.filterCountries(query);
+              },
             ),
           ),
           Expanded(
@@ -66,7 +68,10 @@ class _IntlDataCountriesScreenState
                       padding:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                       itemBuilder: (context, index) {
-                        final country =
+                        final country =intlDataController
+                                .searchController.text.isNotEmpty
+                            ? intlDataController
+                                .filteredIntlDataCountries[index]:
                             intlDataController.intlDataCountries[index];
                         return InkWell(
                           onTap: () {
@@ -107,8 +112,11 @@ class _IntlDataCountriesScreenState
                         );
                       },
                       separatorBuilder: (context, index) => Gap(8),
-                      itemCount:
-                          intlDataController.intlDataCountries.length))
+                      itemCount:intlDataController
+                                .searchController.text.isNotEmpty
+                            ? intlDataController
+                                .filteredIntlDataCountries.length:
+                            intlDataController.intlDataCountries.length))
         ],
       ),
     );

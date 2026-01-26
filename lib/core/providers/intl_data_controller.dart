@@ -11,6 +11,7 @@ class IntlDataController extends ChangeNotifier {
   IntlDataController({required this.intlDataRepo});
 
   List<Country> intlDataCountries = [];
+  List<Country> filteredIntlDataCountries = [];
   List<OperatorProvider> intlDataOperators = [];
   List<OperatorTypeProvider> allPlans = [];
   List<OperatorTypeProvider> durationPlans = [];
@@ -20,6 +21,7 @@ class IntlDataController extends ChangeNotifier {
 
   final amountController = TextEditingController();
   final phoneController = TextEditingController();
+   TextEditingController searchController = TextEditingController();
 
   OperatorProvider? selectedOperator;
   Country? selectedCountry;
@@ -34,6 +36,17 @@ class IntlDataController extends ChangeNotifier {
 
   num rate = 0;
   num amountInNaira = 0;
+
+  void filterCountries(String query){
+    filteredIntlDataCountries = [];
+    for (Country country in intlDataCountries) {
+        if ((country.name!.toLowerCase()).contains(query.toLowerCase())) {
+          filteredIntlDataCountries.add(country);
+          notifyListeners();
+        }
+      }
+      
+  }
 
   void clearData() {
     selectedOperator = null;

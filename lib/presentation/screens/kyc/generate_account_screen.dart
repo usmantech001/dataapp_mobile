@@ -15,7 +15,7 @@ class GenerateAccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppbar(title: 'Generate Account'),
+      appBar: CustomAppbar(title: ''),
       bottomNavigationBar: CustomBottomNavBotton(
           text: 'Continue',
           onTap: () {

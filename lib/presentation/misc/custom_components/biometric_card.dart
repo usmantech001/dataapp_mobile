@@ -1,16 +1,19 @@
+import 'package:dataplug/core/helpers/auth_helper.dart';
+import 'package:dataplug/core/providers/user_provider.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/image_manager/image_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
 
 class BiometricCard extends StatelessWidget {
-  const BiometricCard({super.key});
+  const BiometricCard({super.key, required this.onTap});
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      //onTap: () => _verifyBiometrics(context),
+      onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(top: 24, bottom: 5, left: 15, right: 15),
         padding: const EdgeInsets.all(12.5),

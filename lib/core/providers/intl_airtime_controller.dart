@@ -10,6 +10,7 @@ class IntlAirtimeController extends ChangeNotifier{
   IntlAirtimeController({required this.intlAirtimeRepo});
 
   List<Country> intlAirtimeCountries = [];
+  List<Country> filteredIntlAirtimeCountries = [];
    List<OperatorProvider> intlAirtimeOperators = [];
 
   bool gettingCountries = false;
@@ -17,12 +18,24 @@ class IntlAirtimeController extends ChangeNotifier{
 
   final amountController = TextEditingController();
   final phoneController = TextEditingController();
+   TextEditingController searchController = TextEditingController();
 
   OperatorProvider? selectedOperator;
   Country? selectedCountry;
 
   num rate = 0;
   num amountInNaira = 0;
+
+  void filterCountries(String query){
+    filteredIntlAirtimeCountries = [];
+    for (Country country in intlAirtimeCountries) {
+        if ((country.name!.toLowerCase()).contains(query.toLowerCase())) {
+          filteredIntlAirtimeCountries.add(country);
+          notifyListeners();
+        }
+      }
+      
+  }
 
   void clearData() {
     selectedOperator = null;

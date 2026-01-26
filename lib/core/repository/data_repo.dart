@@ -16,6 +16,10 @@ class DataRepo {
     return await ServicesHelper.getDataPlan(provider, type);
   }
 
+  Future<List<DataPlan>> getRecommendedDataPlans() async{
+    return await ServicesHelper.getRecommendedDataPlan();
+  }
+
 Future<List<String>> getDataPlanTypes(String provider) async{
   return await ServicesHelper.getDataPlanTypes(provider);
 }

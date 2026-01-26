@@ -1,3 +1,4 @@
+import 'package:dataplug/core/model/core/custom_network_image.dart';
 import 'package:dataplug/core/model/core/data_plans.dart';
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/data_controller.dart';
@@ -27,12 +28,10 @@ class BuyOtherDataScreen extends StatefulWidget {
 }
 
 class _BuyOtherDataScreenState extends State<BuyOtherDataScreen> {
- 
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    final code =  ModalRoute.of(context)?.settings.arguments as String;
+      final code = ModalRoute.of(context)?.settings.arguments as String;
       final controller = context.read<DataController>();
       controller.getDataProviders(code: code);
     });
@@ -50,8 +49,6 @@ class _BuyOtherDataScreenState extends State<BuyOtherDataScreen> {
             spacing: 24,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
-             
               Padding(
                 padding: EdgeInsetsGeometry.symmetric(horizontal: 15.w),
                 child: Column(
@@ -108,7 +105,6 @@ class _BuyOtherDataScreenState extends State<BuyOtherDataScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 8.h,
                       children: [
-                        
                         GridView.count(
                           // controller: ,
                           padding: EdgeInsets.symmetric(horizontal: 15.w),
@@ -117,8 +113,8 @@ class _BuyOtherDataScreenState extends State<BuyOtherDataScreen> {
                           mainAxisSpacing: 10,
                           crossAxisSpacing: 10,
                           physics: NeverScrollableScrollPhysics(),
-                          children: List.generate(
-                               controller.allPlans.length, (index) {
+                          children: List.generate(controller.allPlans.length,
+                              (index) {
                             final plan = controller.allPlans[index];
                             return PlanBox(
                               plan: plan,
@@ -207,34 +203,44 @@ class PlanBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('...logo ${plan.provider?.logo}');
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-            color: ColorManager.kWhite,
-            borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(
-                color: ColorManager.kGreyColor.withValues(alpha: .07))),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              plan.bundle,
-              style: get16TextStyle(),
+      child: Stack(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 36.w),
+            decoration: BoxDecoration(
+                color: ColorManager.kWhite,
+                borderRadius: BorderRadius.circular(16.r),
+                border: Border.all(
+                    color: ColorManager.kGreyColor.withValues(alpha: .07))),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  plan.bundle,
+                  style: get16TextStyle(),
+                ),
+                Gap(2),
+                Text(
+                  '${plan.duration} days',
+                  style: get12TextStyle().copyWith(
+                      color: ColorManager.kGreyColor.withValues(alpha: .7)),
+                ),
+                Gap(10),
+                Text(
+                  formatCurrency(plan.amount, decimal: 0),
+                  style: get16TextStyle().copyWith(color: ColorManager.kPrimary),
+                )
+              ],
             ),
-            Gap(2),
-            Text(
-              '${plan.duration} days',
-              style: get12TextStyle().copyWith(
-                  color: ColorManager.kGreyColor.withValues(alpha: .7)),
-            ),
-            Gap(10),
-            Text(
-              formatCurrency(plan.amount, decimal: 0),
-              style: get16TextStyle().copyWith(color: ColorManager.kPrimary),
-            )
-          ],
-        ),
+          ),
+
+          Positioned(
+            right: 0,
+            child: CustomNetworkImage(imageUrl: plan.logo))
+        ],
       ),
     );
     ;

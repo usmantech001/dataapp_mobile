@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dataplug/core/model/core/user.dart';
+import 'package:dataplug/core/providers/data_controller.dart';
+import 'package:dataplug/core/providers/user_provider.dart';
 import 'package:dataplug/core/providers/wallet_controller.dart';
 import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/gen/assets.gen.dart';
@@ -10,6 +13,7 @@ import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:dataplug/presentation/screens/dashboard/home/widgets/service_container.dart';
 import 'package:dataplug/presentation/screens/dashboard/home/widgets/wallet_activities_container.dart';
 import 'package:dataplug/presentation/screens/dashboard/home/widgets/wallet_container.dart';
+import 'package:dataplug/presentation/screens/dashboard/services/internet_data/buy_smile_data_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -24,10 +28,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  User? user;
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UserProvider userProvider =
+          Provider.of<UserProvider>(context, listen: false);
+      print('..user ${userProvider.user.fullName}');
+      user = userProvider.user;
+    });
+
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
     final walletController = context.watch<WalletController>();
+    final dataController = context.watch<DataController>();
     return Scaffold(
       body: SafeArea(
           child: Padding(
@@ -47,7 +65,9 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: RefreshIndicator.adaptive(
                 onRefresh: () {
-                    return context.read<WalletController>().getWalletBalance();
+                  context.read<DataController>().getRecommendedDataPlans();
+                  return context.read<WalletController>().getWalletBalance();
+                   
                 },
                 child: SingleChildScrollView(
                   child: Column(
@@ -66,19 +86,67 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: WalletActivitiesContainer(
                                   name: 'Fund',
                                   iconPath: 'fund',
-                                  onTap: () {},
+                                  onTap: () {
+                                    pushNamed(RoutesManager.virtualAccounts);
+                                    // if (user!.phone == null) {
+                                    //   showCustomToast(
+                                    //       context: context,
+                                    //       description:
+                                    //           "Please complete your profile to continue.");
+                                    //           return;
+                                    // }
+                                    /*
+                                    if (!user!.bvn_validated ||
+                                        !user!.bvn_verified) {
+                                      showCustomBottomSheet(
+                                          context: context,
+                                          isDismissible: true,
+                                          screen: Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 15.w,
+                                                vertical: 40.h),
+                                            decoration: BoxDecoration(
+                                                color: ColorManager.kWhite),
+                                            child: SafeArea(
+                                              child: Column(
+                                                spacing: 30.h,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  CustomButton(
+                                                      text: 'Quick Fund',
+                                                      isActive: true,
+                                                      onTap: () {},
+                                                      loading: false),
+                                                      CustomButton(
+                                                      text: 'Generate Static Account',
+                                                      backgroundColor: ColorManager.kWhite,
+                                                      border: Border.all(color: ColorManager.kPrimary),
+                                                      textColor: ColorManager.kBlack,                                                      isActive: true,
+                                                      onTap: () {
+                                                       // popAndPushScreen(RoutesManager.)
+                                                      },
+                                                      loading: false),
+                                                ],
+                                              ),
+                                            ),
+                                          ));
+                                    }
+                                    */
+                                  },
                                 )),
                                 Expanded(
                                     child: WalletActivitiesContainer(
                                   name: 'Transfer',
                                   iconPath: 'transfer',
-                                  onTap: () => Navigator.pushNamed(context, RoutesManager.transfer),
+                                  onTap: () => Navigator.pushNamed(
+                                      context, RoutesManager.transfer),
                                 )),
                                 Expanded(
                                     child: WalletActivitiesContainer(
                                   name: 'Withdraw',
                                   iconPath: 'withdraw',
-                                  onTap: ()=> pushNamed(RoutesManager.withdraw),
+                                  onTap: () =>
+                                      pushNamed(RoutesManager.withdraw),
                                 )),
                               ],
                             ),
@@ -89,103 +157,109 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ServiceTypeContainer(
                                     name: 'Data',
                                     iconPath: 'data-icon',
-                                    onTap: ()=> pushNamed(RoutesManager.buyData),
+                                    onTap: () =>
+                                        pushNamed(RoutesManager.buyData),
                                   ),
                                   ServiceTypeContainer(
-                                      name: 'Airtime', 
+                                      name: 'Airtime',
                                       iconPath: 'airtime-icon',
-                                      onTap: ()=> Navigator.pushNamed(context, RoutesManager.buyAirtime1)),
+                                      onTap: () => Navigator.pushNamed(
+                                          context, RoutesManager.buyAirtime1)),
                                   ServiceTypeContainer(
-                                      name: 'Electricity', 
+                                      name: 'Electricity',
                                       iconPath: 'electricity-icon',
-                                      onTap: ()=> Navigator.pushNamed(context, RoutesManager.electricityProviders)),
+                                      onTap: () => Navigator.pushNamed(context,
+                                          RoutesManager.electricityProviders)),
                                   ServiceTypeContainer(
                                       name: 'TV/Cable',
                                       iconPath: 'cable-icon',
-                                       onTap: ()=> Navigator.pushNamed(context, RoutesManager.cableTvProviders)),
+                                      onTap: () => Navigator.pushNamed(context,
+                                          RoutesManager.cableTvProviders)),
                                   ServiceTypeContainer(
                                       name: 'Int\'t Data',
                                       iconPath: 'intl-data-icon',
-                                       onTap: ()=>  pushNamed(RoutesManager.intlDataCountries)),
+                                      onTap: () => pushNamed(
+                                          RoutesManager.intlDataCountries)),
                                   ServiceTypeContainer(
-                                      name: 'Int\'t Airtime', 
+                                      name: 'Int\'t Airtime',
                                       iconPath: 'intl-airtime-icon',
-                                      onTap: ()=> Navigator.pushNamed(context, RoutesManager.intlAirtimeCountries)),
+                                      onTap: () => Navigator.pushNamed(context,
+                                          RoutesManager.intlAirtimeCountries)),
                                   ServiceTypeContainer(
-                                      name: 'GiftCard', 
+                                      name: 'GiftCard',
                                       iconPath: 'giftcard-icon',
-                                      onTap: ()=> Navigator.pushNamed(context, RoutesManager.giftcardCategory)),
-                                  ServiceTypeContainer(name: 'More', 
-                                  iconPath: 'more-icon',
-                                  onTap: () {
-                                    pushNamed(RoutesManager.services);
-                                  }),
+                                      onTap: () => Navigator.pushNamed(context,
+                                          RoutesManager.giftcardCategory)),
+                                  ServiceTypeContainer(
+                                      name: 'More',
+                                      iconPath: 'more-icon',
+                                      onTap: () {
+                                        pushNamed(RoutesManager.services);
+                                      }),
                                 ]),
                           ],
                         ),
                       ),
                       Gap(24.h),
-                      
-                       if( walletController.banners.isNotEmpty) CarouselSlider.builder(itemCount: walletController.banners.length, itemBuilder: (context, index, _){
-                          final banner = walletController.banners[index];
-                          return ClipRRect(
-                            borderRadius: BorderRadiusGeometry.circular(10),
-                            child: CachedNetworkImage(imageUrl: banner.featured_image, fit: BoxFit.contain,));
-                        }, options: CarouselOptions(
-                         // aspectRatio: 18/7,
-                          viewportFraction: 1,
-                          height: 165.h,
-                        ), ),
-                      Gap(10),
-                      Center(child: SmoothPageIndicator(controller: PageController(), count: walletController.banners.length, effect: WormEffect(activeDotColor: ColorManager.kPrimary, dotHeight: 8),)),
-                      Gap(24.h),
-                      Padding(
-                        padding: EdgeInsets.only(left: 15.w),
-                        child: Text(
-                          'Recommended for you',
-                          style: get16TextStyle()
-                              .copyWith(fontWeight: FontWeight.w500),
+                      if (walletController.banners.isNotEmpty)
+                        CarouselSlider.builder(
+                          itemCount: walletController.banners.length,
+                          itemBuilder: (context, index, _) {
+                            final banner = walletController.banners[index];
+                            return ClipRRect(
+                                borderRadius: BorderRadiusGeometry.circular(10),
+                                child: CachedNetworkImage(
+                                  imageUrl: banner.featured_image,
+                                  fit: BoxFit.contain,
+                                ));
+                          },
+                          options: CarouselOptions(
+                            // aspectRatio: 18/7,
+                            viewportFraction: 1,
+                            height: 165.h,
+                          ),
                         ),
-                      ),
-                      SizedBox(
+                      Gap(10),
+                      Center(
+                          child: SmoothPageIndicator(
+                        controller: PageController(),
+                        count: walletController.banners.length,
+                        effect: WormEffect(
+                            activeDotColor: ColorManager.kPrimary,
+                            dotHeight: 8),
+                      )),
+                      Gap(24.h),
+                     if(dataController.recommendedPlans.isNotEmpty) Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 15.w),
+                            child: Text(
+                              'Recommended for you',
+                              style: get16TextStyle()
+                                  .copyWith(fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          SizedBox(
                         height: 140.h,
                         child: ListView.separated(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 15.w, vertical: 12.h),
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) {
-                              return Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 22.h, horizontal: 36.w),
-                                decoration: BoxDecoration(
-                                    color: ColorManager.kWhite,
-                                    borderRadius: BorderRadius.circular(18.r)),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      '140GB',
-                                      style: get18TextStyle()
-                                          .copyWith(fontWeight: FontWeight.w500),
-                                    ),
-                                    Text('30 days', style: get14TextStyle()),
-                                    Gap(10),
-                                    RichText(
-                                        text: TextSpan(
-                                            text: '₦ ',
-                                            style: get16TextStyle(),
-                                            children: [
-                                          TextSpan(
-                                              text: "750",
-                                              style: get16TextStyle().copyWith(
-                                                  color: ColorManager.kPrimary))
-                                        ]))
-                                  ],
-                                ),
-                              );
+                              final plan = dataController.recommendedPlans[index];
+                              return PlanBox(plan: plan, onTap: (){
+                                dataController.onPlanSelected(plan, isRecommended: true);
+                                pushNamed(RoutesManager.buyRecommendedData);
+                              });
+                              
                             },
                             separatorBuilder: (context, index) => Gap(20),
-                            itemCount: 10),
+                            itemCount: dataController.recommendedPlans.length),
                       )
+                        ],
+                      ),
+                      
                     ],
                   ),
                 ),

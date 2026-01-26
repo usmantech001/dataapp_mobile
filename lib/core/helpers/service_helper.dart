@@ -5,6 +5,7 @@ import 'package:dataplug/core/model/core/card_data.dart';
 import 'package:dataplug/core/model/core/card_rate.dart';
 import 'package:dataplug/core/model/core/card_service_fee.dart';
 import 'package:dataplug/core/model/core/giftcard_product_provider.dart';
+import 'package:dataplug/core/model/core/spending_analysis_response.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -41,8 +42,8 @@ class ServicesHelper {
   static Future<List<ServiceTxn>> getServiceTxns(
       {int perPage = 30,
       int page = 1,
-      Status? status,
-      ServicePurpose? purpose,
+      String? status,
+      String? purpose,
       CashFlowType? cashFlowType,
       DateTime? startDate,
       DateTime? endDate}) async {
@@ -50,35 +51,40 @@ class ServicesHelper {
 
     String url = "/transactions?page=$page&per_page=$perPage";
 
-    if (status != null) {
-      url = "$url&filter[status]=${enumToString(status)}";
-    }
+    Map<String, String>? queryParameters = {
+      if (status != null) 'filter[status]': status,
+      if (purpose != null) 'filter[purpose]': purpose,
+    };
+    http.Response response =
+        await HttpRequest.get(url, queryParameters: queryParameters)
+            .catchError((err) {
+      throw OtherErrors(err);
+    });
 
-    if (purpose != null) {
-      url = "$url&filter[purpose]=${ServiceTxn.serviceEnumToString(purpose)}";
-    }
+    Map res = json.decode(response.body);
 
-    if (cashFlowType != null) {
-      url = "$url&filter[type]=${enumToString(cashFlowType)}";
+    if (response.statusCode < 400) {
+      return (res['data'] as List).map((e) => ServiceTxn.fromMap(e)).toList();
+    } else {
+      throw throwHttpError(res);
     }
+  }
 
-    if ((startDate != null) && (endDate != null)) {
-      String from = DateFormat("yyyy-MM-dd").format(startDate);
-      String to = DateFormat("yyyy-MM-dd").format(endDate);
+  static Future<SpendingAnalysisData> getSpendingAnalysis(
+      {required String period}) async {
+    //
 
-      url = "$url&filter[from]=$from&filter[to]=$to";
-    }
+    String url = "/spending-analysis?period=$period";
 
     http.Response response = await HttpRequest.get(url).catchError((err) {
       throw OtherErrors(err);
     });
 
     Map res = json.decode(response.body);
-
-    log(res.toString(), name: "Servies esesese");
-
+     
     if (response.statusCode < 400) {
-      return (res['data'] as List).map((e) => ServiceTxn.fromMap(e)).toList();
+      print('...analysis data ${res['data']}');
+      return SpendingAnalysisData.fromJson(res['data']);
     } else {
       throw throwHttpError(res);
     }
@@ -206,9 +212,9 @@ class ServicesHelper {
       throw decodedRes["message"];
     }
   }
-   static Future<String> getWalletBalance() async {
-    http.Response response =
-        await HttpRequest.get("/wallet").catchError((err) {
+
+  static Future<String> getWalletBalance() async {
+    http.Response response = await HttpRequest.get("/wallet").catchError((err) {
       throw OtherErrors(err);
     });
 
@@ -395,7 +401,7 @@ class ServicesHelper {
     }
   }
 
-  static Future<dynamic> validateIdentificationOTP(
+  static Future<Map<String, dynamic>> validateIdentificationOTP(
       {required String otp, required String type}) async {
     //
     http.Response response = await HttpRequest.post(
@@ -407,7 +413,7 @@ class ServicesHelper {
 
     print("err $res\n\n");
     if (response.statusCode < 400) {
-      return true;
+      return res['data'];
     } else {
       throw throwHttpError(res);
     }
@@ -536,7 +542,6 @@ class ServicesHelper {
     if (response.statusCode == 200) {
       print('..successfully veryfied neter number ${res}');
       return ElectricityCustomer.fromJson(res['data']);
-      
     }
     throw throwHttpError(res);
   }
@@ -680,6 +685,26 @@ class ServicesHelper {
     }
   }
 
+  static Future<List<DataPlan>> getRecommendedDataPlan() async {
+    String url = "/data-featured";
+    http.Response response = await HttpRequest.get(url).catchError((err) {
+      throw OtherErrors(err);
+    });
+
+    Map res = json.decode(response.body);
+    if (response.statusCode < 400) {
+      print('..recommended plans $res');
+      if (res['data'] is List && res['data'].isNotEmpty) {
+        return (res['data'] as List).map((e) => DataPlan.fromMap(e)).toList();
+      } else {
+        return []; // Return an empty list if 'data' is empty or not a valid list
+      }
+    } else {
+      // throw throwHttpError(res);
+      return [];
+    }
+  }
+
 // Data plan types
   static Future<List<String>> getDataPlanTypes(String provider) async {
     try {
@@ -730,8 +755,6 @@ class ServicesHelper {
       required bool isPorted,
       required String dataPurchaseType}) async {
     String url = "/data/$dataPurchaseType";
-
-
 
     http.Response response = await HttpRequest.post(url, {
       "phone": phone,
@@ -1058,8 +1081,8 @@ class ServicesHelper {
   }
 
   static Future<GiftcardCategoryProviderResponse> getGiftcardCategories({
-   String? search,
-   int page = 1,
+    String? search,
+    int page = 1,
     int perPage = 200,
   }) async {
     final url = '/giftcard-categories/buy?page=$page&per_page=$perPage';

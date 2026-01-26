@@ -1,7 +1,10 @@
+import 'package:dataplug/core/model/core/leaderboard.dart';
 import 'package:dataplug/core/providers/rewards_controller.dart';
 import 'package:dataplug/core/utils/custom_image.dart';
+import 'package:dataplug/core/utils/utils.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
+import 'package:dataplug/presentation/misc/custom_components/loading.dart';
 import 'package:dataplug/presentation/misc/custom_components/toggle_selector_widget.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +12,22 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 
-class LeaderboardScreen extends StatelessWidget {
+class LeaderboardScreen extends StatefulWidget {
   const LeaderboardScreen({super.key});
 
+  @override
+  State<LeaderboardScreen> createState() => _LeaderboardScreenState();
+}
+
+class _LeaderboardScreenState extends State<LeaderboardScreen> {
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      context.read<RewardsController>().getLeaderboard();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final List<String> tabText = ['Top Referrals', 'Top Earnings'];
@@ -68,10 +84,12 @@ class LeaderboardScreen extends StatelessWidget {
                 ),
                 Gap(12.h),
                 Expanded(
-                  child: controller.leaderboardCurrentIndex== 0? ListView.separated(
+                  child: controller.gettingLeaderBoards? buildLoading(wrapWithExpanded: false): controller.leaderboardCurrentIndex== 0? ListView.separated(
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
+                        final item = controller.leaderBoardItems[index];
                         return LeaderboardTile(
+                          item: item,
                           index: index,
                           bgColor: ColorManager.kLightYellow.withValues(alpha: .2),
                           borderColor: ColorManager.kYellow,
@@ -80,11 +98,14 @@ class LeaderboardScreen extends StatelessWidget {
                         );
                       },
                       separatorBuilder: (context, index) => Gap(10),
-                      itemCount: 10) :ListView.separated(
+                      itemCount: controller.leaderBoardItems.length) :ListView.separated(
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
+                        final item = controller.leaderBoardItems[index];
                         return LeaderboardTile(
                           index: index,
+                          item: item,
+                          isReferrals: false,
                           bgColor: ColorManager.kLightGreen,
                           borderColor: ColorManager.kGreen,
                           iconBgColor: ColorManager.kLightGreenD0,
@@ -93,7 +114,7 @@ class LeaderboardScreen extends StatelessWidget {
                         );
                       },
                       separatorBuilder: (context, index) => Gap(10),
-                      itemCount: 10),
+                      itemCount: controller.leaderBoardItems.length),
                 )
               ],
             ),
@@ -107,12 +128,14 @@ class LeaderboardScreen extends StatelessWidget {
 class LeaderboardTile extends StatelessWidget {
   const LeaderboardTile(
       {super.key,
+      required this.item,
       required this.index,
       required this.bgColor,
       required this.borderColor,
       required this.iconBgColor,
       required this.nuberColor,
-      this.textColor
+      this.textColor,
+      this.isReferrals = true
       });
   final int index;
   final Color bgColor;
@@ -120,6 +143,8 @@ class LeaderboardTile extends StatelessWidget {
   final Color iconBgColor;
   final Color nuberColor;
   final Color? textColor;
+  final LeaderboardItem item;
+  final bool isReferrals;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -157,11 +182,11 @@ class LeaderboardTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Sarah001',
+                item.email,
                 style: get16TextStyle().copyWith(fontWeight: FontWeight.w500),
               ),
               Text(
-                '98 referrals',
+               isReferrals? '${item.value} referrals' : formatCurrency(item.value),
                 style: get14TextStyle().copyWith(
                     color: textColor?? ColorManager.kGreyColor.withValues(alpha: .7)),
               )

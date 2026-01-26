@@ -9,12 +9,14 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.title,
     this.canPop = true,
-    this.hasLogo = false
+    this.hasLogo = false,
+    this.suffix
   });
 
   final String title;
   final bool canPop;
   final bool hasLogo;
+  final Widget? suffix;
 
   @override
   Size get preferredSize => const Size.fromHeight(100);
@@ -42,7 +44,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
               title,
               style: get18TextStyle(),
             ),
-            const SizedBox(width: 40,)
+           suffix?? const SizedBox(width: 40,)
           ],
         ),
       ),

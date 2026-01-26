@@ -54,8 +54,10 @@ class _IntlAirtimeCountriesScreenState
                 LucideIcons.search,
                 color: ColorManager.kGreyColor.withValues(alpha: .7),
               ),
-              //textEditingController: firstnameController,
-              onChanged: (_) {},
+              textEditingController: intlAirtimeController.searchController,
+              onChanged: (query) {
+                intlAirtimeController.filterCountries(query);
+              },
             ),
           ),
           Expanded(
@@ -65,7 +67,10 @@ class _IntlAirtimeCountriesScreenState
                       padding:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                       itemBuilder: (context, index) {
-                        final country =
+                        final country = intlAirtimeController
+                                .searchController.text.isNotEmpty
+                            ? intlAirtimeController
+                                .filteredIntlAirtimeCountries[index]:
                             intlAirtimeController.intlAirtimeCountries[index];
                         return InkWell(
                           onTap: () {
@@ -106,8 +111,11 @@ class _IntlAirtimeCountriesScreenState
                         );
                       },
                       separatorBuilder: (context, index) => Gap(8),
-                      itemCount:
-                          intlAirtimeController.intlAirtimeCountries.length))
+                      itemCount:intlAirtimeController
+                                .searchController.text.isNotEmpty
+                            ? intlAirtimeController
+                                .filteredIntlAirtimeCountries.length:
+                            intlAirtimeController.intlAirtimeCountries.length))
         ],
       ),
     );

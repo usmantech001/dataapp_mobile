@@ -74,14 +74,14 @@ class _RewardsScreenState extends State<RewardsScreen> {
                           Expanded(
                               child: ActivityContainer(
                                   iconPath: 'active-referral',
-                                  totalNumber: '888',
+                                  totalNumber: controller.referralInfo?.totalReferrals??'0',
                                   text: 'Active Referrals',
                                   onTap: () => pushNamed(RoutesManager.referrals),
                                   )),
                           Expanded(
                               child: ActivityContainer(
                                   iconPath: 'inactive-referral',
-                                  totalNumber: '888',
+                                  totalNumber: controller.referralInfo?.totalReferrals??'0',
                                   text: 'Inactive Referrals',
                                   onTap: () => pushNamed(RoutesManager.referrals),
                                   )),

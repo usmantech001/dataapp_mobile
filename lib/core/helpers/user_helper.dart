@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dataplug/core/enum.dart';
+import 'package:dataplug/core/model/core/leaderboard.dart';
 
 import '../model/core/app_notification.dart';
 import '../model/core/referral.dart';
@@ -228,6 +229,23 @@ class UserHelper {
     Map res = json.decode(response.body);
     if (response.statusCode < 400) {
       return ReferralInfo.fromJson(res["data"]);
+    }
+
+    throw throwHttpError(res);
+  }
+
+  static Future<LeaderboardResponse> getLeaderboard(String filter) async {
+    String url = "/leaderboard?per_page=20&filter=$filter";
+
+    http.Response response = await HttpRequest.get(url).catchError((err) {
+      throw OtherErrors(err);
+    });
+
+    Map<String, dynamic> res = json.decode(response.body);
+
+    print('...leaderboard res $res');
+    if (response.statusCode < 400) {
+      return LeaderboardResponse.fromJson(res);
     }
 
     throw throwHttpError(res);

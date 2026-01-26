@@ -32,16 +32,17 @@ class HttpRequest {
     String baseUrl = Constants.kBaseurl,
     bool enableDefaultHeaders = true,
     Map<String, String>? addHeaders,
+    Map<String, String>? queryParameters,
   }) async {
       log(baseUrl, name: "base url");
     log(path, name: "endpoint");
 
     if (enableDefaultHeaders) await _authenticateRequest();
     Future<http.Response> response = _client.get(
-      Uri.parse(baseUrl + path),
+      Uri.parse(baseUrl + path).replace(queryParameters: queryParameters),
       headers: addHeaders ?? _headers,
     );
-
+   
     return (await _completeRequest(response: response)) as http.Response;
   }
 

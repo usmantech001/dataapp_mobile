@@ -1,5 +1,7 @@
+import 'package:dataplug/core/helpers/auth_helper.dart';
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/keypad_provider.dart';
+import 'package:dataplug/core/providers/user_provider.dart';
 import 'package:dataplug/core/utils/formatters.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/biometric_card.dart';
@@ -10,7 +12,8 @@ import 'package:dataplug/presentation/misc/custom_components/summary_container.d
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:provider/provider.dart'; 
+import 'package:local_auth/local_auth.dart';
+import 'package:provider/provider.dart';
 
 class AirtimeReviewScreen extends StatelessWidget {
   const AirtimeReviewScreen({super.key});
@@ -49,7 +52,7 @@ class AirtimeReviewScreen extends StatelessWidget {
                 logo: reviewDetails.logo ?? "",
                 onChange: reviewDetails.onChangeProvider,
               ),
-            SummaryContainer( summaryItem: reviewDetails.summaryItems)
+            SummaryContainer(summaryItem: reviewDetails.summaryItems)
           ],
         ),
       ),
@@ -57,9 +60,46 @@ class AirtimeReviewScreen extends StatelessWidget {
   }
 }
 
-class CustomPinBottomSheet extends StatelessWidget {
+class CustomPinBottomSheet extends StatefulWidget {
   const CustomPinBottomSheet({super.key, required this.reviewDetails});
   final ReviewModel reviewDetails;
+
+  @override
+  State<CustomPinBottomSheet> createState() => _CustomPinBottomSheetState();
+}
+
+class _CustomPinBottomSheetState extends State<CustomPinBottomSheet> {
+  LocalAuthentication localAuth = LocalAuthentication();
+
+  String? biometric_token;
+  bool canAuthorizeWithBiometrics = false;
+  Future<void> checkBiometric() async {
+    bool deviceSupportBiometric =
+        await localAuth.canCheckBiometrics.catchError((_) => false);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+
+    biometric_token = await AuthHelper.getCacheBiometricToken();
+  print('...the biometric token is $biometric_token');
+    if (biometric_token != null &&
+        deviceSupportBiometric &&
+        userProvider.user.login_biometric_activated) {
+      canAuthorizeWithBiometrics = true;
+      setState(() {
+        
+      });
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkBiometric();
+    });
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -90,7 +130,6 @@ class CustomPinBottomSheet extends StatelessWidget {
               ],
             ),
             Gap(24),
-           
             Text(
               'Enter PIN Code',
               style: get16TextStyle().copyWith(fontWeight: FontWeight.w500),
@@ -101,10 +140,18 @@ class CustomPinBottomSheet extends StatelessWidget {
               'Enter your 4-digit security PIN',
               style: get12TextStyle(),
             ),
-             BiometricCard(),
+           if(canAuthorizeWithBiometrics) BiometricCard(
+              onTap: () async {
+                bool didAuthenticate = await localAuth.authenticate(
+                    localizedReason:
+                        "Please complete the authentication process");
+                if (didAuthenticate == false) return;
+                widget.reviewDetails.onPinCompleted(biometric_token??"");
+              },
+            ),
             CustomKeyPad(
                 onPinComplete: (pin) {
-                  reviewDetails.onPinCompleted(pin);
+                  widget.reviewDetails.onPinCompleted(pin);
                 },
                 onSuccessfulBiometric: (token) {})
           ],
