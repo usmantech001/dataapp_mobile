@@ -113,7 +113,7 @@ class _HistoryTabState extends State<HistoryTab>
         scrollController.position.maxScrollExtent)) {
       if (scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
-        paginateHistory();
+      
       }
     }
   }
@@ -245,27 +245,23 @@ class _HistoryTabState extends State<HistoryTab>
     }
 
     if (userProvider.serviceTxn.isEmpty) {
-      return RefreshIndicator(
-        onRefresh: () => refreshHistory(userProvider),
-        color: ColorManager.kPrimary,
-        child: ListView(
-          padding: const EdgeInsets.only(top: 29),
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: CustomEmptyState(
-                imgHeight: 81,
-                imgWidth: 81,
-                image: Assets.images.emptyHistory.path,
-                title: "You are yet to make any transactions yet",
-                btnTitle: "Go to services",
-                onTap: () {
-                  genericProvider.updatePage(DashboardTabs.services);
-                },
-              ),
+      return ListView(
+        padding: const EdgeInsets.only(top: 29),
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: CustomEmptyState(
+              imgHeight: 81,
+              imgWidth: 81,
+              image: Assets.images.emptyHistory.path,
+              title: "You are yet to make any transactions yet",
+              btnTitle: "Go to services",
+              onTap: () {
+                genericProvider.updatePage(DashboardTabs.services);
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       );
     }
 
@@ -275,25 +271,21 @@ class _HistoryTabState extends State<HistoryTab>
         children: [
           if (userProvider.txnFilterActive) _buildActiveFilters(userProvider),
           Expanded(
-            child: RefreshIndicator(
-              onRefresh: () => refreshHistory(userProvider),
-              color: ColorManager.kPrimary,
-              child: Column(
-                children: [
-                  // HistoryTab.buildHeader(context, tabs: DashboardTabs.history),
-                  Expanded(
-                    child: ListView.builder(
-                      controller: scrollController,
-                      itemCount: userProvider
-                          .serviceTxnBasedOnActiveOrInActiveFilter.length,
-                      itemBuilder: (_, i) => ServiceHistoryTile(
-                        param: userProvider
-                            .serviceTxnBasedOnActiveOrInActiveFilter[i],
-                      ),
+            child: Column(
+              children: [
+                // HistoryTab.buildHeader(context, tabs: DashboardTabs.history),
+                Expanded(
+                  child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: userProvider
+                        .serviceTxnBasedOnActiveOrInActiveFilter.length,
+                    itemBuilder: (_, i) => ServiceHistoryTile(
+                      param: userProvider
+                          .serviceTxnBasedOnActiveOrInActiveFilter[i],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           if (userProvider.txnPaginating)
@@ -617,24 +609,6 @@ class _HistoryTabState extends State<HistoryTab>
     );
   }
 
-  Future<void> refreshHistory(UserProvider userProvider) async {
-    (userProvider.txnFilterActive)
-        ? await userProvider.fetchFilteredServiceTxn(forceRefresh: true)
-        : await userProvider.updateServiceTxn(forceRefresh: true);
-  }
-
-  Future<void> paginateHistory() async {
-    UserProvider userProvider =
-        Provider.of<UserProvider>(context, listen: false);
-
-    (userProvider.txnFilterActive)
-        ? await userProvider.fetchFilteredServiceTxn(
-            forceRefresh: false,
-            cashFlowType: userProvider.filterCashFlowType,
-            status: userProvider.filterStatus,
-            purpose: userProvider.filterPurpose,
-            startDate: userProvider.filterStartDate,
-            endDate: userProvider.filterEndDate)
-        : await userProvider.updateServiceTxn(forceRefresh: false);
-  }
+  
+ 
 }

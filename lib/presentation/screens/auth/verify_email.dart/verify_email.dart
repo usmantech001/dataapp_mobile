@@ -297,7 +297,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
       UserProvider userProvider =
           Provider.of<UserProvider>(context, listen: false);
       userProvider.updateUser(user);
-      Navigator.pushNamedAndRemoveUntil(context, RoutesManager.dashboardWrapper,
+      Navigator.pushNamedAndRemoveUntil(context, RoutesManager.bottomNav,
           (Route<dynamic> route) => false);
     }).catchError((e) {
       popScreen();
@@ -323,7 +323,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
       UserProvider userProvider =
           Provider.of<UserProvider>(context, listen: false);
       await userProvider.updateUserInfo();
-      Navigator.pushNamedAndRemoveUntil(context, RoutesManager.dashboardWrapper,
+      Navigator.pushNamedAndRemoveUntil(context, RoutesManager.bottomNav,
           (Route<dynamic> route) => false);
     }).catchError((e) {
       popScreen();

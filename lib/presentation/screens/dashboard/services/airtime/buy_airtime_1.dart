@@ -12,6 +12,7 @@ import 'package:dataplug/presentation/misc/custom_components/amount_suggestion.d
 import 'package:dataplug/presentation/misc/custom_components/amount_textfield.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
+import 'package:dataplug/presentation/misc/custom_components/error_widget.dart';
 import 'package:dataplug/presentation/misc/custom_components/operator_selector.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
@@ -47,7 +48,10 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AirtimeController>().getAirtimeProviders();
+     final controller = context.read<AirtimeController>();
+     controller.clearData();
+      controller.getAirtimeProviders();
+      
     });
     super.initState();
   }
@@ -168,7 +172,9 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                           Padding(
                            // scrollDirection: Axis.horizontal,
                             padding: EdgeInsets.symmetric(horizontal: 15.w),
-                            child: Row(
+                            child: controller.providerErrMsg!=null? CustomError(errMsg: controller.providerErrMsg!, onRefresh: (){
+                            controller.getAirtimeProviders();
+                          }): Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               spacing: 8.w,
                               children: List.generate(
@@ -203,6 +209,9 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                             textEditingController:
                                 controller.phoneNumberController,
                             textInputType: TextInputType.number,
+                            onChanged: (value) {
+                              controller.validatePhoneNumber();
+                            },
                             suffixIcon: InkWell(
                               onTap: () async {
                                 /*

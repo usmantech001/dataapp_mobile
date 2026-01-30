@@ -3,6 +3,8 @@ import 'package:dataplug/core/providers/electricity_controller.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
+import 'package:dataplug/presentation/misc/custom_components/error_widget.dart';
+import 'package:dataplug/presentation/misc/custom_components/loading.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
@@ -61,8 +63,12 @@ class _ElectricityProvidersScreenState
           ),
           Expanded(
               child: electricityController.gettingProviders
-                  ? Center(child: CircularProgressIndicator())
-                  : ListView.separated(
+                  ? Center(child: buildLoading(wrapWithExpanded: false))
+                  :electricityController.providerErrMsg!=null? Center(
+                    child: CustomError(errMsg: electricityController.providerErrMsg!,topPadding: 0, onRefresh: (){
+                              electricityController.getElectricityProviders();
+                            }),
+                  ): ListView.separated(
                       padding:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                       itemBuilder: (context, index) {

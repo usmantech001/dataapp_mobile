@@ -60,6 +60,7 @@ class CableTvController extends ChangeNotifier {
   Future<void> getCableTvProviders() async {
     gettingProviders = true;
     tvServiceProviders = [];
+    providersErrMsg = null;
     notifyListeners();
     try {
       final providers = await cableTvRepo.getCableTvProviders();
@@ -78,6 +79,7 @@ class CableTvController extends ChangeNotifier {
   Future<void> getCableTvPlans() async {
     gettingPlans = true;
     tvPlans = [];
+    plansErrMsg = null;
     notifyListeners();
     try {
       final plans = await cableTvRepo.getTvPlans(selectedProvider!.id);

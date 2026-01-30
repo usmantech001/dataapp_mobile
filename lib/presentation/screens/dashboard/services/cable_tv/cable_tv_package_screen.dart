@@ -5,6 +5,7 @@ import 'package:dataplug/core/utils/utils.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
+import 'package:dataplug/presentation/misc/custom_components/error_widget.dart';
 import 'package:dataplug/presentation/misc/custom_components/toggle_selector_widget.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
@@ -58,7 +59,18 @@ class _CableTvPackageScreenState extends State<CableTvPackageScreen> {
                 ),
             Expanded(
                 child: cableTvController.gettingPlans
-                    ? Center(child: CircularProgressIndicator())
+                    ? Center(child: CircularProgressIndicator()):
+
+                    cableTvController.plansErrMsg != null
+                      ? Center(
+                          child: CustomError(
+                              errMsg: cableTvController.plansErrMsg!,
+                              topPadding: 0,
+                              onRefresh: () {
+                                cableTvController.getCableTvPlans();
+                              }),
+                        )
+                      
                     : ListView.separated(
                         padding:
                             EdgeInsets.symmetric(horizontal: 15, vertical: 20),

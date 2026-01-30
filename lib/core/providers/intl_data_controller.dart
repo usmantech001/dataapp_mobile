@@ -31,6 +31,9 @@ class IntlDataController extends ChangeNotifier {
   bool gettingPlans = false;
   bool isPorted = false;
 
+  String? countriesErrMsg;
+  String? providerErrMsg;
+
   //,, String selectedType = 'Direct';
   String selectedDuration = 'All';
 
@@ -84,6 +87,7 @@ class IntlDataController extends ChangeNotifier {
   Future<void> getIntlDataCountries() async {
     gettingCountries = true;
     intlDataCountries = [];
+    countriesErrMsg = null;
     notifyListeners();
 
     try {
@@ -92,6 +96,7 @@ class IntlDataController extends ChangeNotifier {
       gettingCountries = false;
       notifyListeners();
     } catch (e) {
+      countriesErrMsg = e.toString();
       gettingCountries = false;
       notifyListeners();
     }
@@ -100,14 +105,22 @@ class IntlDataController extends ChangeNotifier {
   Future<void> getIntlDataOperators() async {
     gettingOperators = true;
     intlDataOperators = [];
+    allPlans =[];
+    providerErrMsg = null;
     notifyListeners();
     try {
       final response =
           await intlDataRepo.getIntlDataOperator(selectedCountry?.iso2 ?? "");
+          print('...int data provider ${response.length}');
       intlDataOperators.addAll(response);
+      if(intlDataOperators.isNotEmpty){
+        onSelectOperator(intlDataOperators[0]);
+      getDataPlans();
+      }
       gettingOperators = false;
       notifyListeners();
     } catch (e) {
+      providerErrMsg = e.toString();
       gettingOperators = false;
       notifyListeners();
     }

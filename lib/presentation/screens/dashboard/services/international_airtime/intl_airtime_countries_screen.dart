@@ -3,6 +3,8 @@ import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
+import 'package:dataplug/presentation/misc/custom_components/error_widget.dart';
+import 'package:dataplug/presentation/misc/custom_components/loading.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +64,12 @@ class _IntlAirtimeCountriesScreenState
           ),
           Expanded(
               child: intlAirtimeController.gettingCountries
-                  ? Center(child: CircularProgressIndicator())
+                  ?  Center(child: buildLoading(wrapWithExpanded: false))
+                  :intlAirtimeController.countriesErrMsg!=null? Center(
+                    child: CustomError(errMsg: intlAirtimeController.countriesErrMsg!,topPadding: 0, onRefresh: (){
+                              intlAirtimeController.getIntlAirtimeCountries();
+                            }),
+                  )
                   : ListView.separated(
                       padding:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 20),

@@ -1,6 +1,7 @@
 import 'package:dataplug/core/providers/data_controller.dart';
 import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/providers/wallet_controller.dart';
+import 'package:dataplug/core/services/PushNotificationService/push_notification_service.dart';
 import 'package:dataplug/core/utils/custom_image.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
@@ -43,11 +44,14 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
        final walletController = context.read<WalletController>();
        final generalController = context.read<GeneralController>();
        final dataController = context.read<DataController>();
+       PushNotificationService pushNotificationService = PushNotificationService();
       Future.wait([
         walletController.getWalletBalance(),
          walletController.getBanners(),
          generalController.getServicesCharge(),
-         dataController.getRecommendedDataPlans()
+         dataController.getRecommendedDataPlans(),
+         pushNotificationService.setFcmToken()
+         
         // serviceController.getServicesStatus()
       ]);
     });

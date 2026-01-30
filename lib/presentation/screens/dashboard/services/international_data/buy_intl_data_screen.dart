@@ -9,6 +9,7 @@ import 'package:dataplug/core/utils/summary_info.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
+import 'package:dataplug/presentation/misc/custom_components/error_widget.dart';
 import 'package:dataplug/presentation/misc/custom_components/operator_selector.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
 import 'package:dataplug/presentation/misc/custom_snackbar.dart';
@@ -69,38 +70,6 @@ class _BuyIntlDataScreenState extends State<BuyIntlDataScreen> {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        /*
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: Text(
-                            'Select Data Type',
-                            style: get16TextStyle(),
-                          ),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            spacing: 8.w,
-                            children: List.generate(controller.dataTypes.length,
-                                (index) {
-                              final dataType = controller.dataTypes[index];
-                              print(
-                                  'is direct selectrd ${controller.selectedDataType} ${dataType == controller.selectedDataType}');
-                              return OperatorSelector(
-                                  name: "$dataType \n Data",
-                                  logo: "",
-                                  isSelected:
-                                      dataType == controller.selectedDataType,
-                                  onTap: () {
-                                    controller.onSelectDataType(dataType);
-                                  });
-                            }),
-                          ),
-                        ),
-                        Gap(20),
-                        */
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 15.w),
                           child: Text(
@@ -108,28 +77,35 @@ class _BuyIntlDataScreenState extends State<BuyIntlDataScreen> {
                             style: get16TextStyle(),
                           ),
                         ),
-                        SingleChildScrollView(
+                       controller.providerErrMsg != null
+                              ? CustomError(
+                                  errMsg: controller.providerErrMsg!,
+                                  onRefresh: () {
+                                    controller.getIntlDataOperators();
+                                  })
+                              : SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            spacing: 8.w,
-                            children: List.generate(
-                                controller.intlDataOperators.length, (index) {
-                              final operator =
-                                  controller.intlDataOperators[index];
-                              return OperatorSelector(
-                                  name: operator.name,
-                                  logo: operator.logo ?? "",
-                                  isSelected: operator.name ==
-                                      controller.selectedOperator?.name,
-                                  onTap: () {
-                                    controller.onSelectOperator(
-                                      operator,
-                                    );
-                                  });
-                            }),
-                          ),
+                          child:  Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  spacing: 8.w,
+                                  children: List.generate(
+                                      controller.intlDataOperators.length,
+                                      (index) {
+                                    final operator =
+                                        controller.intlDataOperators[index];
+                                    return OperatorSelector(
+                                        name: operator.name,
+                                        logo: operator.logo ?? "",
+                                        isSelected: operator.name ==
+                                            controller.selectedOperator?.name,
+                                        onTap: () {
+                                          controller.onSelectOperator(
+                                            operator,
+                                          );
+                                        });
+                                  }),
+                                ),
                         ),
                       ],
                     ),
@@ -244,7 +220,8 @@ class _BuyIntlDataScreenState extends State<BuyIntlDataScreen> {
                                 },
                               );
                             });
-                        showReviewBottomShhet(context, reviewDetails: reviewModel);
+                        showReviewBottomShhet(context,
+                            reviewDetails: reviewModel);
                       },
                       child: Stack(
                         children: [

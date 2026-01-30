@@ -85,6 +85,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           ? buildLoading(wrapWithExpanded: false)
                           : ListView.separated(
                               shrinkWrap: true,
+                              controller: controller.scrollController,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 15.w, vertical: 20.h),
                               itemBuilder: (context, index) {

@@ -5,14 +5,14 @@ import 'package:dataplug/core/model/core/spending_analysis_response.dart';
 
 class HistoryRepo {
 
-  Future<List<ServiceTxn>> getServiceTxnsHistory({int perPage = 30,
-      int page = 1,
+  Future<(List<ServiceTxn>, int, int)> getServiceTxnsHistory({int perPage = 30,
+      required int page,
       String? status,
       String? purpose,
       CashFlowType? cashFlowType,
       DateTime? startDate,
       DateTime? endDate}) async{
-    return await ServicesHelper.getServiceTxns(status: status, purpose: purpose);
+    return await ServicesHelper.getServiceTxns(status: status, purpose: purpose, page: page);
   }
 
 Future<SpendingAnalysisData> getSpendingAnalysis(String period) async{

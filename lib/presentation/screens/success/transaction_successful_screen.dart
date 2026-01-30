@@ -1,4 +1,5 @@
 import 'package:dataplug/core/model/core/review_model.dart';
+import 'package:dataplug/core/utils/animated_success_icon.dart';
 import 'package:dataplug/core/utils/custom_image.dart';
 import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
@@ -8,6 +9,7 @@ import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 
 class TransactionSuccessfulScreen extends StatelessWidget {
@@ -24,7 +26,7 @@ class TransactionSuccessfulScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Center(child: customImage(imgPath: 'assets/images/animated-success.gif', height: 100)),
+            Center(child: AnimatedSuccessIcon()),
             Gap(20.h),
             Text(
               'Successful',
@@ -94,6 +96,63 @@ class TransactionSuccessfulScreen extends StatelessWidget {
           ],
         ),
       )),
+    );
+  }
+}
+
+
+
+
+
+class SuccessIconAnimation extends StatefulWidget {
+  const SuccessIconAnimation({super.key});
+
+  @override
+  State<SuccessIconAnimation> createState() => _SuccessIconAnimationState();
+}
+
+class _SuccessIconAnimationState extends State<SuccessIconAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scale;
+  late Animation<double> _fade;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat(reverse: true); // 🔁 continuous loop
+
+    _scale = Tween<double>(begin: 0.9, end: 1.1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    _fade = Tween<double>(begin: 0.6, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fade,
+      child: ScaleTransition(
+        scale: _scale,
+        child: SvgPicture.asset(
+          'assets/icons/success.svg',
+          width: 100,
+          height: 100,
+        ),
+      ),
     );
   }
 }

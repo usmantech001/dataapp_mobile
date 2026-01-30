@@ -39,9 +39,9 @@ import '../utils/errors.dart';
 import '../utils/utils.dart';
 
 class ServicesHelper {
-  static Future<List<ServiceTxn>> getServiceTxns(
+  static Future<(List<ServiceTxn>, int, int)> getServiceTxns(
       {int perPage = 30,
-      int page = 1,
+     required int page,
       String? status,
       String? purpose,
       CashFlowType? cashFlowType,
@@ -49,9 +49,12 @@ class ServicesHelper {
       DateTime? endDate}) async {
     //
 
-    String url = "/transactions?page=$page&per_page=$perPage";
+    String url = "/transactions";
+    print('..page number is $page');
 
     Map<String, String>? queryParameters = {
+      'per_page' : '10',
+      'page' : '$page',
       if (status != null) 'filter[status]': status,
       if (purpose != null) 'filter[purpose]': purpose,
     };
@@ -64,7 +67,11 @@ class ServicesHelper {
     Map res = json.decode(response.body);
 
     if (response.statusCode < 400) {
-      return (res['data'] as List).map((e) => ServiceTxn.fromMap(e)).toList();
+      print('..history data ${res['meta']}');
+      int page = res['meta']['page'];
+      int total = res['meta']['total'];
+      final serviceTxnList = (res['data'] as List).map((e) => ServiceTxn.fromMap(e)).toList();
+      return (serviceTxnList, page, total);
     } else {
       throw throwHttpError(res);
     }

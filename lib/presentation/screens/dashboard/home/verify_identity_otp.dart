@@ -252,7 +252,7 @@ class _VerifyBVNOTPViewState extends State<VerifyBVNOTPView> {
                             // //  Navigator.pop(context);
                             Navigator.pushNamedAndRemoveUntil(
                               context,
-                              RoutesManager.dashboardWrapper,
+                              RoutesManager.bottomNav,
                               (Route<dynamic> route) => false,
                             );
 

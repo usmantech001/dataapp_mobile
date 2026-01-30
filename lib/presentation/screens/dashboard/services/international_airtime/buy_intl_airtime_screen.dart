@@ -7,6 +7,7 @@ import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart'
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
+import 'package:dataplug/presentation/misc/custom_components/error_widget.dart';
 import 'package:dataplug/presentation/misc/custom_components/operator_selector.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
 import 'package:dataplug/presentation/misc/custom_snackbar.dart';
@@ -132,7 +133,13 @@ class _BuyIntlAirtimeScreenState extends State<BuyIntlAirtimeScreen> {
                             style: get16TextStyle(),
                           ),
                         ),
-                        SingleChildScrollView(
+                        intlAirtimeController.providerErrMsg != null
+                              ? CustomError(
+                                  errMsg: intlAirtimeController.providerErrMsg!,
+                                  onRefresh: () {
+                                    intlAirtimeController.getIntlAirtimeOperators();
+                                  })
+                              : SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           padding: EdgeInsets.symmetric(horizontal: 15.w),
                           child: Row(

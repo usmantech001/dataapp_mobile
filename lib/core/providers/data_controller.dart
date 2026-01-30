@@ -29,6 +29,8 @@ class DataController extends ChangeNotifier {
   bool isPorted = false;
   String? plansErrMsg;
 
+  String? providerErrMsg;
+
   //,, String selectedType = 'Direct';
   String selectedDuration = 'All';
 
@@ -122,6 +124,7 @@ class DataController extends ChangeNotifier {
 
   Future<void> getDataProviders({String? id, String? code}) async {
     gettingProviders = true;
+    providerErrMsg = null;
     notifyListeners();
     try {
       providers = [];
@@ -146,6 +149,7 @@ class DataController extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
+      providerErrMsg = e.toString();
       gettingProviders = false;
       notifyListeners();
     }

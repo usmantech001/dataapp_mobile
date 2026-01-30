@@ -79,7 +79,8 @@ class _VirtualAcctountDetailsScreenState
   @override
   Widget build(BuildContext context) {
     final walletController = context.read<WalletController>();
-
+     virtualAccountDetails =
+          ModalRoute.of(context)!.settings.arguments as VirtualAccountDetails;
     return Scaffold(
       appBar: CustomAppbar(
         canPop: false,
@@ -91,7 +92,7 @@ class _VirtualAcctountDetailsScreenState
         child: Column(
           children: [
             Text(
-              'Fund your account by transferring ₦${walletController.amountController.text} to this virtual account',
+              'Fund your account by transferring ${walletController.amountController.text} to this virtual account',
             ),
             Gap(30),
             VirtualAccDetailsWidget(

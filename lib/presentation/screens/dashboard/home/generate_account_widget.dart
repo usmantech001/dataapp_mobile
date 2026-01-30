@@ -241,11 +241,11 @@ class _GenerateAccountBottomSheetState
 //                                           "Virtual account generated successfully",
 //                                       type: ToastType.success);
 // //  Navigator.pop(context);
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  RoutesManager.dashboardWrapper,
-                                  (Route<dynamic> route) => false,
-                                );
+                                // Navigator.pushNamedAndRemoveUntil(
+                                //   context,
+                                //   RoutesManager.dashboardWrapper,
+                                //   (Route<dynamic> route) => false,
+                                // );
 
 //                                 if (mounted) setState(() => btnLoading = false);
 //                                   // Navigator.pop(context);

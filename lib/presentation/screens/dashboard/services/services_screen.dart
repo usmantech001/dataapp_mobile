@@ -71,7 +71,7 @@ class ServicesScreen extends StatelessWidget {
                   onTap: () =>
                       Navigator.pushNamed(context, RoutesManager.transfer)),
               ServiceTypeContainer(
-                  name: 'Top Up', iconPath: 'topup-green', onTap: () {}),
+                  name: 'Top Up', iconPath: 'topup-green', onTap: ()=> pushNamed(RoutesManager.quickFund)),
             ]),
             ServiceContainer(title: 'Others', serviceTypes: [
               ServiceTypeContainer(

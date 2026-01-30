@@ -231,7 +231,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> {
           Provider.of<UserProvider>(context, listen: false);
       userProvider.updateUser(user);
       AuthHelper.updateSavedUserDetails(user);
-      Navigator.pushNamedAndRemoveUntil(context, RoutesManager.dashboardWrapper,
+      Navigator.pushNamedAndRemoveUntil(context, RoutesManager.bottomNav,
           (Route<dynamic> route) => false);
     }).catchError((e) {
       showCustomToast(

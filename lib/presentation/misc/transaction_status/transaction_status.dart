@@ -37,10 +37,10 @@ class TransactionStatus extends StatelessWidget {
                   onTap: () {
                     // Use microtask to prevent navigator lock
                     Future.delayed(Duration.zero, () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        RoutesManager.dashboardWrapper,
-                        (route) => false,
-                      );
+                      // Navigator.of(context).pushNamedAndRemoveUntil(
+                      //   RoutesManager.dashboardWrapper,
+                      //   (route) => false,
+                      // );
                     });
                   },
                   child: Padding(

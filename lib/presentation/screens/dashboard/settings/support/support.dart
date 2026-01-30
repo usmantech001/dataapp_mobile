@@ -1,11 +1,7 @@
 import 'package:dataplug/gen/assets.gen.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_container.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_empty_state.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_scaffold.dart';
-import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -109,7 +105,7 @@ class _SupportState extends State<Support> {
                                   },
                                   text: "Call us",
                                   shortDesc: genericProvider.supportPhone ?? "",
-                                  img: Assets.images.profileIcon.path),
+                                  img: 'call-icon'),
 
                                   SettingsIconTab(
                                   onTap: () {
@@ -121,7 +117,7 @@ class _SupportState extends State<Support> {
                                   },
                                   text: "Send us a mail",
                                   shortDesc: genericProvider.supportEmail ?? "",
-                                  img: Assets.images.profileIcon.path),  
+                                  img: 'mail-icon'),  
                                    SettingsIconTab(
                                   onTap: () {
                                     Uri url = Uri.parse(
@@ -132,7 +128,7 @@ class _SupportState extends State<Support> {
                                   },
                                   text: "Chat with us on Whatsapp",
                                   shortDesc: genericProvider.supportWhatsapp ?? "",
-                                  img: Assets.images.profileIcon.path), 
+                                  img: 'whatsapp-icon'), 
 
                             
 

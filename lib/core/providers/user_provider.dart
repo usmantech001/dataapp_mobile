@@ -23,8 +23,8 @@ class UserProvider with ChangeNotifier {
 
   Future<void> updateUserInfo() async {
     try {
-      await Future.wait([updateServiceTxn(), updateRecentTxns()])
-          .catchError((_) {});
+      // await Future.wait([updateServiceTxn(), updateRecentTxns()])
+      //     .catchError((_) {});
       User res = await UserHelper.getProfileInfo();
       _user = res;
       notifyListeners();
@@ -103,11 +103,7 @@ class UserProvider with ChangeNotifier {
   ////////////////////////////////////// TRANSACTION HISTORY MNGT. ////////////////////////////////////////////////////////////////
   List<ServiceTxn> _recentTxns = [];
   List<ServiceTxn> get recentTxns => _recentTxns;
-  Future<void> updateRecentTxns() async {
-    _recentTxns =
-        await ServicesHelper.getServiceTxns(perPage: 3).catchError((_) {});
-    notifyListeners();
-  }
+  
 
   //
   int _serviceTxnPage = 1;
@@ -116,30 +112,30 @@ class UserProvider with ChangeNotifier {
   List<ServiceTxn> _serviceTxn = [];
   List<ServiceTxn> get serviceTxn => _serviceTxn;
 
-  Future<void> updateServiceTxn({bool forceRefresh = true}) async {
-    if (txnPaginating) return;
+  // Future<void> updateServiceTxn({bool forceRefresh = true}) async {
+  //   if (txnPaginating) return;
 
-    if (!forceRefresh) {
-      _txnPaginating = true;
-      await Future.delayed(const Duration(milliseconds: 10));
-      notifyListeners();
-    }
+  //   if (!forceRefresh) {
+  //     _txnPaginating = true;
+  //     await Future.delayed(const Duration(milliseconds: 10));
+  //     notifyListeners();
+  //   }
 
-    await ServicesHelper.getServiceTxns(
-            page: (forceRefresh) ? 1 : _serviceTxnPage, perPage: 10)
-        .then((dt) {
-      if (forceRefresh) {
-        _serviceTxnPage = 2;
-        _serviceTxn = dt;
-      } else {
-        _serviceTxn.addAll(dt);
-        if (dt.isNotEmpty) _serviceTxnPage = _serviceTxnPage + 1;
-      }
-    }).catchError((_) {});
+  //   await ServicesHelper.getServiceTxns(
+  //           page: (forceRefresh) ? 1 : _serviceTxnPage, perPage: 10)
+  //       .then((dt) {
+  //     if (forceRefresh) {
+  //       _serviceTxnPage = 2;
+  //       _serviceTxn = dt;
+  //     } else {
+  //       _serviceTxn.addAll(dt);
+  //       if (dt.isNotEmpty) _serviceTxnPage = _serviceTxnPage + 1;
+  //     }
+  //   }).catchError((_) {});
 
-    _txnPaginating = false;
-    notifyListeners();
-  }
+  //   _txnPaginating = false;
+  //   notifyListeners();
+  // }
 
   ////////////////////// TXN FILTERS //////////////////////
   CashFlowType? _filterCashFlowType;
@@ -165,6 +161,8 @@ class UserProvider with ChangeNotifier {
   List<ServiceTxn> _filteredServiceTxn = [];
   List<ServiceTxn> get filteredServiceTxn => _filteredServiceTxn;
 
+
+/*
   Future<void> fetchFilteredServiceTxn({
     bool forceRefresh = true,
     bool showLoader = false,
@@ -231,6 +229,7 @@ class UserProvider with ChangeNotifier {
     _historyPageLoading = false;
     notifyListeners();
   }
+  */
 
   resetTxnFilter({
     required Status? status,
@@ -257,15 +256,15 @@ class UserProvider with ChangeNotifier {
       clearTxnFilter();
     } else {
       if (preventRefresh) return;
-      fetchFilteredServiceTxn(
-        forceRefresh: true,
-        showLoader: true,
-        cashFlowType: filterCashFlowType,
-        status: filterStatus,
-        purpose: filterPurpose,
-        startDate: filterStartDate,
-        endDate: filterEndDate,
-      );
+      // fetchFilteredServiceTxn(
+      //   forceRefresh: true,
+      //   showLoader: true,
+      //   cashFlowType: filterCashFlowType,
+      //   status: filterStatus,
+      //   purpose: filterPurpose,
+      //   startDate: filterStartDate,
+      //   endDate: filterEndDate,
+      // );
     }
   }
 

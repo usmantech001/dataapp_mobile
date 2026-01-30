@@ -6,12 +6,23 @@ import 'package:flutter/material.dart';
 class HistoryController extends ChangeNotifier {
   HistoryRepo historyRepo;
 
-  HistoryController({required this.historyRepo});
+  HistoryController({required this.historyRepo}){
+    scrollController.addListener((){
+      if(scrollController.position.pixels ==
+            scrollController.position.maxScrollExtent &&
+        transactionsHistory.length < totalTransaction){
+          getMoreServiceTxnsHistory();
+        }
+    });
+  }
 
   List<ServiceTxn> transactionsHistory = [];
 
   bool gettingHistory = false;
+  bool gettingMoreHistory = false;
   bool gettingAnalysis = false;
+
+  final scrollController = ScrollController();
 
   String? errMsg;
 
@@ -19,6 +30,10 @@ class HistoryController extends ChangeNotifier {
   int selectedCategoryIndex = 0;
   int selectedStatusIndex = 0;
   int selectedPeriodIndex = 0;
+  int totalTransaction = 0;
+
+
+  int transactionPage = 1;
 
   String? analysisError;
 
@@ -72,6 +87,7 @@ class HistoryController extends ChangeNotifier {
     gettingHistory = true;
     errMsg = null;
     transactionsHistory = [];
+    transactionPage = 1;
     notifyListeners();
     try {
       String? status;
@@ -84,13 +100,45 @@ class HistoryController extends ChangeNotifier {
         status = statusFilterList[selectedStatusIndex].toLowerCase();
       }
       final response = await historyRepo.getServiceTxnsHistory(
-          status: status, purpose: purpose);
-      transactionsHistory.addAll(response);
+          status: status, purpose: purpose, page: 1);
+      transactionsHistory.addAll(response.$1);
+      totalTransaction = response.$3;
       gettingHistory = false;
       notifyListeners();
     } catch (e) {
       errMsg = e.toString();
       gettingHistory = false;
+      notifyListeners();
+    }
+  }
+
+
+  Future<void> getMoreServiceTxnsHistory() async {
+    gettingMoreHistory = true;
+    
+    notifyListeners();
+    try {
+      String? status;
+      String? purpose;
+
+      if (selectedCategoryIndex != 0) {
+        purpose = categoryFilterList[selectedCategoryIndex].toLowerCase();
+      }
+      if (selectedStatusIndex != 0) {
+        status = statusFilterList[selectedStatusIndex].toLowerCase();
+      }
+      int page = transactionPage+1;
+      print('..page before sending is $transactionPage');
+      final response = await historyRepo.getServiceTxnsHistory(
+          status: status, purpose: purpose, page: transactionPage+1);
+      transactionsHistory.addAll(response.$1);
+      transactionPage = response.$2;
+      
+      gettingMoreHistory = false;
+      notifyListeners();
+    } catch (e) {
+      
+      gettingMoreHistory = false;
       notifyListeners();
     }
   }

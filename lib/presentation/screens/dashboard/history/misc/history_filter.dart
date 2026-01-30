@@ -549,15 +549,6 @@ class _HistoryFilterState extends State<HistoryFilter> {
           endDate: endDate,
           preventRefresh: false);
 
-      userProvider.fetchFilteredServiceTxn(
-        forceRefresh: true,
-        showLoader: true,
-        cashFlowType: cashFlowType,
-        status: status,
-        purpose: purpose,
-        startDate: startDate,
-        endDate: endDate,
-      );
       Navigator.pop(context);
     } catch (e) {
       showCustomToast(context: context, description: e.toString());

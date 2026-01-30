@@ -12,6 +12,7 @@ import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart'
 import 'package:dataplug/presentation/misc/custom_components/custom_bottom_sheet.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
+import 'package:dataplug/presentation/misc/custom_components/error_widget.dart';
 import 'package:dataplug/presentation/misc/custom_components/operator_selector.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
 import 'package:dataplug/presentation/misc/custom_components/toggle_selector_widget.dart';
@@ -86,7 +87,9 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
                         Padding(
                           // scrollDirection: Axis.horizontal,
                           padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: Row(
+                          child: controller.providerErrMsg!=null? CustomError(errMsg: controller.providerErrMsg!, onRefresh: (){
+                            controller.getDataProviders();
+                          }):  Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             spacing: MediaQuery.sizeOf(context).width * 0.02,
                             children: List.generate(controller.providers.length,

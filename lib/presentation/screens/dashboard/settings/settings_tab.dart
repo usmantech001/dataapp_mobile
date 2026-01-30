@@ -49,7 +49,7 @@ class SettingsTab extends StatelessWidget {
             
             SettingsIconTab(
                 onTap: () {
-                  Navigator.pushNamed(context, RoutesManager.addedBanks);
+                 // Navigator.pushNamed(context, RoutesManager.addedBanks);
                 },
                 text: "Invite a Friend",
                 shortDesc: "Invite friends and earn rewards",
@@ -83,6 +83,7 @@ class SettingsTab extends StatelessWidget {
                 onTap: () {
                   showCustomBottomSheet(
                     context: context,
+                    
                     screen: const LogoutConfirmation(),
                     isDismissible: true,
                   );

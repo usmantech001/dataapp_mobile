@@ -41,7 +41,6 @@ import 'package:dataplug/presentation/screens/dashboard/services/giftcard/buy_gi
 import 'package:dataplug/presentation/screens/dashboard/services/giftcard/giftcard_1.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/giftcard/giftcard_categories_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/giftcard/giftcard_countries_screen.dart';
-import 'package:dataplug/presentation/screens/dashboard/services/giftcard/giftcard_main.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/giftcard/giftcard_products_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/international_airtime/buy_intl_airtime_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/international_airtime/intl_airtime_countries_screen.dart';
@@ -85,13 +84,9 @@ import '../../screens/dashboard/services/airtime/buy_airtime_1.dart';
 import '../../screens/dashboard/services/cable_tv/cable_tv_1.dart';
 import '../../screens/dashboard/services/cable_tv/cable_tv_2.dart';
 import '../../screens/dashboard/services/cable_tv/misc/arg.dart';
-import '../../screens/dashboard/services/electricity/buy_electricity_1.dart';
 import '../../screens/dashboard/services/epin/buy_epin_1.dart';
 import '../../screens/dashboard/services/international_airtime/international_airtime_1.dart';
-import '../../screens/dashboard/services/internet_data/buy_data_1.dart';
-import '../../screens/dashboard/services/internet_data/buy_data_4.dart';
-import '../../screens/dashboard/services/internet_data/buy_data_2.dart';
-import '../../screens/dashboard/services/internet_data/misc/buy_data_arg.dart';
+
 import '../../screens/dashboard/settings/bank/add_bank.dart';
 import '../../screens/dashboard/settings/bank/added_banks.dart';
 import '../../screens/dashboard/settings/faqs/faqs.dart';
@@ -126,7 +121,6 @@ class RoutesManager {
   static const String onboarding1 = "/onboarding1";
   static const String verifyEmail = "/verifyEmail";
 
-  static const String dashboardWrapper = "/dashboardWrapper";
   static const String bottomNav = "/bottomNav";
 
   //static const String home = "/homeTa";
@@ -170,9 +164,6 @@ class RoutesManager {
   static const String internationalData2 = "/internationalData2";
   static const String internationalAirtime1 = "/internationalAirtime1";
   static const String internationalAirtime2 = "/internationalAirtime2";
-  static const String buyData1 = "/buyData1";
-  static const String buyData2 = "/buyData2";
-  static const String buyData4 = "/buyData4å";
   static const String transfer1 = "/transfer1";
   static const String transfer2 = "/transfer2";
 
@@ -271,8 +262,8 @@ class RouteGenerator {
               VerifyEmail(param: settings.arguments as VerifyEmailArg),
         );
 
-      case RoutesManager.dashboardWrapper:
-        return MaterialPageRoute(builder: (_) => const DashboardWrapper(), settings: settings);
+      // case RoutesManager.dashboardWrapper:
+      //   return MaterialPageRoute(builder: (_) => const DashboardWrapper(), settings: settings);
 
       case RoutesManager.profileSettings:
         return MaterialPageRoute(builder: (_) => const ProfileSettings(), settings: settings);
@@ -325,8 +316,7 @@ class RouteGenerator {
                 param: settings.arguments as GiftcardTxn));
       case RoutesManager.buyAirtime1:
         return MaterialPageRoute(builder: (_) => const BuyAirtime1());
-      case RoutesManager.buyElectricity1:
-        return MaterialPageRoute(builder: (_) => const BuyElectricity1());
+      
       case RoutesManager.buyEPin1:
         return MaterialPageRoute(builder: (_) => const BuyEPin1());
       case RoutesManager.cableTv1:
@@ -342,11 +332,7 @@ class RouteGenerator {
       case RoutesManager.fundBetting:
         return MaterialPageRoute(
             builder: (_) => const FundBettingScreen(), settings: settings);
-      case RoutesManager.giftcardMain:
-        return MaterialPageRoute(
-            builder: (_) => GiftCardMain(
-                  activeTab: settings.arguments as int,
-                ));
+      
       case RoutesManager.giftcard1:
         return MaterialPageRoute(builder: (_) => const Giftcard1());
       case RoutesManager.giftcardCategory:
@@ -374,20 +360,9 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (_) =>
                 TransactionStatus(param: settings.arguments as ServiceTxn));
-      case RoutesManager.buyData1:
-        return MaterialPageRoute(
-            builder: (_) =>
-                BuyData1(param: settings.arguments as DataPurchaseType));
 
-      case RoutesManager.buyData2:
-        return MaterialPageRoute(
-          builder: (_) => BuyData2(param: settings.arguments as BuyDataArg),
-        );
 
-      case RoutesManager.buyData4:
-        return MaterialPageRoute(
-          builder: (_) => BuyData4(),
-        );
+    
       case RoutesManager.transfer1:
         return MaterialPageRoute(builder: (_) => const Transfer1());
       case RoutesManager.transfer2:

@@ -26,6 +26,9 @@ class IntlAirtimeController extends ChangeNotifier{
   num rate = 0;
   num amountInNaira = 0;
 
+   String? countriesErrMsg;
+  String? providerErrMsg;
+
   void filterCountries(String query){
     filteredIntlAirtimeCountries = [];
     for (Country country in intlAirtimeCountries) {
@@ -67,6 +70,7 @@ class IntlAirtimeController extends ChangeNotifier{
   Future<void> getIntlAirtimeCountries() async {
     gettingCountries = true;
     intlAirtimeCountries = [];
+    countriesErrMsg = null;
     notifyListeners();
     
     try {
@@ -75,6 +79,7 @@ class IntlAirtimeController extends ChangeNotifier{
       gettingCountries = false;
       notifyListeners();
     } catch (e) {
+      countriesErrMsg = e.toString();
       gettingCountries = false;
       notifyListeners();
     }
@@ -83,6 +88,7 @@ class IntlAirtimeController extends ChangeNotifier{
   Future<void> getIntlAirtimeOperators() async{
     gettingOperators = true;
     intlAirtimeOperators = [];
+    providerErrMsg = null;
     notifyListeners();
     try {
       final response = await intlAirtimeRepo.getIntlAirtimeOperator(selectedCountry?.iso2??"");
@@ -90,6 +96,7 @@ class IntlAirtimeController extends ChangeNotifier{
       gettingOperators = false;
       notifyListeners();
     } catch (e) {
+      providerErrMsg = e.toString();
       gettingOperators = false;
       notifyListeners();
     }

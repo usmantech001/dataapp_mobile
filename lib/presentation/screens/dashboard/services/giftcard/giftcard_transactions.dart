@@ -6,7 +6,6 @@ import 'package:flutter/rendering.dart';
 
 import '../../../../../core/helpers/giftcard_helper.dart';
 import '../../../../../core/model/core/giftcard_txn.dart';
-import '../../../../../core/model/dashboard_tabs.dart';
 import '../../../../misc/color_manager/color_manager.dart';
 import '../../../../misc/custom_components/custom_appbar.dart';
 import '../../../../misc/custom_components/custom_scaffold.dart';
@@ -78,7 +77,7 @@ class _GiftcardTxnViewState extends State<GiftcardTxnView> {
       //         elevation: 1),
       body: Column(
         children: [
-          SizedBox(height: DashboardTabsItems.getDasboardTabTopPadding),
+         // SizedBox(height: DashboardTabsItems.getDasboardTabTopPadding),
         
 
           /// ///

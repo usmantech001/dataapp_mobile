@@ -26,6 +26,7 @@ class ElectricityController extends ChangeNotifier {
 
   String? meterNoErrMsg;
   String? attachedMeterName;
+  String? providerErrMsg;
 
   bool isPrepaid = true;
   final focusNode = FocusNode();
@@ -80,6 +81,7 @@ class ElectricityController extends ChangeNotifier {
     gettingProviders = true;
     electricityProviders = [];
     searchController.clear();
+    providerErrMsg = null;
     notifyListeners();
     await electricityRepo.getProviders().then((value) {
       if (value.isNotEmpty) {
@@ -87,10 +89,13 @@ class ElectricityController extends ChangeNotifier {
         notifyListeners();
       }
     }).catchError((err) {
+      providerErrMsg = err.toString();
+      
       print('..faled to get electricity providers ${err.toString()}');
     });
     gettingProviders = false;
     notifyListeners();
+    
   }
 
   void onSelectProvider(ElectricityProvider provider) {
