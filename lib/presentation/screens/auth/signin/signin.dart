@@ -7,6 +7,7 @@ import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/image_manager/image_manager.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
+import 'package:dataplug/presentation/screens/auth/signin/widgets/feature_badge.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -69,6 +70,7 @@ class _SignInState extends State<SignIn> {
         Provider.of<UserProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: ColorManager.kWhite,
+      //bottomNavigationBar: SafeArea(child: FeatureBadges()),
       body: SafeArea(
         bottom: false,
         child: GestureDetector(
@@ -226,6 +228,8 @@ class _SignInState extends State<SignIn> {
                                 underline: false,
                                 text2: 'Switch Account')
                           ],
+
+                          
                           // if (widget.user == null)
                           // const Padding(
                           //   padding: EdgeInsets.only(top: 16),
@@ -265,7 +269,9 @@ class _SignInState extends State<SignIn> {
                                 ],
                               ),
                             ),
-                         )
+                         ),
+                         Gap(30.h),
+                         FeatureBadges()
                         ],
                       ),
                     ],
@@ -301,7 +307,8 @@ class _SignInState extends State<SignIn> {
         final diff = nextGlobalLoginDate.difference(now);
         print('...the difference is ${diff.inDays}');
         bool localSiginDue = nextGlobalLoginDate.isBefore(now);
-        if (!localSiginDue) {
+        print('..local sigin due $localSiginDue');
+        if (localSiginDue) {
           signIn(LoginProvider.password, email: email, password: password)
               .catchError((e) {
             // widget.user = null;

@@ -1,3 +1,4 @@
+import 'package:dataplug/core/helpers/facebook_event_helper.dart';
 import 'package:dataplug/core/helpers/service_helper.dart';
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/model/core/service_txn.dart';
@@ -11,13 +12,16 @@ import 'package:dataplug/core/utils/summary_info.dart';
 import 'package:dataplug/presentation/misc/custom_components/amount_suggestion.dart';
 import 'package:dataplug/presentation/misc/custom_components/amount_textfield.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
+import 'package:dataplug/presentation/misc/custom_components/custom_bottom_sheet.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/error_widget.dart';
 import 'package:dataplug/presentation/misc/custom_components/operator_selector.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
+import 'package:dataplug/presentation/misc/select_contact.dart';
 // import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -48,9 +52,11 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-     final controller = context.read<AirtimeController>();
-     controller.clearData();
-      controller.getAirtimeProviders();
+      final controller = context.read<AirtimeController>();
+      controller.clearData();
+      if(controller.airtimeProviders.isEmpty){
+        controller.getAirtimeProviders();
+      }
       
     });
     super.initState();
@@ -80,10 +86,26 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                 );
                 return;
               }
+              if(controller.phoneNumberController.text.isEmpty){
+                showCustomToast(
+                  context: context,
+                  description: "Please enter your phone number",
+                );
+                return;
+              }
+              if(controller.phoneError){
+                showCustomToast(
+                  context: context,
+                  description: "Phone number does not match selected network"
+                );
+                return;
+              }
+              
               final generalController = context.read<GeneralController>();
-              num serviceCharge = generalController.serviceCharge?.airtime??0;
-              num totalAmount = calculateTotalAmount(amount: formatUseableAmount(
-                        controller.amountController.text.trim()), charge: serviceCharge);
+              final amount = formatUseableAmount(
+                      controller.amountController.text.trim());
+              generalController.getDiscount(type: 'airtime', provider: controller.selectedProvider!.code,amount: amount, onSuccess: (discount) {
+              num totalAmount = discount.amount??0;
               final summaryItems = [
                 SummaryItem(
                     title: 'Network',
@@ -93,19 +115,26 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                   name: controller.phoneNumberController.text.trim(),
                   hasDivider: true,
                 ),
-               if(serviceCharge!=0) SummaryItem(
-                  title: 'Service Charge',
-                  name: formatCurrency(serviceCharge),
-                  
+                 SummaryItem(
+                  title: 'Amount',
+                  name: controller.amountController.text,
+                  hasDivider: true,
                 ),
-                SummaryItem(
-                    title: 'Amount',
-                    name: formatCurrency(totalAmount, decimal: 0)),
+
+
+                if (discount.discount != 0)
+                  SummaryItem(
+                    title: 'Discount',
+                    name: discount.discount.toString()??'0',
+                  ),
+               if (discount.discount != 0) SummaryItem(
+                    title: 'Total Amount',
+                    name: formatCurrency(totalAmount, decimal: 2)),
               ];
               final reviewDetails = ReviewModel(
                   summaryItems: summaryItems,
                   providerName: controller.selectedProvider?.name,
-                  logo: controller.selectedProvider?.logo??"",
+                  logo: controller.selectedProvider?.logo ?? "",
                   amount: formatUseableAmount(
                       controller.amountController.text.trim()),
                   shortInfo:
@@ -115,6 +144,7 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                     controller.buyAirtime(
                       pin,
                       onSuccess: (transactionInfo) {
+                        FacebookEventHelper().logEvent('Airtime');
                         popScreen();
                         final items = getSummaryItems(
                             transactionInfo, TransactionType.airtime);
@@ -130,14 +160,17 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                             (Route<dynamic> route) => false,
                             arguments: review);
                       },
-                      onError: (error) async{
+                      onError: (error) async {
                         popScreen();
                         showCustomErrorTransaction(
                             context: context, errMsg: error);
                       },
                     );
                   });
-             showReviewBottomShhet(context, reviewDetails: reviewDetails);
+              showReviewBottomShhet(context, reviewDetails: reviewDetails);
+              }, onError: (error) {
+                
+              },);
             }),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -145,7 +178,7 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
             padding: EdgeInsets.only(top: 24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+              // mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 20,
               children: [
@@ -170,27 +203,34 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                             ),
                           ),
                           Padding(
-                           // scrollDirection: Axis.horizontal,
+                            // scrollDirection: Axis.horizontal,
                             padding: EdgeInsets.symmetric(horizontal: 15.w),
-                            child: controller.providerErrMsg!=null? CustomError(errMsg: controller.providerErrMsg!, onRefresh: (){
-                            controller.getAirtimeProviders();
-                          }): Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              spacing: 8.w,
-                              children: List.generate(
-                                  controller.airtimeProviders.length, (index) {
-                                final operator =
-                                    controller.airtimeProviders[index];
-                                return OperatorSelector(
-                                    name: operator.name,
-                                    logo: operator.logo ?? "",
-                                    isSelected: operator.name ==
-                                        controller.selectedProvider?.name,
-                                    onTap: () {
-                                      controller.onSelectProvider(operator);
-                                    });
-                              }),
-                            ),
+                            child: controller.providerErrMsg != null
+                                ? CustomError(
+                                    errMsg: controller.providerErrMsg!,
+                                    onRefresh: () {
+                                      controller.getAirtimeProviders();
+                                    })
+                                : Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    spacing: 8.w,
+                                    children: List.generate(
+                                        controller.airtimeProviders.length,
+                                        (index) {
+                                      final operator =
+                                          controller.airtimeProviders[index];
+                                      return OperatorSelector(
+                                          name: operator.name,
+                                          logo: operator.logo ?? "",
+                                          isSelected: operator.name ==
+                                              controller.selectedProvider?.name,
+                                          onTap: () {
+                                            controller
+                                                .onSelectProvider(operator);
+                                          });
+                                    }),
+                                  ),
                           ),
                         ],
                       ),
@@ -214,25 +254,14 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                             },
                             suffixIcon: InkWell(
                               onTap: () async {
-                                /*
-                                            Contact? res =
-                                                await showCustomBottomSheet(
-                                              context: context,
-                                              isDismissible: true,
-                                              screen: SelectFromContactWidget(),
-                                            );
-                                            if (res != null) {
-                                              phoneController.text = res
-                                                  .phones.first.number
-                                                  .replaceAll(" ", "")
-                                                  .replaceAll("(", "")
-                                                  .replaceAll(")", "")
-                                                  .replaceAll("+234", "0")
-                                                  .replaceAll("-", "")
-                                                  .trim();
-                                              setState(() {});
-                                            }
-                                            */
+                                Contact? res = await showCustomBottomSheet(
+                                  context: context,
+                                  isDismissible: true,
+                                  screen: SelectFromContactWidget(),
+                                );
+                                if (res != null) {
+                                  controller.onSelectNumberFromContact(res);
+                                }
                               },
                               child: Icon(
                                 Icons.person,
@@ -245,18 +274,11 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                             ],
                           ),
                           if (controller.phoneError)
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.red.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: const EdgeInsets.only(left: 3, top: 2),
-                              child: const Text(
-                                "Phone number does not match selected network",
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 14,
-                                ),
+                            const Text(
+                              "Phone number does not match selected network",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
                               ),
                             ),
                           const SizedBox(height: 5),
@@ -301,9 +323,7 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
   }
 }
 
-
-
-num calculateTotalAmount({required String amount,required num charge }){
-  final total = (num.tryParse(amount)??0) + charge;
+num calculateTotalAmount({required String amount, required num charge}) {
+  final total = (num.tryParse(amount) ?? 0) + charge;
   return total;
 }

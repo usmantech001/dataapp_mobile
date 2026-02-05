@@ -13,9 +13,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-class VerifyBvnNinScreen extends StatelessWidget {
+class VerifyBvnNinScreen extends StatefulWidget {
   const VerifyBvnNinScreen({super.key});
 
+  @override
+  State<VerifyBvnNinScreen> createState() => _VerifyBvnNinScreenState();
+}
+
+class _VerifyBvnNinScreenState extends State<VerifyBvnNinScreen> {
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -30,9 +30,16 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.360610928796-j3mk7rtrhhb3l5i13cnavu30n8m2l95i</string>
+				<string>fb1370731344261040</string>
 			</array>
 		</dict>
 	</array>
+	<key>FacebookAppID</key>
+<string>1370731344261040</string>
+<key>FacebookClientToken</key>
+<string>4feb7084c259f14a04d188e448bc7815</string>
+<key>FacebookDisplayName</key>
+<string>DataApp</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>GIDClientID</key>

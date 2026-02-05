@@ -146,6 +146,8 @@ class HistoryController extends ChangeNotifier {
   Future<void> getSpendingAnalysis(String period) async{
     gettingAnalysis = true;
     analysisError = null;
+    weeklyAnalysis = null;
+    monthlyAnalysis = null;
     notifyListeners();
     try {
     final data = await historyRepo.getSpendingAnalysis(period);

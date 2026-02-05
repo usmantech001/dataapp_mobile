@@ -4,7 +4,6 @@ import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
-import 'package:dataplug/presentation/misc/custom_components/custom_scaffold.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -98,6 +97,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   }
 
   setController(User user) {
+    print('...user phone is ${user.phone}');
     firstnameController.text = user.firstname ?? "";
     lastnameController.text = user.lastname ?? "";
     phoneCodeController.text = user.phone_code ?? "234";
@@ -281,6 +281,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                 CustomInputField(
                   maxLength: 10,
                   formHolderName: "Phone Number",
+                  hintText: '8050754432',
                   prefixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -304,7 +305,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                               padding: const EdgeInsets.only(
                                   left: 8, right: 4.5),
                               child: Text(
-                                  " ${phoneCountry?.phone_code ?? "+${phoneCodeController.text}"}",
+                                  " ${phoneCountry?.phone_code ?? "${phoneCodeController.text}"}",
                                   style: get16TextStyle()
                                       .copyWith(
                                           fontWeight:

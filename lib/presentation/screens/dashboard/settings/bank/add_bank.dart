@@ -49,131 +49,141 @@ class _AddBankState extends State<AddBank> {
           padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
           child: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
-              decoration: BoxDecoration(
-                  color: ColorManager.kWhite,
-                  borderRadius: BorderRadius.circular(16.r)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () async {
-                      await showCustomBottomSheet(
-                          context: context, screen: const SelectBank());
-                    },
-                    child: IgnorePointer(
-                      child: CustomInputField(
-                        formHolderName: "Bank Name",
-                        hintText: "",
-                        textInputAction: TextInputAction.next,
-                        textEditingController: TextEditingController(
-                            text: controller.selectedBank?.name),
-                        suffixIcon: Icon(
-                          Icons.keyboard_arrow_down_sharp,
-                          color: ColorManager.kFormHintText,
+            child: SizedBox(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
+                decoration: BoxDecoration(
+                    color: ColorManager.kWhite,
+                    borderRadius: BorderRadius.circular(16.r)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () async {
+                        await showCustomBottomSheet(
+                            context: context, screen: const SelectBank());
+                      },
+                      child: IgnorePointer(
+                        child: CustomInputField(
+                          formHolderName: "Bank Name",
+                          hintText: "",
+                          textInputAction: TextInputAction.next,
+                          textEditingController: TextEditingController(
+                              text: controller.selectedBank?.name),
+                          suffixIcon: Icon(
+                            Icons.keyboard_arrow_down_sharp,
+                            color: ColorManager.kFormHintText,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Gap(16.h),
-
-                  CustomInputField(
-                    formHolderName: "Bank Account Number",
-                    hintText: "",
-                    textInputAction: TextInputAction.next,
-                    textEditingController: controller.accountNumberController,
-                    textInputType: TextInputType.number,
-                    maxLength: 10,
-                    counterText: "",
-                    focusNode: controller.focusNode,
-                    // onChanged: (e) {
-                    //   accNameController.text = "";
-                    //   verified = false;
-                    //   setState(() {});
-                    //   if (e.length == 10 && selectedBank != null) {
-                    //     verifyBankInfo().then((_) {}).catchError((_) {});
-                    //   }
-                    // },
-                    // validator: (val) =>
-                    //     val!.isEmpty ? "Account Number cannot be empty !!" : null,
-                  ),
-                  if (controller.verifyingBankInfo)
-                    CustomVerifying(text: 'Verifying bank info'),
-                  controller.bankInfoErrMsg != null
-                      ? Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Text(
-                            controller.bankInfoErrMsg!,
-                            style: get12TextStyle().copyWith(
-                              color: ColorManager.kError,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        )
-                      : controller.attachedBankName != null
-                          ? Padding(
-                              padding: EdgeInsets.only(top: 10),
-                              child: Row(
-                                spacing: 8.w,
-                                children: [
-                                  Container(
-                                      height: 20.h,
-                                      width: 20.w,
-                                      //padding: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: ColorManager.kGreen,
-                                        borderRadius:
-                                            BorderRadiusGeometry.circular(6.r),
-                                      ),
-                                      child: Icon(
-                                        Icons.check,
-                                        color: ColorManager.kWhite,
-                                        size: 20,
-                                      )),
-                                  Text(
-                                    controller.attachedBankName!,
-                                    style: get12TextStyle().copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      color: ColorManager.kGreen,
-                                    ),
-                                  ),
-                                ],
+                    Gap(16.h),
+              
+                    CustomInputField(
+                      formHolderName: "Bank Account Number",
+                      hintText: "",
+                      textInputAction: TextInputAction.next,
+                      textEditingController: controller.accountNumberController,
+                      textInputType: TextInputType.number,
+                      maxLength: 10,
+                      counterText: "",
+                      focusNode: controller.focusNode,
+                      // onChanged: (e) {
+                      //   accNameController.text = "";
+                      //   verified = false;
+                      //   setState(() {});
+                      //   if (e.length == 10 && selectedBank != null) {
+                      //     verifyBankInfo().then((_) {}).catchError((_) {});
+                      //   }
+                      // },
+                      // validator: (val) =>
+                      //     val!.isEmpty ? "Account Number cannot be empty !!" : null,
+                    ),
+                    if (controller.verifyingBankInfo)
+                      CustomVerifying(text: 'Verifying bank info'),
+                    controller.bankInfoErrMsg != null
+                        ? Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Text(
+                              controller.bankInfoErrMsg!,
+                              style: get12TextStyle().copyWith(
+                                color: ColorManager.kError,
+                                fontWeight: FontWeight.w500,
                               ),
-                            )
-                          : SizedBox.shrink(),
+                            ),
+                          )
+                        : controller.attachedBankName != null
+                            ? Padding(
+                                padding: EdgeInsets.only(top: 10),
+                                child: Row(
+                                  spacing: 8.w,
+                                  children: [
+                                    Container(
+                                        height: 20.h,
+                                        width: 20.w,
+                                        //padding: EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          color: ColorManager.kGreen,
+                                          borderRadius:
+                                              BorderRadiusGeometry.circular(6.r),
+                                        ),
+                                        child: Icon(
+                                          Icons.check,
+                                          color: ColorManager.kWhite,
+                                          size: 20,
+                                        )),
+                                    Text(
+                                      controller.attachedBankName!,
+                                      style: get12TextStyle().copyWith(
+                                        fontWeight: FontWeight.w500,
+                                        color: ColorManager.kGreen,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : SizedBox.shrink(),
+              
+                    Gap(24.h),
+              
+                    CustomButton(
+                      text: "Save Account",
+                      isActive: true,
+                      onTap: () async {
+                        if(controller.accountNumberController.text.isEmpty){
+                          showCustomToast(context: context, description: 'Account number field can\'t be empty');
+                          return;
+                        }
 
-                  Gap(24.h),
-
-                  CustomButton(
-                    text: "Save Account",
-                    isActive: true,
-                    onTap: () async {
-                      if(controller.bankInfoErrMsg!=null){
-                        showCustomToast(context: context, description: 'Please enter a valid account number');
-                        return;
-                      }
-                      displayLoader(context);
-                      controller.saveBankInfo(
-                        onSuccess: (p0) {
-                          popScreen();
-                          showCustomMessageBottomSheet(context: context, title: 'Bank Account Added Successfully', description: 'Your bank account has been linked to your wallet. You can now make deposits and withdrawals anytime.', onTap: (){
-                            removeUntilAndPushScreen(RoutesManager.addedBanks, RoutesManager.bottomNav);
-                          });
-                        },
-                        onError: (error) {
-                          popScreen();
-                          showCustomMessageBottomSheet(context: context, title: 'Bank Account Linking Failed', description: error, onTap: (){
+                        if(controller.bankInfoErrMsg!=null ){
+                          showCustomToast(context: context, description: 'Please enter a valid account number');
+                          return;
+                        }
+                        if(controller.verifyingBankInfo){
+                          return;
+                        }
+                        displayLoader(context);
+                        controller.saveBankInfo(
+                          onSuccess: (p0) {
                             popScreen();
-                          });
-                        },
-                      );
-                    },
-                    loading: false,
-                  ),
-                  //
-                ],
+                            showCustomMessageBottomSheet(context: context, title: 'Bank Account Added Successfully', description: 'Your bank account has been linked to your wallet. You can now make deposits and withdrawals anytime.', onTap: (){
+                              removeUntilAndPushScreen(RoutesManager.addedBanks, RoutesManager.bottomNav);
+                            });
+                          },
+                          onError: (error) {
+                            popScreen();
+                            showCustomMessageBottomSheet(context: context, title: 'Bank Account Linking Failed', description: error,isSuccess: false, onTap: (){
+                              popScreen();
+                            });
+                          },
+                        );
+                      },
+                      loading: false,
+                    ),
+                    //
+                  ],
+                ),
               ),
             ),
           ),

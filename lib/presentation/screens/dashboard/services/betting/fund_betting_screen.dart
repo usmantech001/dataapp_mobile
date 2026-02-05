@@ -39,7 +39,6 @@ class _FundBettingScreenState extends State<FundBettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final List<String> suggestedAmounts = [
       '500',
       '1000',
@@ -61,7 +60,7 @@ class _FundBettingScreenState extends State<FundBettingScreen> {
             text: 'Continue',
             onTap: () {
               final controller = context.read<BettingController>();
-              // if (controller.meterNoErrMsg != null 
+              // if (controller.meterNoErrMsg != null
               // //|| controller.meterNumberController.text.isEmpty
               // ) {
               //   showCustomToast(
@@ -71,40 +70,52 @@ class _FundBettingScreenState extends State<FundBettingScreen> {
               //         "Merchant not verified. Please check the meter number and try again.",
               //   );
               // }
-      
+
               if (controller.amountController.text.isEmpty ||
-                  num.parse(formatUseableAmount(controller.amountController.text)) <= 0) {
+                  num.parse(formatUseableAmount(
+                          controller.amountController.text)) <=
+                      0) {
                 showCustomToast(
                   context: context,
                   // meesage
-                  description:
-                      "Please enter a valid amount.",
+                  description: "Please enter a valid amount.",
                 );
                 return;
               }
-       final generalController = context.read<GeneralController>();
-              num serviceCharge = generalController.serviceCharge?.betting??0;
-              num totalAmount = calculateTotalAmount(amount: formatUseableAmount(
-                        controller.amountController.text.trim()), charge: serviceCharge);
+              final generalController = context.read<GeneralController>();
+              final amount = formatUseableAmount(
+                      controller.amountController.text.trim());
+              generalController.getDiscount(type: 'betting', provider: controller.selectedProvider!.code, amount: amount, onSuccess: (discount) {
+              num totalAmount = discount.amount??0;
 
-               final summaryItems = [
-                SummaryItem(title: 'Betting Provider', name: controller.selectedProvider?.name ?? ""),
+              final summaryItems = [
+                SummaryItem(
+                    title: 'Betting Provider',
+                    name: controller.selectedProvider?.name ?? ""),
                 SummaryItem(
                   title: 'Bet ID / Phone Number',
                   name: controller.bettingNumberController.text.trim(),
-                  
                 ),
                 SummaryItem(
                   title: 'Attached Name',
-                  name: controller.attachedName??'',
+                  name: controller.attachedName ?? '',
                   hasDivider: true,
                 ),
-                SummaryItem(
-                    title: 'Amount', name: controller.amountController.text.trim()),
-               if(serviceCharge!=0) SummaryItem(
-                    title: 'Service Charge', name: formatCurrency(serviceCharge), hasDivider: true,),    
-                SummaryItem(
-                    title: 'Total Amount', name: formatCurrency(totalAmount)),     
+                  SummaryItem(
+                  title: 'Amount',
+                  name: controller.amountController.text,
+                  hasDivider: true,
+                ),
+
+
+                if (discount.discount != 0)
+                  SummaryItem(
+                    title: 'Discount',
+                    name: discount.discount.toString()??'0',
+                  ),
+               if (discount.discount != 0) SummaryItem(
+                    title: 'Total Amount',
+                    name: formatCurrency(totalAmount, decimal: 2)),
               ];
               final reviewModel = ReviewModel(
                   summaryItems: summaryItems,
@@ -112,10 +123,15 @@ class _FundBettingScreenState extends State<FundBettingScreen> {
                   providerType: 'Electricity',
                   providerName: controller.selectedProvider?.name,
                   logo: controller.selectedProvider?.logo,
-                  onChangeProvider: () => Navigator.pushNamed(context, RoutesManager.electricityProviders,),
+                  onChangeProvider: () => Navigator.pushNamed(
+                        context,
+                        RoutesManager.electricityProviders,
+                      ),
                   onPinCompleted: (pin) async {
                     print('...on pin completed $pin');
-                    controller.fundBetting(pin,  onSuccess: (transactionInfo) {
+                    controller.fundBetting(
+                      pin,
+                      onSuccess: (transactionInfo) {
                         final items = getSummaryItems(
                             transactionInfo, TransactionType.airtime);
                         print('....able to get the summary items $items');
@@ -128,14 +144,15 @@ class _FundBettingScreenState extends State<FundBettingScreen> {
                             RoutesManager.successful,
                             (Route<dynamic> route) => false,
                             arguments: review);
-                      }, onError: (error) {
-                      showCustomErrorTransaction(context: context, errMsg: error);
-                    } ,);
-                   
+                      },
+                      onError: (error) {
+                        showCustomErrorTransaction(
+                            context: context, errMsg: error);
+                      },
+                    );
                   });
-                showReviewBottomShhet(context, reviewDetails: reviewModel);
-      
-      
+              showReviewBottomShhet(context, reviewDetails: reviewModel);
+              },);
             }),
         body: Consumer<BettingController>(
             builder: (context, bettingController, child) {
@@ -150,13 +167,13 @@ class _FundBettingScreenState extends State<FundBettingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 20,
                 children: [
-                 ReviewHeaderContainer(
-                providerType: "Betting",
-                providerName: bettingController.selectedProvider?.name??"",
-                logo: bettingController.selectedProvider?.logo??"",
-                
-                onChange: (){},
-              ),
+                  ReviewHeaderContainer(
+                    providerType: "Betting",
+                    providerName:
+                        bettingController.selectedProvider?.name ?? "",
+                    logo: bettingController.selectedProvider?.logo ?? "",
+                    onChange: () {},
+                  ),
                   Column(
                     spacing: 5,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +197,6 @@ class _FundBettingScreenState extends State<FundBettingScreen> {
                               : SizedBox(),
                     ],
                   ),
-                  
                   AmountTextField(
                     controller: bettingController.amountController,
                     onChanged: (value) {
@@ -188,8 +204,7 @@ class _FundBettingScreenState extends State<FundBettingScreen> {
                     },
                   ),
                   AmountSuggestion(
-                      selectedAmount:
-                          bettingController.selectedSuggestedAmount,
+                      selectedAmount: bettingController.selectedSuggestedAmount,
                       onSelect: (amount) {
                         bettingController.onSuggestedAmountSelected(amount);
                       },

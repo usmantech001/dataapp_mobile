@@ -48,6 +48,10 @@ class WalletRepo {
     return await ServicesHelper.validateIdentificationOTP(otp: otp, type: type);
   }
 
+  Future<bool> requestSafeHavenOtp() async{
+    return await ServicesHelper.requestSafeHavenOtp();
+  }
+
   Future<VirtualBankDetail> generateStaticAccount(String provider) async{
     return await ServicesHelper.generateVirtualAccount(provider);
   }

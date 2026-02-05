@@ -84,9 +84,10 @@ class _BuyElectricityScreenState extends State<BuyElectricityScreen> {
             }
 
                final generalController = context.read<GeneralController>();
-              num serviceCharge = generalController.serviceCharge?.electricity??0;
-              num totalAmount = calculateTotalAmount(amount: formatUseableAmount(
-                        controller.amountController.text.trim()), charge: serviceCharge);
+               final amount = formatUseableAmount(
+                      controller.amountController.text.trim());
+              generalController.getDiscount(type: 'electricity', provider: controller.selectedProvider!.code, amount: amount, onSuccess: (discount) {
+              num totalAmount = discount.amount??0;
 
             final summaryItems = [
               SummaryItem(
@@ -97,17 +98,33 @@ class _BuyElectricityScreenState extends State<BuyElectricityScreen> {
                 name: controller.meterNumberController.text.trim(),
                 hasDivider: true,
               ),
-              if(serviceCharge!=0) SummaryItem(
-                  title: 'Service Charge',
-                  name: formatCurrency(serviceCharge),
-                  
-                ),
-              SummaryItem(
-                  title: 'Recharge Amount',
-                  name: controller.amountController.text.trim()),
+              
+              // SummaryItem(
+              //     title: 'Recharge Amount',
+              //     name: controller.amountController.text.trim()),
+              //     SummaryItem(
+              //     title: 'Total Amount',
+              //     name: formatCurrency(totalAmount)),
                   SummaryItem(
-                  title: 'Total Amount',
-                  name: formatCurrency(totalAmount)),
+                  title: 'Amount',
+                  name: controller.amountController.text,
+                  hasDivider: true,
+                ),
+                
+
+                if (discount.discount != 0)
+                  SummaryItem(
+                    title: 'Discount',
+                    name: discount.discount.toString(),
+                  ),
+                  if (discount.fee != 0)
+                  SummaryItem(
+                    title: 'Fee',
+                    name: formatCurrency(discount.fee),
+                  ),
+               if (discount.discount != 0 || discount.fee!=0) SummaryItem(
+                    title: 'Total Amount',
+                    name: formatCurrency(totalAmount, decimal: 2)),
             ];
             String meterType = controller.isPrepaid ? 'prepaid' : 'postpaid';
             final reviewModel = ReviewModel(
@@ -149,6 +166,7 @@ class _BuyElectricityScreenState extends State<BuyElectricityScreen> {
                   );
                 });
            showReviewBottomShhet(context, reviewDetails: reviewModel);
+              },);
           }),
       body: Consumer<ElectricityController>(
           builder: (context, electricityController, child) {

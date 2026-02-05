@@ -17,4 +17,8 @@ class RewardsRepo {
     final res = await UserHelper.getLeaderboard(filter);
     return res.data;
   }
+
+  Future<String> claimReward() async{
+    return await UserHelper.claimReward();
+  }
 }

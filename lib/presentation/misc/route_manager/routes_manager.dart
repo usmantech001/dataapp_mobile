@@ -3,6 +3,7 @@ import 'package:dataplug/core/model/core/app_notification.dart';
 import 'package:dataplug/core/model/core/card_transactions.dart';
 import 'package:dataplug/core/model/core/user.dart';
 import 'package:dataplug/core/model/core/user_bank.dart';
+import 'package:dataplug/presentation/screens/auth/onboarding/onboarding_screen.dart';
 import 'package:dataplug/presentation/screens/auth/password_reset/misc/password_reset_3_arg.dart';
 import 'package:dataplug/presentation/screens/auth/verify_email.dart/verify_email.dart';
 import 'package:dataplug/presentation/screens/dashboard/bottom_nav_screen.dart';
@@ -19,6 +20,8 @@ import 'package:dataplug/presentation/screens/dashboard/fund/quick_fund_amount_s
 import 'package:dataplug/presentation/screens/dashboard/fund/virtual_acctount_details_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/kyc/verify_bvn_nin_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/kyc/verify_bvn_otp_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/notification/notofication_screen.dart';
+import 'package:dataplug/presentation/screens/dashboard/rewards/rewards_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/internet_data/buy_recommended_data_screen.dart';
 import 'package:dataplug/presentation/screens/dashboard/settings/bank/virtual_accounts_screen.dart';
 import 'package:dataplug/presentation/screens/success/auth_successful_screen.dart';
@@ -232,7 +235,11 @@ class RoutesManager {
   static const String quickFund = "/quickFund";
   static const String buyRecommendedData = "/buyRecommendedData";
   static const String addFundPaymentMethods = "/addFundPaymentMethods";
-  static const String virtualAcctountDetails = "/virtualAcctountDetails"; 
+  static const String virtualAcctountDetails = "/virtualAcctountDetails";
+  static const String pushNotification = "/pushNotification";
+  static const String rewards = "/rewards"; 
+  static const String onboarding = "/onboarding";    
+
 }
 
 class RouteGenerator {
@@ -547,7 +554,16 @@ case RoutesManager.addFundPaymentMethods:
             builder: (_) => VirtualAcctountDetailsScreen(), settings: settings);    
   case RoutesManager.receipt:
         return MaterialPageRoute(
-            builder: (_) => ReceiptScreen(), settings: settings);                                                                  
+            builder: (_) => ReceiptScreen(), settings: settings);
+  case RoutesManager.pushNotification:
+        return MaterialPageRoute(
+            builder: (_) => PushNotificationScreen(), settings: settings); 
+  case RoutesManager.rewards:
+        return MaterialPageRoute(
+            builder: (_) => RewardsScreen(), settings: settings); 
+  case RoutesManager.onboarding:
+        return MaterialPageRoute(
+            builder: (_) => OnboardingScreen(), settings: settings);                                                                                                  
       default:
         return unDefinedRoute();
     }

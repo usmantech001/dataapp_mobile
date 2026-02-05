@@ -12,14 +12,14 @@ List<SummaryItem> getSummaryItems(ServiceTxn transInfo, TransactionType type){
     SummaryItem(title: 'Payment Status', name: transInfo.status.name??"", hasDivider: true,),
     SummaryItem(title: 'Amount', name: '₦${transInfo.amount}')
   ];
-  if(transInfo.purpose == ServicePurpose.airtime){
+  if(transInfo.purpose == ServicePurpose.airtime || transInfo.purpose == ServicePurpose.internationalAirtime){
     List<SummaryItem> airtimeItems = [
       SummaryItem(title: 'Network', name: transInfo.meta.provider?.name??""),
       SummaryItem(title: 'Phone Number', name: transInfo.meta.customer?.phone??"", hasDivider: true,),
     ];
     items = [...airtimeItems, ...paymentInfoItems];
   }
-  if(transInfo.purpose == ServicePurpose.data){
+  if(transInfo.purpose == ServicePurpose.data || transInfo.purpose == ServicePurpose.internationalData){
     List<SummaryItem> airtimeItems = [
       SummaryItem(title: 'Network', name: transInfo.meta.provider?.name??""),
       SummaryItem(title: 'Phone Number', name: transInfo.meta.customer?.phone??""),
@@ -66,6 +66,15 @@ List<SummaryItem> getSummaryItems(ServiceTxn transInfo, TransactionType type){
       //SummaryItem(title: 'Bet ID / Phone Number', name: transInfo.meta.customer.??"", hasDivider: true,),
     ];
     items = [...bettingItems, ...paymentInfoItems];
+  }
+
+  if(transInfo.purpose == ServicePurpose.deposit){
+    List<SummaryItem> depositItems = [
+      SummaryItem(title: 'Amount', name: transInfo.amount.toString()??""),
+      SummaryItem(title: 'Depositor Name', name: capitalize(transInfo.provider)??"", hasDivider: true,),
+      //SummaryItem(title: 'Bet ID / Phone Number', name: transInfo.meta.customer.??"", hasDivider: true,),
+    ];
+    items = [...depositItems, ...paymentInfoItems];
   }
 
   return items;

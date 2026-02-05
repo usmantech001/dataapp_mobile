@@ -1,16 +1,34 @@
+import 'package:dataplug/core/enum.dart';
 import 'package:dataplug/core/utils/custom_image.dart';
 import 'package:dataplug/core/utils/utils.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
+import 'package:dataplug/presentation/misc/custom_snackbar.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ReferEarnContainer extends StatelessWidget {
-  const ReferEarnContainer({super.key, required this.referralCode});
+  const ReferEarnContainer(
+      {super.key, required this.referralCode, required this.totalReferrals});
 
   final String referralCode;
+  final String totalReferrals;
+
+  void shareReferralCode() {
+    Share.share(
+      '''
+Hey 👋  
+
+I use DataApp to buy affordable data and also pay bills like airtime and electricity easily.
+
+Sign up on DataApp and use my referral code $referralCode during registration to enjoy the benefits 🚀
+''',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +60,7 @@ class ReferEarnContainer extends StatelessWidget {
                     style: get16TextStyle(),
                   ),
                   Text(
-                    '3 friends joined',
+                    '$totalReferrals friends joined',
                     style: get14TextStyle().copyWith(
                         color: ColorManager.kGreyColor.withValues(alpha: .7)),
                   )
@@ -118,9 +136,11 @@ class ReferEarnContainer extends StatelessWidget {
           ),
           Gap(16.h),
           CustomButton(
-            text: 'View Leaderboard',
+            text: '',
             isActive: true,
-            onTap: () {},
+            onTap: () {
+              shareReferralCode();
+            },
             loading: false,
             textColor: ColorManager.kPrimary,
             backgroundColor: ColorManager.kPrimary.withValues(alpha: .08),

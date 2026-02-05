@@ -18,6 +18,7 @@ class Constants {
   static const String kBiometricTransactionKey = "transaction";
   static const String kCachedAuthKey = "authCred";
    static const String kGlobalLoginKey = "globalLogin";
+   static const String kAlreadyUsedAppKey = "AlreadyUsedApp";
 
   static const String serverError = "A server error occured, please try again.";
   static const kConnectionError =

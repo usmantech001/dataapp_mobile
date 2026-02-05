@@ -35,7 +35,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
     return Scaffold(
       appBar: CustomAppbar(
         title: 'Rewards',
-        canPop: false,
+        canPop: Navigator.canPop(context),
       ),
       body: Consumer<RewardsController>(
         builder: (context, controller, child) {
@@ -91,7 +91,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                   ),
                 ),
                 LeaderboardContainer(),
-                ReferEarnContainer(referralCode: controller.referralInfo?.refCode??"",)
+                ReferEarnContainer(referralCode: controller.referralInfo?.refCode??"", totalReferrals: controller.referralInfo?.totalReferrals??"",)
               ],
             ),
           );

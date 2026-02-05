@@ -1,5 +1,7 @@
+import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
+import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../misc/custom_components/custom_bottom_sheet.dart';
@@ -49,7 +51,7 @@ class SettingsTab extends StatelessWidget {
             
             SettingsIconTab(
                 onTap: () {
-                 // Navigator.pushNamed(context, RoutesManager.addedBanks);
+                  Navigator.pushNamed(context, RoutesManager.rewards);
                 },
                 text: "Invite a Friend",
                 shortDesc: "Invite friends and earn rewards",
@@ -57,7 +59,7 @@ class SettingsTab extends StatelessWidget {
            
             SettingsIconTab(
                 onTap: () {
-                  Navigator.pushNamed(context, RoutesManager.faqs);
+                  Navigator.pushNamed(context, RoutesManager.pushNotification);
                 },
                 text: "Notifications",
                 shortDesc: "Notifications settings",
@@ -92,42 +94,17 @@ class SettingsTab extends StatelessWidget {
                 shortDesc: "Log Out from this account",
                 hasNavIcon: false,
                 img: 'log-out'),
-            
-      /*
-            GestureDetector(
-              onTap: () {
-                showCustomBottomSheet(
-                  context: context,
-                  screen: const DeleteAccount(),
-                  isDismissible: true,
-                );
-              },
-              child: Container(
-                alignment: Alignment.center,
-                width: double.maxFinite,
-                padding: EdgeInsets.symmetric(vertical: 16),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(7),
-                    color: Color(0xffFFE1E1)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Assets.icons.trash.svg(),
-                    Gap(10),
-                    Text(
-                      "Delete Account",
-                      style: get14TextStyle().copyWith(
-                        fontSize: 14,
-                        color: ColorManager.kError,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            */
-            //
+
+                Center(child: Text('App version 2.0.0', style: get12TextStyle().copyWith(color: ColorManager.kGreyColor.withValues(alpha: .7)),)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: 2,
+                        children: [
+                          Text('Bank-Level Security',style: get12TextStyle().copyWith(color: ColorManager.kGreyColor.withValues(alpha: .7)),),
+                          Icon(Icons.verified_user, size: 12.sp, color: ColorManager.kDeepgreen,)
+                        ],
+                      )
+    
           ],
         ),
       ),

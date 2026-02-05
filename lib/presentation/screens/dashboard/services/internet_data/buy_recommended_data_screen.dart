@@ -1,3 +1,4 @@
+import 'package:dataplug/core/model/core/custom_network_image.dart';
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/data_controller.dart';
 import 'package:dataplug/core/providers/general_controller.dart';
@@ -15,18 +16,32 @@ import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
 import 'package:dataplug/presentation/misc/custom_snackbar.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/select_contact.dart';
+import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:dataplug/presentation/screens/dashboard/services/airtime/buy_airtime_1.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 
-class BuyRecommendedDataScreen extends StatelessWidget {
+class BuyRecommendedDataScreen extends StatefulWidget {
   const BuyRecommendedDataScreen({super.key});
 
   @override
+  State<BuyRecommendedDataScreen> createState() => _BuyRecommendedDataScreenState();
+}
+
+class _BuyRecommendedDataScreenState extends State<BuyRecommendedDataScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<DataController>().clearData();
+  }
+  @override
   Widget build(BuildContext context) {
+    
     return Consumer<DataController>(builder: (context, controller, child) {
       return Scaffold(
         appBar: CustomAppbar(title: 'Buy Data'),
@@ -101,6 +116,54 @@ class BuyRecommendedDataScreen extends StatelessWidget {
                 EdgeInsetsGeometry.symmetric(horizontal: 15.w, vertical: 24.h),
             child: Column(
               children: [
+                Container(
+                  padding: EdgeInsets.all(16),
+                  margin: EdgeInsets.only(bottom: 24.h),
+                  decoration: BoxDecoration(
+                    color: ColorManager.kWhite,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Selected Package',
+                        style: get16TextStyle()
+                            .copyWith(fontWeight: FontWeight.w500),
+                      ),
+                      Gap(15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              CustomNetworkImage(
+                                  imageUrl:
+                                      controller.selectedRecommendedPlan!.logo ??
+                                          ""),
+                              Gap(12),
+                              SizedBox(
+                                width: 200,
+                                child: Text(
+                                  controller.selectedRecommendedPlan!.name,
+                                  style: get14TextStyle()
+                                      .copyWith(fontWeight: FontWeight.w400),
+                                ),
+                              )
+                            ],
+                          ),
+                         
+                        ],
+                      ),
+                      Gap(8.h),
+                      Text(
+                        '${controller.selectedRecommendedPlan!.duration} Days',
+                        style: get16TextStyle()
+                            .copyWith(fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                ),
                 CustomInputField(
                   formHolderName: "Phone Number",
                   textInputAction: TextInputAction.next,

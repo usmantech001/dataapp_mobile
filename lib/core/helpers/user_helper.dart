@@ -219,6 +219,21 @@ class UserHelper {
     throw throwHttpError(res);
   }
 
+  static Future<User> toggleNotification() async {
+    http.Response response =
+        await HttpRequest.post("/auth/notifications/toggle", {}).catchError((err) {
+      throw OtherErrors(err);
+    });
+
+    Map res = {};
+    try {
+      res = json.decode(response.body);
+    } catch (_) {}
+    print('...response ${res['data']}');
+    if (response.statusCode < 400) return User.fromMap(res["data"]);
+    throw throwHttpError(res);
+  }
+
   static Future<ReferralInfo> getReferralInfo() async {
     String url = "/referrals?per_page=1&page=1";
 
@@ -231,6 +246,19 @@ class UserHelper {
       return ReferralInfo.fromJson(res["data"]);
     }
 
+    throw throwHttpError(res);
+  }
+
+  static Future<String> claimReward() async {
+    http.Response response =
+        await HttpRequest.post("/auth/referrals/claim", {})
+            .catchError((err) {
+      throw OtherErrors(err);
+    });
+
+    Map res = json.decode(response.body);
+    print('..res ${res}');
+    if (response.statusCode < 400) return res["message"];
     throw throwHttpError(res);
   }
 

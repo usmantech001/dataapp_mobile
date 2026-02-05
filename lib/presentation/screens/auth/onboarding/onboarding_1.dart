@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:dataplug/core/helpers/tiktok_helper.dart';
+import 'package:dataplug/core/utils/app-loader.dart';
+import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_elements.dart';
@@ -11,6 +13,7 @@ import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:dataplug/presentation/screens/auth/verify_email.dart/misc/verify_email_arg.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
 import '../../../../core/enum.dart';
@@ -53,7 +56,7 @@ class _Onboarding1State extends State<Onboarding1> {
   Widget build(BuildContext context) {
     return Scaffold(
       //backgroundColor: ColorManager.kPrimaryLight,
-       backgroundColor: ColorManager.kWhite,
+      backgroundColor: ColorManager.kWhite,
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -77,7 +80,7 @@ class _Onboarding1State extends State<Onboarding1> {
                     style: get24TextStyle(),
                   ),
                   Gap(12),
-                   Text(
+                  Text(
                     "Sign Up Today to Manage Data and Pay Bills in One Place",
                     style: get14TextStyle(),
                   ),
@@ -162,6 +165,7 @@ class _Onboarding1State extends State<Onboarding1> {
                               CustomInputField(
                                 maxLength: 10,
                                 formHolderName: "Phone Number",
+                                hintText: '8050754432',
                                 prefixIcon: GestureDetector(
                                   onTap: () async {
                                     Country? res = await showCustomBottomSheet(
@@ -263,7 +267,38 @@ class _Onboarding1State extends State<Onboarding1> {
                                         context: context, description: "$e");
                                   }
                                 },
-                                loading: loading,
+                                loading: false,
+                              ),
+
+                              Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 10.h),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style:
+                                          get12TextStyle().copyWith(fontSize: 12),
+                                      children: [
+                                        TextSpan(
+                                            text: "Already have an Account? ",
+                                            style: get14TextStyle().copyWith(
+                                                color: ColorManager.kGreyColor
+                                                    .withValues(alpha: .7))),
+                                        TextSpan(
+                                          text: "Sign In",
+                                          style: get14TextStyle().copyWith(
+                                              color: ColorManager.kPrimary),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () {
+                                              Navigator.pushReplacementNamed(
+                                                  context,
+                                                  RoutesManager.signIn);
+                                            },
+                                          //
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
 
 //                               const Padding(
@@ -300,9 +335,9 @@ class _Onboarding1State extends State<Onboarding1> {
     );
   }
 
-  bool loading = false;
+  //bool loading = false;
   Future<void> createAccount() async {
-    setState(() => loading = true);
+    displayLoader(context);
 
     await AuthHelper.signUp(
             firstname: firstnameController.text,
@@ -319,6 +354,7 @@ class _Onboarding1State extends State<Onboarding1> {
         'email': emailController.text,
         'phone': phoneController.text
       });
+      popScreen();
       showCustomToast(
         context: context,
         description: "Account creation was sucessful.",
@@ -336,9 +372,9 @@ class _Onboarding1State extends State<Onboarding1> {
         ),
       );
     }).catchError((e) {
-      log(e.toString(), name: "createAccount");
+      popScreen();
       showCustomToast(context: context, description: e.toString());
     });
-    setState(() => loading = false);
+    
   }
 }

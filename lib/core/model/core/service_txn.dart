@@ -64,7 +64,7 @@ class ServiceTxn {
       "purpose": serviceEnumToString(purpose),
       "status": enumToString(status),
       "created_at": createdAt?.toIso8601String(),
-      "meta": meta,
+      "meta": meta.toJson(),
     };
   }
 

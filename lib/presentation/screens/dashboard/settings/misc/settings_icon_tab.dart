@@ -34,7 +34,7 @@ class SettingsIconTab extends StatelessWidget {
               // mainAxisAlignment: MainAxisAlignment.start,
                crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
+               if(img.isNotEmpty) Container(
                   width: 48.w,
                   height: 48.h,
                   padding: EdgeInsets.all(10.r),
@@ -47,6 +47,7 @@ class SettingsIconTab extends StatelessWidget {
                 ),
                 Gap(12),
                 Column(
+                  mainAxisSize: MainAxisSize.min,
                   spacing: 4.h,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

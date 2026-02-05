@@ -75,10 +75,9 @@ class _CableTvScreenState extends State<CableTvScreen> {
               }
 
               final generalController = context.read<GeneralController>();
-              num serviceCharge = generalController.serviceCharge?.tv ?? 0;
-              num totalAmount = calculateTotalAmount(
-                  amount: cableController.selectedPlan!.amount.toString(),
-                  charge: serviceCharge);
+             generalController.getDiscount(type: 'tv', provider: cableController.selectedProvider!.code, code: cableController.selectedPlan!.code.toString(), onSuccess: (discount) {
+                num serviceCharge = generalController.serviceCharge?.tv ?? 0;
+              num totalAmount = discount.amount??0;
 
               final summaryItems = [
                 SummaryItem(
@@ -98,17 +97,19 @@ class _CableTvScreenState extends State<CableTvScreen> {
                   title: 'Decoder Number',
                   name: cableController.decoderNumberController.text.trim(),
                 ),
-                SummaryItem(
-                    title: 'Amount',
-                    name: cableController.selectedPlan!.amount.toString()),
-                if (serviceCharge != 0)
+                 SummaryItem(
+                  title: 'Amount',
+                  name: cableController.selectedPlan?.amount.toString()??'',
+                  hasDivider: true,
+                ),
+                if (discount.discount != 0)
                   SummaryItem(
-                    title: 'Service Charge',
-                    name: formatCurrency(serviceCharge),
-                    hasDivider: true,
+                    title: 'Discount',
+                    name: discount.discount.toString()??'0',
                   ),
-                SummaryItem(
-                    title: 'Total Amount', name: formatCurrency(totalAmount)),
+               if (discount.discount != 0) SummaryItem(
+                    title: 'Total Amount',
+                    name: formatCurrency(totalAmount, decimal: 2)),
               ];
 
               final reviewModel = ReviewModel(
@@ -149,6 +150,7 @@ class _CableTvScreenState extends State<CableTvScreen> {
                     );
                   });
               showReviewBottomShhet(context, reviewDetails: reviewModel);
+             },);
             }),
         body: Consumer<CableTvController>(
             builder: (context, cableController, child) {
@@ -167,7 +169,7 @@ class _CableTvScreenState extends State<CableTvScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Data Package',
+                        'TV Package',
                         style: get16TextStyle()
                             .copyWith(fontWeight: FontWeight.w500),
                       ),

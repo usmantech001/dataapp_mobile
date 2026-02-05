@@ -9,87 +9,164 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 
 Future<Uint8List> generateReceiptPdfFromModel(ReceiptModel model) async {
-  final pdf = pw.Document();
-  pw.MemoryImage? logoImage;
+  final geistRegular = pw.Font.ttf(
+  await rootBundle.load(
+    'assets/fonts/Geist/static/Geist-Regular.ttf',
+  ),
+);
 
-   final bytes = await rootBundle.load('assets/images/dataplug-logo-text.png');
-    logoImage = pw.MemoryImage(bytes.buffer.asUint8List());
+final geistMedium = pw.Font.ttf(
+  await rootBundle.load(
+    'assets/fonts/Geist/static/Geist-Medium.ttf',
+  ),
+);
+
+final geistBold = pw.Font.ttf(
+  await rootBundle.load(
+    'assets/fonts/Geist/static/Geist-Bold.ttf',
+  ),
+);
+
+  final pdf = pw.Document(
+    theme: pw.ThemeData.withFont(
+    base: geistRegular,
+    bold: geistBold,
+    fontFallback: [
+      pw.Font.symbol()
+    ],
+  
+  ),
+  );
+  pw.MemoryImage logoImage;
+
+  final bytes =
+      await rootBundle.load('assets/images/dataplug-logo-text.png');
+  logoImage = pw.MemoryImage(bytes.buffer.asUint8List());
+
+  const brandColor = PdfColor.fromInt(0xFF00B875);
+  const bgColor = PdfColor.fromInt(0xFFF5F6FA);
 
   pdf.addPage(
     pw.Page(
       pageFormat: PdfPageFormat.a4,
+      margin: pw.EdgeInsets.zero,
       build: (context) {
-        return pw.Center(
-          child: pw.Container(
-            padding: const pw.EdgeInsets.all(24),
-            decoration: pw.BoxDecoration(
-              color: PdfColors.white,
-              borderRadius: pw.BorderRadius.circular(16),
-            ),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.center,
-              children: [
-                // Icon
-                pw.Align(
-                  alignment: pw.Alignment.centerLeft,
-                  child: pw.Image(logoImage!, height: 32)
-                )
-                ,
-                pw.Container(
-                  height: 70,
-                  width: 70,
-                  decoration: pw.BoxDecoration(
-                    shape: pw.BoxShape.circle,
-                    color: PdfColor.fromHex('#E8FAF8'),
+        return pw.Container(
+          color: bgColor,
+          padding: const pw.EdgeInsets.all(24),
+          child: pw.Center(
+            child: pw.Container(
+              width: 380,
+              padding: const pw.EdgeInsets.all(24),
+              decoration: pw.BoxDecoration(
+                color: PdfColors.white,
+                borderRadius: pw.BorderRadius.circular(20),
+              ),
+              child: pw.Column(
+                mainAxisSize: pw.MainAxisSize.min,
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                children: [
+                  // Header
+                  pw.Align(
+                    alignment: pw.Alignment.centerLeft,
+                    child: pw.Image(logoImage, height: 28),
                   ),
-                  child: pw.Center(
-                    child: logoImage != null
-                        ? pw.Image(logoImage!, height: 32)
-                        : pw.Icon(pw.IconData(0xe227)),
+
+                  pw.SizedBox(height: 20),
+
+                  // Status Badge
+                  pw.Container(
+                    padding: const pw.EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    decoration: pw.BoxDecoration(
+                      color: PdfColor.fromHex('#E8FAF8'),
+                      borderRadius: pw.BorderRadius.circular(30),
+                    ),
+                    child: pw.Text(
+                      'SUCCESS',
+                      
+                      style: pw.TextStyle(
+                        color: brandColor,
+                        fontSize: 12,
+                        font: geistRegular,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
 
-                pw.SizedBox(height: 16),
+                  pw.SizedBox(height: 16),
 
-                pw.Text(
-                  'Transaction Receipt',
-                  style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
-                ),
-
-                pw.SizedBox(height: 8),
-
-                pw.Text(
-                  '₦${model.amount}',
-                  style: pw.TextStyle(fontSize: 32, fontWeight: pw.FontWeight.bold),
-                ),
-
-                pw.SizedBox(height: 10),
-
-                pw.Text(
-                  model.shortInfo,
-                  style: pw.TextStyle(fontSize: 14),
-                ),
-
-                pw.SizedBox(height: 20),
-
-                // Summary
-                pw.Align(
-                  alignment: pw.Alignment.centerLeft,
-                  child: pw.Text(
-                    'Summary',
-                    style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+                  // Amount
+                  pw.Text(
+                    '\$₦${model.amount}',
+                    style: pw.TextStyle(
+                      fontSize: 34,
+                      font: geistRegular,
+                      fontWeight: pw.FontWeight.bold,
+                      color: brandColor,
+                    ),
                   ),
-                ),
 
-                pw.SizedBox(height: 8),
-                _pdfDashedDivider(),
+                  pw.SizedBox(height: 6),
 
-                pw.SizedBox(height: 12),
+                  pw.Text(
+                    model.shortInfo,
+                    style: pw.TextStyle(
+                      fontSize: 13,
+                      font: geistRegular,
+                      color: PdfColors.grey700,
+                    ),
+                    textAlign: pw.TextAlign.center,
+                  ),
 
-                ...model.summaryItems.map(
-                  (item) => _pdfSummaryRow(item.title, item.name),
-                ),
-              ],
+                  pw.SizedBox(height: 24),
+
+                  // Summary Card
+                  pw.Container(
+                    padding: const pw.EdgeInsets.all(16),
+                    decoration: pw.BoxDecoration(
+                      color: PdfColor.fromHex('#FAFAFA'),
+                      borderRadius: pw.BorderRadius.circular(12),
+                    ),
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(
+                          'Transaction Details',
+                          style: pw.TextStyle(
+                            fontSize: 14,
+                            font: geistRegular,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+
+                        pw.SizedBox(height: 10),
+                        _pdfDashedDivider(),
+                        pw.SizedBox(height: 12),
+
+                        ...model.summaryItems.map(
+                          (item) =>
+                              _pdfSummaryRow(item.title, item.name, geistRegular),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  pw.SizedBox(height: 24),
+
+                  // Footer
+                  pw.Text(
+                    'Powered by DataPlug',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      font: geistRegular,
+                      color: PdfColors.grey,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -100,18 +177,33 @@ Future<Uint8List> generateReceiptPdfFromModel(ReceiptModel model) async {
   return pdf.save();
 }
 
-pw.Widget _pdfSummaryRow(String title, String value) {
+
+pw.Widget _pdfSummaryRow(String title, String value, pw.Font font) {
   return pw.Padding(
     padding: const pw.EdgeInsets.symmetric(vertical: 6),
     child: pw.Row(
       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
       children: [
-        pw.Text(title, style: const pw.TextStyle(fontSize: 12)),
-        pw.Text(value, style:  pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
+        pw.Text(
+          title,
+          style: pw.TextStyle(
+            fontSize: 12,
+            color: PdfColors.grey700,
+            font: font,
+          ),
+        ),
+        pw.Text(
+          value,
+          style: pw.TextStyle(
+            fontSize: 12,
+            fontWeight: pw.FontWeight.bold,
+          ),
+        ),
       ],
     ),
   );
 }
+
 
 pw.Widget _pdfDashedDivider() {
   return pw.LayoutBuilder(

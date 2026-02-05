@@ -2,6 +2,7 @@ import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/betting_controller.dart';
 import 'package:dataplug/core/providers/electricity_controller.dart';
 import 'package:dataplug/core/providers/epin_controller.dart';
+import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/utils/custom_verifying.dart';
 import 'package:dataplug/core/utils/formatters.dart';
 import 'package:dataplug/core/utils/review_bottomsheet.dart';
@@ -71,7 +72,10 @@ List<String> jambTypes = [
       
               
       
-               final summaryItems = [
+               final generalController = context.read<GeneralController>();
+               generalController.getDiscount(type: 'education', provider: controller.selectedProvider!.code, onSuccess: (discount) {
+                num totalAmount = discount.amount??0;
+                 final summaryItems = [
                 SummaryItem(title: 'EPin Provider', name: controller.selectedProvider?.name ?? ""),
                 SummaryItem(title: 'EPin Product', name: controller.selectedProduct?.name ?? ""),
                 SummaryItem(
@@ -82,10 +86,16 @@ List<String> jambTypes = [
                 
                 SummaryItem(
                     title: 'Amount', name: formatCurrency(num.parse(controller.selectedProduct?.amount.toString()??'0'), decimal: 0)),
-                SummaryItem(
-                    title: 'Service Charge', name: "₦0.00", hasDivider: true,),    
-                SummaryItem(
-                    title: 'Total Amount', name: formatCurrency(num.parse(controller.selectedProduct?.amount.toString()??'0'), decimal: 0)),     
+               
+
+                if (discount.discount != 0)
+                  SummaryItem(
+                    title: 'Discount',
+                    name: discount.discount.toString()??'0',
+                  ),
+               if (discount.discount != 0) SummaryItem(
+                    title: 'Total Amount',
+                    name: formatCurrency(totalAmount, decimal: 2)),
               ];
               final reviewDetails = ReviewModel(
                   summaryItems: summaryItems,
@@ -115,6 +125,7 @@ List<String> jambTypes = [
                    
                   });
              showReviewBottomShhet(context, reviewDetails: reviewDetails);
+               },);
       
       
             }),

@@ -1,3 +1,4 @@
+import 'package:dataplug/core/helpers/facebook_event_helper.dart';
 import 'package:dataplug/core/model/core/data_plans.dart';
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/data_controller.dart';
@@ -41,7 +42,10 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = context.read<DataController>();
-      controller.getDataProviders();
+      controller.clearData();
+      if (controller.providers.isEmpty) {
+        controller.getDataProviders();
+      }
     });
     super.initState();
   }
@@ -51,324 +55,379 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
     return Consumer<DataController>(builder: (context, controller, child) {
       return Scaffold(
         appBar: CustomAppbar(title: 'Buy Data'),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(vertical: 24.h),
-          child: Column(
-            spacing: 24,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ToggleSelectorWidget(
-                tabIndex: controller.selectedTypeIndex,
-                tabText: controller.dataTypes,
-                onTap: (index) {
-                  controller.onSelectDataType(index);
-                },
-              ),
-              controller.gettingProviders
-                  ? SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.symmetric(horizontal: 15.w),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          spacing: 8.w,
-                          children: List.generate(
-                              4, (index) => OperatorSelectorShimmer())),
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: Text(
-                            'Select Operator',
-                            style: get16TextStyle(),
+        body: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(vertical: 24.h),
+            child: Column(
+              spacing: 24,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ToggleSelectorWidget(
+                  tabIndex: controller.selectedTypeIndex,
+                  tabText: controller.dataTypes,
+                  onTap: (index) {
+                    controller.onSelectDataType(index);
+                  },
+                ),
+                controller.gettingProviders
+                    ? SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.symmetric(horizontal: 15.w),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            spacing: 8.w,
+                            children: List.generate(
+                                4, (index) => OperatorSelectorShimmer())),
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15.w),
+                            child: Text(
+                              'Select Operator',
+                              style: get16TextStyle(),
+                            ),
                           ),
-                        ),
-                        Padding(
-                          // scrollDirection: Axis.horizontal,
-                          padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: controller.providerErrMsg!=null? CustomError(errMsg: controller.providerErrMsg!, onRefresh: (){
-                            controller.getDataProviders();
-                          }):  Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            spacing: MediaQuery.sizeOf(context).width * 0.02,
-                            children: List.generate(controller.providers.length,
-                                (index) {
-                              final operator = controller.providers[index];
-                              return OperatorSelector(
-                                  name: operator.name,
-                                  logo: operator.logo ?? "",
-                                  isSelected: operator.name ==
-                                      controller.selectedProvider?.name,
-                                  onTap: () {
-                                    controller.onSelectProvider(operator,
-                                        isPreSelect: false);
-                                  });
-                            }),
+                          Padding(
+                            // scrollDirection: Axis.horizontal,
+                            padding: EdgeInsets.symmetric(horizontal: 15.w),
+                            child: controller.providerErrMsg != null
+                                ? CustomError(
+                                    errMsg: controller.providerErrMsg!,
+                                    onRefresh: () {
+                                      controller.getDataProviders();
+                                    })
+                                : Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    spacing:
+                                        MediaQuery.sizeOf(context).width * 0.02,
+                                    children: List.generate(
+                                        controller.providers.length, (index) {
+                                      final operator =
+                                          controller.providers[index];
+                                      return OperatorSelector(
+                                          name: operator.name,
+                                          logo: operator.logo ?? "",
+                                          isSelected: operator.name ==
+                                              controller.selectedProvider?.name,
+                                          onTap: () {
+                                            controller.onSelectProvider(
+                                                operator,
+                                                isPreSelect: false);
+                                          });
+                                    }),
+                                  ),
                           ),
-                        ),
-                      ],
-                    ),
-              Padding(
-                padding: EdgeInsetsGeometry.symmetric(horizontal: 15.w),
-                child: Column(
-                  children: [
-                    CustomInputField(
-                      formHolderName: "Phone Number",
-                      textInputAction: TextInputAction.next,
-                      textEditingController: controller.phoneNumberController,
-                      textInputType: TextInputType.number,
-                      suffixIcon: InkWell(
-                        onTap: () async {
-                          bool permissionGranted =
-                              await FlutterContacts.requestPermission();
-                          if (permissionGranted) {
+                        ],
+                      ),
+                Padding(
+                  padding: EdgeInsetsGeometry.symmetric(horizontal: 15.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      CustomInputField(
+                        formHolderName: "Phone Number",
+                        textInputAction: TextInputAction.next,
+                        textEditingController: controller.phoneNumberController,
+                        textInputType: TextInputType.number,
+                        onChanged: (value) {
+                          controller.validatePhoneNumber();
+                        },
+                        suffixIcon: InkWell(
+                          onTap: () async {
                             Contact? res = await showCustomBottomSheet(
                               context: context,
                               isDismissible: true,
                               screen: SelectFromContactWidget(),
                             );
                             if (res != null) {
-                              print('...response from contact is $res');
-                              // phoneController.text = res
-                              //     .phones.first.number
-                              //     .replaceAll(" ", "")
-                              //     .replaceAll("(", "")
-                              //     .replaceAll(")", "")
-                              //     .replaceAll("+234", "0")
-                              //     .replaceAll("-", "")
-                              //     .trim();
-                              setState(() {});
+                              controller.onSelectNumberFromContact(res);
                             }
-                          }
-                        },
-                        child: Icon(
-                          Icons.person,
-                          size: 24,
-                          color: ColorManager.kPrimary,
-                        ),
-                      ),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.w),
-                child: Text(
-                  'Data Packages',
-                  style: get16TextStyle(),
-                ),
-              ),
-              controller.gettingPlans
-                  ? GridView.count(
-                      padding: EdgeInsets.symmetric(horizontal: 15.w),
-                      shrinkWrap: true,
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      physics: NeverScrollableScrollPhysics(),
-                      children: List.generate(9, (index) {
-                        return PlanBoxShimmer();
-                      }),
-                    )
-                  : controller.plansErrMsg != null
-                      ? Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: Column(
-                            spacing: 30.h,
-                            children: [
-                              Text(controller.plansErrMsg ?? "", textAlign: TextAlign.center,),
-                              CustomButton(
-                                text: 'Retry',
-                                width: 180.w,
-                                isActive: true,
-                                onTap: () {
-                                  if(controller.selectedTypeIndex==0){
-                                    controller.getDataPlans();
-                                  }else{
-                                    controller.getDataPlanTypes();
-                                  }
-                                },
-                                loading: false,
-                                border: Border.all(
-                                  color: ColorManager.kPrimary,
-                                ),
-                                textColor: ColorManager.kPrimary,
-                                backgroundColor: ColorManager.kGreyF5,
-                              )
-                            ],
+                          },
+                          child: Icon(
+                            Icons.person,
+                            size: 24,
+                            color: ColorManager.kPrimary,
                           ),
-                        )
-                      : controller.allPlans.isNotEmpty
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              spacing: 8.h,
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                      ),
+                      if (controller.phoneError)
+                        const Text(
+                          "Phone number does not match selected network",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15.w),
+                  child: Text(
+                    'Data Packages',
+                    style: get16TextStyle(),
+                  ),
+                ),
+                controller.gettingPlans
+                    ? GridView.count(
+                        padding: EdgeInsets.symmetric(horizontal: 15.w),
+                        shrinkWrap: true,
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        physics: NeverScrollableScrollPhysics(),
+                        children: List.generate(9, (index) {
+                          return PlanBoxShimmer();
+                        }),
+                      )
+                    : controller.plansErrMsg != null
+                        ? Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15.w),
+                            child: Column(
+                              spacing: 30.h,
                               children: [
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 15.w),
-                                  child: Row(
-                                    spacing: 8.w,
-                                    children: controller.selectedTypeIndex == 0
-                                        ? List.generate(
-                                            controller.dataPlanTypes.length,
-                                            (index) {
-                                            final type =
-                                                controller.dataPlanTypes[index];
-                                            return PlanTab(
-                                              planType: type,
-                                              isSelected: controller.type ==
-                                                  type
-                                                      .split(" ")
-                                                      .last
-                                                      .toLowerCase(),
-                                              onTap: () {
-                                                controller.onSelectPlanType(type
-                                                    .split(" ")
-                                                    .last
-                                                    .toLowerCase());
-                                              },
-                                            );
-                                          })
-                                        : List.generate(
-                                            controller.plansByDays.length,
-                                            (index) {
-                                            final duration = controller
-                                                .plansByDays.keys
-                                                .toList()[index];
-                                            return PlanTab(
-                                              duration: duration,
-                                              isSelected:
-                                                  controller.selectedDuration ==
-                                                      duration,
-                                              onTap: () {
-                                                controller.onDurationChanged(
-                                                    duration);
-                                              },
-                                            );
-                                          }),
-                                  ),
+                                Text(
+                                  controller.plansErrMsg ?? "",
+                                  textAlign: TextAlign.center,
                                 ),
-                                GridView.count(
-                                  // controller: ,
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 15.w),
-                                  shrinkWrap: true,
-                                  crossAxisCount: 3,
-                                  mainAxisSpacing: 10,
-                                  crossAxisSpacing: 10,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  children: List.generate(
-                                      controller.selectedDuration == 'All'
-                                          ? controller.allPlans.length
-                                          : controller.durationPlans.length,
-                                      (index) {
-                                    final plan =
-                                        controller.selectedDuration == 'All'
-                                            ? controller.allPlans[index]
-                                            : controller.durationPlans[index];
-                                    print('..the plan is $plan');
-                                    return PlanBox(
-                                      plan: plan,
-                                      onTap: () {
-                                        if (controller.phoneNumberController
-                                            .text.isEmpty) {
-                                          showCustomToast(
-                                              context: context,
-                                              description:
-                                                  'Please enter a phone number');
-                                          return;
-                                        }
-                                        controller.onPlanSelected(plan);
-                                        final generalController =
-                                            context.read<GeneralController>();
-                                        num serviceCharge = generalController
-                                                .serviceCharge?.data ??
-                                            0;
-                                        num totalAmount = calculateTotalAmount(
-                                            amount: plan.amount.toString(),
-                                            charge: serviceCharge);
-                                        final summaryItems = [
-                                          SummaryItem(
-                                              title: 'Network',
-                                              name: controller
-                                                      .selectedProvider?.name ??
-                                                  ""),
-                                          SummaryItem(
-                                            title: 'Phone number',
-                                            name: controller
-                                                .phoneNumberController.text
-                                                .trim(),
-                                            hasDivider: true,
-                                          ),
-                                          if (serviceCharge != 0)
-                                            SummaryItem(
-                                              title: 'Service Charge',
-                                              name:
-                                                  formatCurrency(serviceCharge),
-                                            ),
-                                          SummaryItem(
-                                              title: 'Amount',
-                                              name:
-                                                  formatCurrency(totalAmount)),
-                                        ];
-                                        final reviewDetails = ReviewModel(
-                                            summaryItems: summaryItems,
-                                            amount: plan.amount.toString(),
-                                            providerName: controller
-                                                .selectedProvider?.name,
-                                            logo: controller
-                                                .selectedProvider?.logo,
-                                            shortInfo:
-                                                '${controller.selectedProvider?.name ?? ""} Data',
-                                            onPinCompleted: (pin) async {
-                                              displayLoader(context);
-                                              controller.buyData(
-                                                pin,
-                                                onSuccess: (transactionInfo) {
-                                                  popScreen();
-                                                  final items = getSummaryItems(
-                                                      transactionInfo,
-                                                      TransactionType.data);
-                                                  final review = ReceiptModel(
-                                                      summaryItems: items,
-                                                      amount: transactionInfo
-                                                          .amount
-                                                          .toString(),
-                                                      shortInfo:
-                                                          '${transactionInfo.meta.provider?.name ?? ""} Airtime');
-                                                  Navigator
-                                                      .pushNamedAndRemoveUntil(
-                                                          context,
-                                                          RoutesManager
-                                                              .successful,
-                                                          (Route<dynamic>
-                                                                  route) =>
-                                                              false,
-                                                          arguments: review);
-                                                },
-                                                onError: (error) {
-                                                  popScreen();
-                                                  showCustomErrorTransaction(
-                                                      context: context,
-                                                      errMsg: error);
-                                                },
-                                              );
-                                            });
-                                        showReviewBottomShhet(context,
-                                            reviewDetails: reviewDetails);
-                                      },
-                                    );
-                                  }),
+                                CustomButton(
+                                  text: 'Retry',
+                                  width: 180.w,
+                                  isActive: true,
+                                  onTap: () {
+                                    if (controller.selectedTypeIndex == 0) {
+                                      controller.getDataPlans();
+                                    } else {
+                                      controller.getDataPlanTypes();
+                                    }
+                                  },
+                                  loading: false,
+                                  border: Border.all(
+                                    color: ColorManager.kPrimary,
+                                  ),
+                                  textColor: ColorManager.kPrimary,
+                                  backgroundColor: ColorManager.kGreyF5,
                                 )
                               ],
-                            )
-                          : controller.allPlans.isEmpty? Center(child: Text('')): SizedBox(),
-            ],
+                            ),
+                          )
+                        : controller.allPlans.isNotEmpty
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                spacing: 8.h,
+                                children: [
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 15.w),
+                                    child: Row(
+                                      spacing: 8.w,
+                                      children: controller.selectedTypeIndex ==
+                                              0
+                                          ? List.generate(
+                                              controller.dataPlanTypes.length,
+                                              (index) {
+                                              final type = controller
+                                                  .dataPlanTypes[index];
+                                              return PlanTab(
+                                                planType: type,
+                                                isSelected: controller.type ==
+                                                    type
+                                                        .split(" ")
+                                                        .last
+                                                        .toLowerCase(),
+                                                onTap: () {
+                                                  controller.onSelectPlanType(
+                                                      type
+                                                          .split(" ")
+                                                          .last
+                                                          .toLowerCase());
+                                                },
+                                              );
+                                            })
+                                          : List.generate(
+                                              controller.plansByDays.length,
+                                              (index) {
+                                              final duration = controller
+                                                  .plansByDays.keys
+                                                  .toList()[index];
+                                              return PlanTab(
+                                                duration: duration,
+                                                isSelected: controller
+                                                        .selectedDuration ==
+                                                    duration,
+                                                onTap: () {
+                                                  controller.onDurationChanged(
+                                                      duration);
+                                                },
+                                              );
+                                            }),
+                                    ),
+                                  ),
+                                  GridView.count(
+                                    // controller: ,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 15.w),
+                                    shrinkWrap: true,
+                                    crossAxisCount: 3,
+                                    mainAxisSpacing: 10,
+                                    crossAxisSpacing: 10,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    children: List.generate(
+                                        controller.selectedDuration == 'All'
+                                            ? controller.allPlans.length
+                                            : controller.durationPlans.length,
+                                        (index) {
+                                      final plan =
+                                          controller.selectedDuration == 'All'
+                                              ? controller.allPlans[index]
+                                              : controller.durationPlans[index];
+                                      print('..the plan is $plan');
+                                      return PlanBox(
+                                        plan: plan,
+                                        onTap: () {
+                                          if (controller.phoneNumberController
+                                              .text.isEmpty) {
+                                            showCustomToast(
+                                                context: context,
+                                                description:
+                                                    'Please enter a phone number');
+                                            return;
+                                          }
+                                          if (controller.phoneNumberController
+                                              .text.isEmpty) {
+                                            showCustomToast(
+                                              context: context,
+                                              description:
+                                                  "Please enter your phone number",
+                                            );
+                                            return;
+                                          }
+                                          if (controller.phoneError) {
+                                            showCustomToast(
+                                                context: context,
+                                                description:
+                                                    "Phone number does not match selected network");
+                                            return;
+                                          }
+                                          controller.onPlanSelected(plan);
+
+                                          final generalController =
+                                              context.read<GeneralController>();
+                                          generalController.getDiscount(
+                                            type: 'data',
+                                            provider: controller
+                                                .selectedProvider!.code,
+                                            code: controller.selectedPlan!.code,
+                                            onSuccess: (discount) {
+                                       
+                                              num totalAmount = discount.amount??0;
+                                              final summaryItems = [
+                                                SummaryItem(
+                                                    title: 'Network',
+                                                    name: controller
+                                                            .selectedProvider
+                                                            ?.name ??
+                                                        ""),
+                                                SummaryItem(
+                                                  title: 'Phone number',
+                                                  name: controller
+                                                      .phoneNumberController
+                                                      .text
+                                                      .trim(),
+                                                  hasDivider: true,
+                                                ),
+                                               
+                                                SummaryItem(
+                                                    title: 'Amount',
+                                                    name: formatCurrency(
+                                                        totalAmount)),
+                                                if (discount.discount != 0)
+                                                  SummaryItem(
+                                                    title: 'Discount',
+                                                    name: discount.discount
+                                                            .toString() 
+                                                        
+                                                  ),
+                                               if (discount.discount != 0) SummaryItem(
+                                                    title: 'Total Amount',
+                                                    name: formatCurrency(
+                                                        totalAmount,
+                                                        decimal: 2)),
+                                              ];
+                                              final reviewDetails = ReviewModel(
+                                                  summaryItems: summaryItems,
+                                                  amount:
+                                                      plan.amount.toString(),
+                                                  providerName: controller
+                                                      .selectedProvider?.name,
+                                                  logo: controller
+                                                      .selectedProvider?.logo,
+                                                  shortInfo:
+                                                      '${controller.selectedProvider?.name ?? ""} Data',
+                                                  onPinCompleted: (pin) async {
+                                                    displayLoader(context);
+                                                    controller.buyData(
+                                                      pin,
+                                                      onSuccess:
+                                                          (transactionInfo) {
+                                                            
+                                                        popScreen();
+                                                        FacebookEventHelper().logEvent('Data Purchase');
+                                                        final items =
+                                                            getSummaryItems(
+                                                                transactionInfo,
+                                                                TransactionType
+                                                                    .data);
+                                                        final review = ReceiptModel(
+                                                            summaryItems: items,
+                                                            amount:
+                                                                transactionInfo
+                                                                    .amount
+                                                                    .toString(),
+                                                            shortInfo:
+                                                                '${transactionInfo.meta.provider?.name ?? ""} Data');
+                                                        Navigator
+                                                            .pushNamedAndRemoveUntil(
+                                                                context,
+                                                                RoutesManager
+                                                                    .successful,
+                                                                (Route<dynamic>
+                                                                        route) =>
+                                                                    false,
+                                                                arguments:
+                                                                    review);
+                                                      },
+                                                      onError: (error) {
+                                                        popScreen();
+                                                        showCustomErrorTransaction(
+                                                            context: context,
+                                                            errMsg: error);
+                                                      },
+                                                    );
+                                                  });
+                                              showReviewBottomShhet(context,
+                                                  reviewDetails: reviewDetails);
+                                            },
+                                          );
+                                        },
+                                      );
+                                    }),
+                                  )
+                                ],
+                              )
+                            : controller.allPlans.isEmpty
+                                ? Center(child: Text(''))
+                                : SizedBox(),
+              ],
+            ),
           ),
         ),
       );

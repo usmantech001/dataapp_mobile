@@ -20,6 +20,36 @@ class TransactionSuccessfulScreen extends StatelessWidget {
     final reviewDetails =
         ModalRoute.of(context)?.settings.arguments as ReceiptModel;
     return Scaffold(
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15.w),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomButton(
+                  text: 'Generate Receipt',
+                  isActive: true,
+                  onTap: () {
+                    pushNamed(RoutesManager.receipt, arguments: reviewDetails);
+                  },
+                  loading: false),
+              Gap(12.h),
+              CustomButton(
+                text: 'Back Home',
+                isActive: true,
+                onTap: () {
+                  removeAllAndPushScreen(RoutesManager.bottomNav);
+                },
+                loading: false,
+                backgroundColor: ColorManager.kWhite,
+                textStyle: get16TextStyle().copyWith(
+                    color: ColorManager.kGreyColor.withValues(alpha: .7),
+                    fontWeight: FontWeight.w400),
+              ),
+            ],
+          ),
+        ),
+      ),
       body: SafeArea(
           child: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
@@ -56,8 +86,8 @@ class TransactionSuccessfulScreen extends StatelessWidget {
                   Center(
                     child: Text(
                       '₦${reviewDetails.amount}',
-                      style:
-                          get32TextStyle().copyWith(fontWeight: FontWeight.w500),
+                      style: get32TextStyle()
+                          .copyWith(fontWeight: FontWeight.w500),
                     ),
                   ),
                   Gap(4),
@@ -83,26 +113,12 @@ class TransactionSuccessfulScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Gap(24.h),
-            CustomButton(
-          text: 'Generate Receipt', isActive: true, onTap: (){
-            pushNamed(RoutesManager.receipt, arguments: reviewDetails);
-          }, loading: false),
-          Gap(12.h),
-            CustomButton(
-          text: 'Back Home', isActive: true, onTap: (){
-            removeAllAndPushScreen(RoutesManager.bottomNav);
-          }, loading: false, backgroundColor: ColorManager.kWhite, textStyle: get16TextStyle().copyWith(color: ColorManager.kGreyColor.withValues(alpha: .7), fontWeight: FontWeight.w400),),
           ],
         ),
       )),
     );
   }
 }
-
-
-
-
 
 class SuccessIconAnimation extends StatefulWidget {
   const SuccessIconAnimation({super.key});

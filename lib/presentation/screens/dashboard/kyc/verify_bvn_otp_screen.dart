@@ -33,6 +33,13 @@ class _VerifyBvnOtpScreenState extends State<VerifyBvnOtpScreen> {
   //
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<WalletController>().requestSafeHavenOtp();
+  }
+
+  @override
   Widget build(BuildContext context) {
    final walletController = context.read<WalletController>();
     return Scaffold(
@@ -101,7 +108,17 @@ class _VerifyBvnOtpScreenState extends State<VerifyBvnOtpScreen> {
 
                         GestureDetector(
                           behavior: HitTestBehavior.translucent,
-                          onTap: () => null,
+                          onTap: () {
+                            displayLoader(context);
+                            context.read<WalletController>().requestSafeHavenOtp(onSuccess: (){
+                              popScreen();
+                              showCustomToast(context: context, description: 'OTP has been sent to the number attached to your BVN', type: ToastType.success);
+                              return;
+                            }, onError: (error) {
+                              popScreen();
+                              showCustomToast(context: context, description: error);
+                            },);
+                          },
                           child: Text(
                             "Resend New Code",
                             style: get12TextStyle().copyWith(

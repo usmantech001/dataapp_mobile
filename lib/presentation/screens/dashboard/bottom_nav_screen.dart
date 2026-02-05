@@ -1,3 +1,4 @@
+import 'package:dataplug/core/providers/airtime_controller.dart';
 import 'package:dataplug/core/providers/data_controller.dart';
 import 'package:dataplug/core/providers/general_controller.dart';
 import 'package:dataplug/core/providers/wallet_controller.dart';
@@ -44,12 +45,16 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
        final walletController = context.read<WalletController>();
        final generalController = context.read<GeneralController>();
        final dataController = context.read<DataController>();
+       final airtimeController = context.read<AirtimeController>();
        PushNotificationService pushNotificationService = PushNotificationService();
       Future.wait([
         walletController.getWalletBalance(),
          walletController.getBanners(),
          generalController.getServicesCharge(),
          dataController.getRecommendedDataPlans(),
+         dataController.getDataProviders(),
+         airtimeController.getAirtimeProviders(),
+         walletController.getStaticAccounts(),
          pushNotificationService.setFcmToken()
          
         // serviceController.getServicesStatus()

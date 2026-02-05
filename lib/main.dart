@@ -1,3 +1,4 @@
+import 'package:dataplug/core/helpers/facebook_event_helper.dart';
 import 'package:dataplug/core/helpers/tiktok_helper.dart';
 import 'package:dataplug/core/services/PushNotificationService/push_notification_service.dart';
 import 'package:dataplug/dep/locator.dart';
@@ -35,6 +36,7 @@ void main() async {
   print('.....firebase message ${message.notification?.title}');
   notificationService.showNotification(message);
  });
+
   // TiktokHelper().logIdentification();
   // TiktokHelper().logEvent('Registration', {
   //   'name' : 'usman',

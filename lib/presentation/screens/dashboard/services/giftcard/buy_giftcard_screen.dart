@@ -139,7 +139,7 @@ class BuyGiftcardScreen extends StatelessWidget {
                             ),
                             Gap(4.h),
                             Text(
-                              "( \$5 to \$99.99 ) US USD",
+                              "( \$${giftCardController.selectedProduct?.minAmount} to \$99.99 ) US USD",
                               style: get14TextStyle()
                                   .copyWith(fontWeight: FontWeight.w500),
                             ),

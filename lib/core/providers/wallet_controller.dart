@@ -20,11 +20,14 @@ class WalletController extends ChangeNotifier {
   String? bannersErrMsg;
   String? virtualAccProviderErrMsg;
 
+
   bool gettingBalance = false;
   bool isBalanceVisible = true;
   bool gettingBanners = false;
   bool gettingVirtualAccs = false;
   bool gettingVirtualAccsProvider = false;
+  bool alreadyGeneratedMonnifyAcc = false;
+  bool alreadyGeneratedSafeHavenAcc = false;
 
   int selectedFundingMethodIndex = 0;
 
@@ -80,11 +83,13 @@ class WalletController extends ChangeNotifier {
   }
 
   Future<void> getWalletBalance() async {
+    
     balanceErrMsg = null;
     gettingBalance = false;
     notifyListeners();
     try {
       final res = await walletRepo.getWalletBalance();
+      print('..wallet balnce $res');
       balance = res;
       gettingBalance = false;
       notifyListeners();
@@ -147,9 +152,21 @@ class WalletController extends ChangeNotifier {
     }
   }
 
+  Future<void> requestSafeHavenOtp({Function? onSuccess, Function(String)? onError}) async{
+    try {
+      final response = await walletRepo.requestSafeHavenOtp();
+       print('..response $response');
+      onSuccess?.call();
+    } catch (e) {
+      onError?.call(e.toString());
+    }
+  }
+
    Future<void> generateStaticAccount({Function? onSuccess, Function(String)? onError}) async{
     try {
       final response = await walletRepo.generateStaticAccount(staticAccProvider??"");
+      // virtualAccounts.add(response);
+      // notifyListeners();
       onSuccess?.call();
     } catch (e) {
       onError?.call(e.toString());
@@ -158,12 +175,31 @@ class WalletController extends ChangeNotifier {
 
   Future<void> getStaticAccounts() async {
     gettingVirtualAccs = true;
+    
     notifyListeners();
+
     try {
+      virtualAccounts = [];
       final response = await walletRepo.getStaticAccounts();
       if(response!=null){
         print('..virtual accounts is $response');
         virtualAccounts.addAll(response);
+        if(virtualAccounts.isNotEmpty){
+          for (VirtualBankDetail account in virtualAccounts){
+          switch (account.provider) {
+            case 'monnify':
+              alreadyGeneratedMonnifyAcc = true;
+              notifyListeners();
+              break;
+           case 'safehaven':
+              alreadyGeneratedSafeHavenAcc = true;
+              notifyListeners();
+              break;   
+            default:
+          }
+          notifyListeners();
+        }
+        }
         
       }
       gettingVirtualAccs = false;

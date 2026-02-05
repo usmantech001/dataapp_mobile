@@ -50,7 +50,6 @@ class ServicesHelper {
     //
 
     String url = "/transactions";
-    print('..page number is $page');
 
     Map<String, String>? queryParameters = {
       'per_page' : '10',
@@ -90,7 +89,6 @@ class ServicesHelper {
     Map res = json.decode(response.body);
      
     if (response.statusCode < 400) {
-      print('...analysis data ${res['data']}');
       return SpendingAnalysisData.fromJson(res['data']);
     } else {
       throw throwHttpError(res);
@@ -259,8 +257,6 @@ class ServicesHelper {
       {required String provider,
       required num amount,
       required String method}) async {
-    //
-
     Map<String, dynamic> _req = {};
     _req["provider"] = provider;
     _req["amount"] = amount.toString();
@@ -289,11 +285,6 @@ class ServicesHelper {
     });
 
     Map res = json.decode(response.body);
-
-    print(res);
-
-    log(res.toString());
-
     if (response.statusCode < 400) {
       return res['data'];
     } else {
@@ -302,15 +293,12 @@ class ServicesHelper {
   }
 
   static Future<bool> requestSafeHavenOtp() async {
-    //
-
     http.Response response =
         await HttpRequest.post("/identity/request-otp", {}).catchError((err) {
       throw OtherErrors(err);
     });
 
     Map res = json.decode(response.body);
-    print("res $res\n\n");
     if (response.statusCode < 400) {
       // return false;
       return true;
@@ -332,7 +320,7 @@ class ServicesHelper {
       "first_name": fName,
       "bvn": number,
       "dob": dob,
-      // "type": type,
+     // "type": 'type',
     }).catchError((err) {
       throw OtherErrors(err);
     });

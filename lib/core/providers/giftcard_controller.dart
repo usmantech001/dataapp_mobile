@@ -82,10 +82,12 @@ class GiftcardController extends ChangeNotifier{
    Future<void> getGiftcardProducts() async{
     gettingProducts = true;
     productErrMsg = null;
+    products = [];
     notifyListeners();
     try {
      final response = await giftcardRepo.getGiftcardProducts(categoryId: selectedCategory!.id.toString(), countryId: selectedCountry!.id.toString());
      products.addAll(response.data);
+     print('...giftcard data ${response.data[0].toJson()}');
       gettingProducts = false;
       notifyListeners();
     } catch (e) {

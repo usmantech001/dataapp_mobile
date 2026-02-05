@@ -64,10 +64,10 @@ class GiftcardTransactionStatus extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     // Simple and direct navigation to dashboard
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      RoutesManager.dashboardWrapper,
-                      (route) => false,
-                    );
+                    // Navigator.of(context).pushNamedAndRemoveUntil(
+                    //   //RoutesManager.dashboardWrapper,
+                    //   (route) => false,
+                    // );
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(right: 0),

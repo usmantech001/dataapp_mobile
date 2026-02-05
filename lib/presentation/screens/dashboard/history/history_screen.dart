@@ -78,8 +78,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
               Expanded(
                   child: controller.currentTabIndex == 1
-                      ? controller.gettingAnalysis? Center(child: CircularProgressIndicator()) : controller.analysisError!=null?Text(controller.analysisError!): SpendingAnalysis(
-                        spendingAnalysisData: controller.selectedPeriodIndex==0? controller.weeklyAnalysis! : controller.monthlyAnalysis!,
+                      ? controller.gettingAnalysis ? Center(child: CircularProgressIndicator()) : controller.analysisError!=null?Text(controller.analysisError!): SpendingAnalysis(
+                        spendingAnalysisData: controller.selectedPeriodIndex==0 && controller.weeklyAnalysis!=null? controller.weeklyAnalysis! : controller.monthlyAnalysis!,
                       )
                       : controller.gettingHistory
                           ? buildLoading(wrapWithExpanded: false)
@@ -312,6 +312,7 @@ class HistoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        print(transInfo.toMap());
         final summaryItems =
             getSummaryItems(transInfo, TransactionType.airtime);
         final details = ReceiptModel(
@@ -368,7 +369,7 @@ class HistoryTile extends StatelessWidget {
                   capitalize(transInfo.status.name),
                   style: get12TextStyle().copyWith(
                       fontWeight: FontWeight.w400,
-                      color: ColorManager.kSuccess),
+                      color:  getStatusColor(transInfo.status.name)),
                 ),
               ],
             )
@@ -376,6 +377,20 @@ class HistoryTile extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+Color getStatusColor( String status){
+  print('..status $status');
+  switch (status) {
+    case 'successful':
+      return ColorManager.kSuccess;
+    case 'failed':
+      return ColorManager.kError; 
+    case 'pending':
+      return ColorManager.kYellow;   
+    default:
+    return ColorManager.kSuccess;
   }
 }
 

@@ -84,54 +84,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Expanded(
                                     child: WalletActivitiesContainer(
-                                  name: 'Fund',
+                                  name: 'Add Money',
                                   iconPath: 'fund',
+                                  // textColor: ColorManager.kPrimary,
+                                  // bgColor: ColorManager.kPrimary.withValues(alpha: .08),
                                   onTap: () {
                                     pushNamed(RoutesManager.virtualAccounts);
-                                    // if (user!.phone == null) {
-                                    //   showCustomToast(
-                                    //       context: context,
-                                    //       description:
-                                    //           "Please complete your profile to continue.");
-                                    //           return;
-                                    // }
-                                    /*
-                                    if (!user!.bvn_validated ||
-                                        !user!.bvn_verified) {
-                                      showCustomBottomSheet(
-                                          context: context,
-                                          isDismissible: true,
-                                          screen: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 15.w,
-                                                vertical: 40.h),
-                                            decoration: BoxDecoration(
-                                                color: ColorManager.kWhite),
-                                            child: SafeArea(
-                                              child: Column(
-                                                spacing: 30.h,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  CustomButton(
-                                                      text: 'Quick Fund',
-                                                      isActive: true,
-                                                      onTap: () {},
-                                                      loading: false),
-                                                      CustomButton(
-                                                      text: 'Generate Static Account',
-                                                      backgroundColor: ColorManager.kWhite,
-                                                      border: Border.all(color: ColorManager.kPrimary),
-                                                      textColor: ColorManager.kBlack,                                                      isActive: true,
-                                                      onTap: () {
-                                                       // popAndPushScreen(RoutesManager.)
-                                                      },
-                                                      loading: false),
-                                                ],
-                                              ),
-                                            ),
-                                          ));
-                                    }
-                                    */
+                                    
                                   },
                                 )),
                                 Expanded(

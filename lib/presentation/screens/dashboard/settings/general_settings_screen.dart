@@ -2,8 +2,6 @@ import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart'
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../misc/custom_components/custom_bottom_sheet.dart';
-import 'logout_confirmation/logout_confirmation.dart';
 import 'misc/settings_icon_tab.dart';
 
 class GeneralSettingsScreen extends StatelessWidget {

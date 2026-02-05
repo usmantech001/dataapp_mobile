@@ -9,13 +9,16 @@ import 'package:dataplug/core/utils/review_bottomsheet.dart';
 import 'package:dataplug/core/utils/summary_info.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
+import 'package:dataplug/presentation/misc/custom_components/custom_bottom_sheet.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
 import 'package:dataplug/presentation/misc/custom_snackbar.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
+import 'package:dataplug/presentation/misc/select_contact.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +37,7 @@ class _BuyOtherDataScreenState extends State<BuyOtherDataScreen> {
       final code = ModalRoute.of(context)?.settings.arguments as String;
       final controller = context.read<DataController>();
       controller.getDataProviders(code: code);
+      controller.clearData();
     });
     super.initState();
   }
@@ -60,25 +64,14 @@ class _BuyOtherDataScreenState extends State<BuyOtherDataScreen> {
                       textInputType: TextInputType.number,
                       suffixIcon: InkWell(
                         onTap: () async {
-                          /*
-                                                  Contact? res =
-                                                      await showCustomBottomSheet(
-                                                    context: context,
-                                                    isDismissible: true,
-                                                    screen: SelectFromContactWidget(),
-                                                  );
-                                                  if (res != null) {
-                                                    phoneController.text = res
-                                                        .phones.first.number
-                                                        .replaceAll(" ", "")
-                                                        .replaceAll("(", "")
-                                                        .replaceAll(")", "")
-                                                        .replaceAll("+234", "0")
-                                                        .replaceAll("-", "")
-                                                        .trim();
-                                                    setState(() {});
-                                                  }
-                                                  */
+                          Contact? res = await showCustomBottomSheet(
+                              context: context,
+                              isDismissible: true,
+                              screen: SelectFromContactWidget(),
+                            );
+                            if (res != null) {
+                              controller.onSelectNumberFromContact(res);
+                            }
                         },
                         child: Icon(
                           Icons.person,

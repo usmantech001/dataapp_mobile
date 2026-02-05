@@ -250,7 +250,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
   //
 
-  bool loading = false;
+  //bool loading = false;
   Future<void> confirmSignUpOtp(String code) async {
     displayLoader(context);
     await AuthHelper.verifyEmail(code: code, token: widget.param.token)
@@ -263,6 +263,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
         Navigator.pushReplacementNamed(context, RoutesManager.signIn);
       });
     }).catchError((e) {
+      popScreen();
       showCustomToast(context: context, description: e.toString());
     });
   }

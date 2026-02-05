@@ -11,20 +11,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-class QuickFundAmountScreen extends StatelessWidget {
+class QuickFundAmountScreen extends StatefulWidget {
   const QuickFundAmountScreen({super.key});
 
   @override
+  State<QuickFundAmountScreen> createState() => _QuickFundAmountScreenState();
+}
+
+class _QuickFundAmountScreenState extends State<QuickFundAmountScreen> {
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      context.read<WalletController>().clearData();
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    
+  }
+  @override
   Widget build(BuildContext context) {
     final List<String> suggestedAmounts = [
-      '500',
       '1000',
       '1500',
       '2000',
       '3000',
       '5000',
       '10000',
-      '20000'
+      '20000',
+      '30000'
     ];
     return Consumer<WalletController>(
       builder: (context, controller, child) {
@@ -45,24 +64,31 @@ class QuickFundAmountScreen extends StatelessWidget {
 
               pushNamed(RoutesManager.addFundPaymentMethods);
           }),
-          body: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
-            child: Column(
-              spacing: 20.h,
-              children: [
-                AmountTextField(
-                  controller: controller.amountController,
-                  onChanged: (value) {
-                    controller.onAmountChanged(num.parse(value));
-                  },
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
+              child: SizedBox(
+                height: MediaQuery.sizeOf(context).height,
+                child: Column(
+                  
+                  spacing: 20.h,
+                  children: [
+                    AmountTextField(
+                      controller: controller.amountController,
+                      onChanged: (value) {
+                        controller.onAmountChanged(num.parse(value));
+                      },
+                    ),
+                    AmountSuggestion(
+                              selectedAmount: controller.selectedSuggestedAmount,
+                              onSelect: (amount) {
+                                controller.onSuggestedAmountSelected(amount);
+                              },
+                              suggestedAmounts: suggestedAmounts)
+                  ],
                 ),
-                AmountSuggestion(
-                          selectedAmount: controller.selectedSuggestedAmount,
-                          onSelect: (amount) {
-                            controller.onSuggestedAmountSelected(amount);
-                          },
-                          suggestedAmounts: suggestedAmounts)
-              ],
+              ),
             ),
           ),
         );

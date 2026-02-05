@@ -4,7 +4,9 @@ import 'package:dataplug/core/model/core/data_plans.dart';
 import 'package:dataplug/core/model/core/data_provider.dart';
 import 'package:dataplug/core/model/core/service_txn.dart';
 import 'package:dataplug/core/repository/data_repo.dart';
+import 'package:dataplug/core/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/contact.dart';
 
 class DataController extends ChangeNotifier {
   DataRepo dataRepo;
@@ -44,6 +46,46 @@ class DataController extends ChangeNotifier {
 
   String? type;
 
+  void onSelectNumberFromContact(Contact number) {
+    phoneNumberController.text = number.phones.first.number
+        .replaceAll(" ", "")
+        .replaceAll("(", "")
+        .replaceAll(")", "")
+        .replaceAll("+234", "0")
+        .replaceAll("-", "")
+        .trim();
+        validatePhoneNumber();
+        
+  }
+
+   bool phoneError = false;
+
+  void validatePhoneNumber() {
+    print('..selected provider ${selectedProvider!.code}');
+    phoneError = false;
+    bool isValid = phoneNumberController.text.length >= 4
+        ? isValidNetwork(phoneNumberController.text, selectedProvider!.code)
+        : true;
+    print('..is valid $isValid');
+    if (!isValid && !isPorted) {
+      phoneError = true;
+    }
+    notifyListeners();
+  }
+
+  void toggleIsPorted() {
+    print('...isPorted $isPorted');
+    if (!isPorted) {
+      phoneError = false;
+      isPorted = !isPorted;
+    } else {
+      isPorted = !isPorted;
+      validatePhoneNumber();
+    }
+
+    notifyListeners();
+  }
+
   String get getDataType {
     switch (selectedTypeIndex) {
       case 0:
@@ -53,6 +95,12 @@ class DataController extends ChangeNotifier {
       default:
         return 'direct';
     }
+  }
+
+  void clearData() {
+    phoneNumberController.clear();
+    phoneError = false;
+    notifyListeners();
   }
 
   void onSelectDataType(int index) {
@@ -67,9 +115,11 @@ class DataController extends ChangeNotifier {
   }
 
   void onSelectProvider(DataProvider provider, {bool isPreSelect = true}) {
+    
     selectedProvider = provider;
     selectedDuration = 'All';
     gettingPlans = true;
+    validatePhoneNumber();
     notifyListeners();
     if (!isPreSelect) {
       if (getDataType == 'direct') {
@@ -125,6 +175,7 @@ class DataController extends ChangeNotifier {
   Future<void> getDataProviders({String? id, String? code}) async {
     gettingProviders = true;
     providerErrMsg = null;
+    allPlans = [];
     notifyListeners();
     try {
       providers = [];

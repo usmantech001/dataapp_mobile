@@ -24,6 +24,7 @@ class User {
   final bool two_factor_enabled;
   final num wallet_balance;
   final String? biometricToken;
+  final bool? notifications_enabled;
 
   User({
     this.id,
@@ -50,7 +51,8 @@ class User {
     this.two_factor_enabled = false,
     this.wallet_balance = 0,
     this.login_biometric_activated = false,
-    this.biometricToken
+    this.biometricToken,
+    this.notifications_enabled = false
   });
 
   factory User.fromMap(Map<String, dynamic> map) {
@@ -74,6 +76,7 @@ class User {
       email_verified: map["email_verified"] ?? false,
       pin_activated: map["pin_activated"] ?? false,
       bvn_verified: map["bvn_verified"] ?? false,
+      notifications_enabled: map["notifications_enabled"] ?? false,
           bvn_validated: map["bvn_validated"] ?? false,
       transaction_biometric_activated:
           map["transaction_biometric_activated"] ?? false,
@@ -114,7 +117,8 @@ class User {
       // 'auth_type': auth_type,
       // 'countryObj': countryObj == null ? null : countryObj?.toMap(),
       'login_biometric_activated': login_biometric_activated,
-      'biometric_token' : biometricToken
+      'biometric_token' : biometricToken,
+      'notifications_enabled' : notifications_enabled
     };
   }
 }

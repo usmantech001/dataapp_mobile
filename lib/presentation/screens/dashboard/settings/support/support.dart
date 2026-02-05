@@ -24,7 +24,18 @@ class Support extends StatefulWidget {
 class _SupportState extends State<Support> {
   final spacer = const SizedBox(height: 30);
   bool loading = true;
+ 
+     Future<void> _joinChannel() async {
+    final Uri whatsappUrl = Uri.parse(
+      "https://whatsapp.com/channel/0029VbAXD9cL2AU5Xave2933",
+    );
 
+    if (await canLaunchUrl(whatsappUrl)) {
+      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+    } else {
+      throw "Could not launch WhatsApp.";
+    }
+  }
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -126,10 +137,16 @@ class _SupportState extends State<Support> {
                                       .then((value) {})
                                       .catchError((onError) {});
                                   },
-                                  text: "Chat with us on Whatsapp",
+                                  text: "Chat us on Whatsapp",
                                   shortDesc: genericProvider.supportWhatsapp ?? "",
                                   img: 'whatsapp-icon'), 
-
+                                 SettingsIconTab(
+                                  onTap: () {
+                                   _joinChannel();
+                                  },
+                                  text: "Whatsapp Channel",
+                                  shortDesc: "Kindly join for more info",
+                                  img: 'whatsapp-icon'), 
                             
 
                               

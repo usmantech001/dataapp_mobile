@@ -1,4 +1,4 @@
-import 'package:dataplug/core/enum.dart';
+
 import 'package:dataplug/core/model/core/leaderboard.dart';
 import 'package:dataplug/core/model/core/referral.dart';
 import 'package:dataplug/core/repository/rewards_repo.dart';
@@ -12,10 +12,17 @@ class RewardsController extends ChangeNotifier {
   int leaderboardCurrentIndex = 0;
   ReferralInfo? referralInfo;
 
+  bool earningVisible = true;
+  
   List<Referral> referrals = [];
   List<LeaderboardItem> leaderBoardItems = [];
 
   bool gettingLeaderBoards = false;
+
+  void onToggleEarningVisibility(){
+    earningVisible = !earningVisible;
+    notifyListeners();
+  }
 
   void onTabChange(int index){
     leaderboardCurrentIndex = index;
@@ -35,14 +42,14 @@ class RewardsController extends ChangeNotifier {
     try {
       final res = await rewardsRepo.getReferralInfo();
       referralInfo = res;
-      
-      //referrals.addAll(res.)
+
       notifyListeners();
-      print('...the referral info are $referralInfo');
     } catch (e) {
       
     }
   }
+
+
 
   Future<void> getLeaderboard() async{
     gettingLeaderBoards = true;
@@ -62,4 +69,14 @@ class RewardsController extends ChangeNotifier {
     }
   }
 
+  Future<void> claimReward({Function(String)? onSuccess, Function(String)? onError}) async{
+    try {
+      final res = await rewardsRepo.claimReward();
+      onSuccess?.call(res);
+      getReferralInfo();
+      print('...the referral info are $referralInfo');
+    } catch (e) {
+      onError?.call(e.toString());
+    }
+  }
 }
