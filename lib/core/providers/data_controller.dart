@@ -268,9 +268,35 @@ class DataController extends ChangeNotifier {
               : getDataType);
       onSuccess?.call(response);
     } catch (e) {
-      onError?.call(e.toString());
+      final err = getFriendlyErrorMessage(e.toString());
+      onError?.call(err);
     }
   }
+
+  String getFriendlyErrorMessage(dynamic error) {
+  if (error == null) {
+    return 'Something went wrong. Please try again.';
+  }
+
+  final message = error.toString().toLowerCase();
+
+  // Timeout / network errors
+  if (message.contains('curl error 28') ||
+      message.contains('timed out') ||
+      message.contains('timeout')) {
+    return 'Request timed out. Please try again.';
+  }
+
+  // Backend internal errors
+  if (message.contains('app\\') ||
+      message.contains('::') ||
+      message.contains('/var/www')) {
+    return 'Something went wrong on our end. Please try again later.';
+  }
+
+  // Fallback
+  return error?? 'Unable to complete purchase. Please try again.';
+}
 
   Future<void> getRecommendedDataPlans() async {
     gettingRecommendedPlans = true;

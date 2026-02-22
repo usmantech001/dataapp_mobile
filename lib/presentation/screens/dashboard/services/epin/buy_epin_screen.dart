@@ -108,7 +108,7 @@ List<String> jambTypes = [
                     print('...on pin completed $pin');
                     controller.purchaseEPin(pin,  onSuccess: (transactionInfo) {
                         final items = getSummaryItems(
-                            transactionInfo, TransactionType.epin);
+                             transInfo:  transactionInfo, TransactionType.epin);
                         final review = ReceiptModel(
                             summaryItems: items,
                             amount: transactionInfo.amount.toString(),

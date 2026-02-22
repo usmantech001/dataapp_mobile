@@ -165,6 +165,20 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
                             fontSize: 14,
                           ),
                         ),
+                         const SizedBox(height: 5),
+                          GestureDetector(
+                            onTap: controller.toggleIsPorted,
+                            child: Row(
+                              children: [
+                                Checkbox(
+                                  value: controller.isPorted,
+                                  activeColor: ColorManager.kPrimary,
+                                  onChanged: (v) => controller.toggleIsPorted(),
+                                ),
+                                const Text("Is this number ported?"),
+                              ],
+                            ),
+                          ),
                     ],
                   ),
                 ),
@@ -383,7 +397,7 @@ class _BuyDataScreenState extends State<BuyDataScreen> {
                                                         FacebookEventHelper().logEvent('Data Purchase');
                                                         final items =
                                                             getSummaryItems(
-                                                                transactionInfo,
+                                                                 transInfo:  transactionInfo,
                                                                 TransactionType
                                                                     .data);
                                                         final review = ReceiptModel(

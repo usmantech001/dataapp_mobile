@@ -124,7 +124,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                     onSuccess: (transactionInfo) {
                       popScreen();
                       final items = getSummaryItems(
-                          transactionInfo, TransactionType.withdraw);
+                           transInfo:  transactionInfo, TransactionType.withdraw);
                       print('....able to get the summary items $items');
                       final review = ReceiptModel(
                           summaryItems: items,

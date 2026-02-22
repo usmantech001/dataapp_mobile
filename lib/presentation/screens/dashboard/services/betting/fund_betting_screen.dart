@@ -133,7 +133,7 @@ class _FundBettingScreenState extends State<FundBettingScreen> {
                       pin,
                       onSuccess: (transactionInfo) {
                         final items = getSummaryItems(
-                            transactionInfo, TransactionType.airtime);
+                             transInfo:  transactionInfo, TransactionType.airtime);
                         print('....able to get the summary items $items');
                         final review = ReceiptModel(
                             summaryItems: items,

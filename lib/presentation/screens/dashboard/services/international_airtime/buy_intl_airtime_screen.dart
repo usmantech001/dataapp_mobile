@@ -1,5 +1,7 @@
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/intl_airtime_controller.dart';
+import 'package:dataplug/core/utils/app-loader.dart';
+import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/core/utils/review_bottomsheet.dart';
 import 'package:dataplug/core/utils/summary_info.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
@@ -80,11 +82,13 @@ class _BuyIntlAirtimeScreenState extends State<BuyIntlAirtimeScreen> {
                 amount: controller.amountController.text.trim(),
                 shortInfo: 'International Airtime',
                 onPinCompleted: (pin) async {
+                  displayLoader(context);
                   controller.buyInternationalAirtime(
                     pin,
                     onSuccess: (transactionInfo) {
+                      popScreen();
                       final items = getSummaryItems(
-                          transactionInfo, TransactionType.airtime);
+                           transInfo:  transactionInfo, TransactionType.airtime);
                       print('....able to get the summary items $items');
                       final review = ReceiptModel(
                           summaryItems: items,
@@ -98,6 +102,7 @@ class _BuyIntlAirtimeScreenState extends State<BuyIntlAirtimeScreen> {
                           arguments: review);
                     },
                     onError: (error) {
+                      popScreen();
                       showCustomErrorTransaction(
                           context: context, errMsg: error);
                     },

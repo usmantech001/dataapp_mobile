@@ -1,13 +1,17 @@
 import 'package:dataplug/core/model/core/custom_network_image.dart';
 import 'package:dataplug/core/model/core/review_model.dart';
 import 'package:dataplug/core/providers/giftcard_controller.dart';
+import 'package:dataplug/core/utils/app-loader.dart';
 import 'package:dataplug/core/utils/formatters.dart';
+import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/core/utils/review_bottomsheet.dart';
+import 'package:dataplug/core/utils/summary_info.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_appbar.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_btn.dart';
 import 'package:dataplug/presentation/misc/custom_components/custom_input_field.dart';
 import 'package:dataplug/presentation/misc/custom_components/summary_item.dart';
+import 'package:dataplug/presentation/misc/custom_snackbar.dart';
 import 'package:dataplug/presentation/misc/route_manager/routes_manager.dart';
 import 'package:dataplug/presentation/misc/style_manager/styles_manager.dart';
 import 'package:flutter/material.dart';
@@ -15,97 +19,155 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 
-class BuyGiftcardScreen extends StatelessWidget {
+class BuyGiftcardScreen extends StatefulWidget {
   const BuyGiftcardScreen({super.key});
+
+  @override
+  State<BuyGiftcardScreen> createState() => _BuyGiftcardScreenState();
+}
+
+class _BuyGiftcardScreenState extends State<BuyGiftcardScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<GiftcardController>().initializeAmount();
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final giftCardController = context.watch<GiftcardController>();
     return Scaffold(
       appBar: CustomAppbar(title: 'Buy GiftCard'),
-      bottomNavigationBar:  CustomBottomNavBotton(
+      bottomNavigationBar: CustomBottomNavBotton(
           text: 'Continue',
           onTap: () {
-            
-            // if (controller.meterNoErrMsg != null 
-            // //|| controller.meterNumberController.text.isEmpty
-            // ) {
-            //   showCustomToast(
-            //     context: context,
-            //     // meesage
-            //     description:
-            //         "Merchant not verified. Please check the meter number and try again.",
-            //   );
-            // }
+            if (giftCardController.giftcardAmountController.text.isEmpty
+                //|| controller.meterNumberController.text.isEmpty
+                ) {
+              showCustomToast(
+                context: context,
+                // meesage
+                description:
+                    "Kindly enter the amount of giftcard you want to buy",
+              );
+              return;
+            }
 
-            // if (controller.amountController.text.isEmpty ||
-            //     num.parse(formatUseableAmount(controller.amountController.text)) <= 0) {
-            //   showCustomToast(
-            //     context: context,
-            //     // meesage
-            //     description:
-            //         "Merchant not verified. Please check the meter number and try again.",
-            //   );
-            //   return;
-            // }
-
-             final summaryItems = [
-              SummaryItem(title: 'GiftCard', name: giftCardController.selectedProduct?.name ?? ""),
+            final summaryItems = [
+              SummaryItem(
+                  title: 'GiftCard',
+                  name: giftCardController.selectedProduct?.name ?? ""),
               SummaryItem(
                 title: 'Type',
-                name: giftCardController.giftCardTypes[giftCardController.currentTypeTabIndex],
+                name: giftCardController
+                    .giftCardTypes[giftCardController.currentTypeTabIndex],
                 hasDivider: true,
               ),
               SummaryItem(
-                  title: 'Unit', name: '${giftCardController.giftcardQuantity}'),
+                  title: 'Unit',
+                  name: '${giftCardController.giftcardQuantity}'),
+              SummaryItem(
+                  title: 'Amount in USD',
+                  name: giftCardController.giftcardAmountController.text),
+              SummaryItem(
+                title: 'Amount in Naira',
+                name: formatCurrency(giftCardController.totalAmount),
+                hasDivider: true,
+              ),
             ];
             final reviewModel = ReviewModel(
                 summaryItems: summaryItems,
-                amount: formatUseableAmount('2000'),
-                shortInfo: giftCardController.selectedProduct?.name??"",
+                amount: formatUseableAmount(
+                    giftCardController.totalAmount.toString()),
+                shortInfo: giftCardController.selectedProduct?.name ?? "",
                 logo: giftCardController.selectedProduct?.logo,
-                onChangeProvider: () => Navigator.pushNamed(context, RoutesManager.electricityProviders,),
+                onChangeProvider: () => Navigator.pushNamed(
+                      context,
+                      RoutesManager.electricityProviders,
+                    ),
                 onPinCompleted: (pin) async {
-                  giftCardController.buyGiftCard(pin, onError: (error) {
-                    showDialog(
-                      context: context, 
-                      builder: (context){
-                      return Dialog(
-                        backgroundColor: ColorManager.kError,
-                        insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: Container(
-                         // height: 200,
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),
-                          decoration: BoxDecoration(
-                            color: ColorManager.kWhite,
-                            borderRadius: BorderRadius.circular(24.r)
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              CircleAvatar(backgroundColor: ColorManager.kErrorEB.withValues(alpha: .08),radius: 43.r, child: CircleAvatar(backgroundColor: ColorManager.kErrorEB,radius: 30.r, child: Icon(Icons.close),),),
-                              Gap(24.h),
-                              Text('Purchase Failed', style: get20TextStyle(),),
-                              Gap(12.h),
-                              Text(error.toString(),textAlign: TextAlign.center, style: get14TextStyle().copyWith(
-                                
-                              ),),
-                              Gap(24.h),
-                              CustomButton(text: 'Okay',width: 90,borderRadius: BorderRadius.circular(12.r), isActive: true, onTap: (){
-                                Navigator.pop(context);
-                              }, loading: false)
-                            ],
-                          ),
-                        ),
-                      );
-                    });
-                  } ,);
-                 
+                  displayLoader(context);
+                  giftCardController.buyGiftCard(
+                    pin,
+                    onSuccess: (giftcardTxn) {
+                      popScreen();
+                      final items = getSummaryItems(
+                          giftcardInfo: giftcardTxn, TransactionType.giftcard);
+
+                      final review = ReceiptModel(
+                          summaryItems: items,
+                          amount: giftcardTxn.amount.toString(),
+                          shortInfo: 'Giftcard');
+                      Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          RoutesManager.successful,
+                          (Route<dynamic> route) => false,
+                          arguments: review);
+                    },
+                    onError: (error) {
+                      popScreen();
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              backgroundColor: ColorManager.kError,
+                              insetPadding:
+                                  EdgeInsets.symmetric(horizontal: 16.w),
+                              child: Container(
+                                // height: 200,
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20.w, vertical: 40.h),
+                                decoration: BoxDecoration(
+                                    color: ColorManager.kWhite,
+                                    borderRadius: BorderRadius.circular(24.r)),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundColor: ColorManager.kErrorEB
+                                          .withValues(alpha: .08),
+                                      radius: 43.r,
+                                      child: CircleAvatar(
+                                        backgroundColor: ColorManager.kErrorEB,
+                                        radius: 30.r,
+                                        child: Icon(Icons.close),
+                                      ),
+                                    ),
+                                    Gap(24.h),
+                                    Text(
+                                      error,
+                                      style: get20TextStyle(),
+                                    ),
+                                    Gap(12.h),
+                                    Text(
+                                      error.toString(),
+                                      textAlign: TextAlign.center,
+                                      style: get14TextStyle().copyWith(),
+                                    ),
+                                    Gap(24.h),
+                                    CustomButton(
+                                        text: 'Okay',
+                                        width: 90,
+                                        borderRadius:
+                                            BorderRadius.circular(12.r),
+                                        isActive: true,
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                        loading: false)
+                                  ],
+                                ),
+                              ),
+                            );
+                          });
+                    },
+                  );
                 });
             showReviewBottomShhet(context, reviewDetails: reviewModel);
-
-
           }),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
@@ -133,16 +195,18 @@ class BuyGiftcardScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                             giftCardController.selectedProduct?.name??"",
+                              giftCardController.selectedProduct?.name ?? "",
                               style: get14TextStyle()
                                   .copyWith(fontWeight: FontWeight.w500),
                             ),
                             Gap(4.h),
-                            Text(
-                              "( \$${giftCardController.selectedProduct?.minAmount} to \$99.99 ) US USD",
-                              style: get14TextStyle()
-                                  .copyWith(fontWeight: FontWeight.w500),
-                            ),
+                            if (giftCardController.selectedProduct?.minAmount !=
+                                null)
+                              Text(
+                                "( \$${giftCardController.selectedProduct?.minAmount ?? ""} to \$${giftCardController.selectedProduct?.maxAmount ?? ""} ) US USD",
+                                style: get14TextStyle()
+                                    .copyWith(fontWeight: FontWeight.w500),
+                              ),
                           ],
                         ),
                       )
@@ -160,27 +224,95 @@ class BuyGiftcardScreen extends StatelessWidget {
               ),
             ),
             CustomInputField(
+              readOnly: giftCardController.selectedProduct?.denominationType ==
+                      'FIXED'
+                  ? true
+                  : false,
+                  onChanged: (value) {
+                    giftCardController.calculateAmount();
+                  },
+              onTap: () {
+                if (giftCardController.selectedProduct?.denominationType ==
+                    'FIXED') {
+                  List<double>? amountList =
+                      giftCardController.selectedProduct?.priceList;
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          padding: EdgeInsets.all(16.sp),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: ColorManager.kWhite,
+                              borderRadius: BorderRadius.circular(15.r)),
+                          child: SafeArea(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              spacing: 15.h,
+                              children: [
+                                Text(
+                                  'Select Amount',
+                                  style: get16TextStyle()
+                                      .copyWith(fontWeight: FontWeight.w600),
+                                ),
+                                Column(
+                                  spacing: 10,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: List.generate(
+                                      amountList?.length ?? 0, (index) {
+                                    final amount = amountList?[index];
+                                    return InkWell(
+                                      onTap: () {
+                                        giftCardController
+                                            .onSelectAmount(amount.toString());
+                                        popScreen();
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10.w, vertical: 10.h),
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey
+                                                .withValues(alpha: .2),
+                                            borderRadius:
+                                                BorderRadius.circular(10.r)),
+                                        child: Text('${amount ?? ""}'),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                }
+              },
+              textEditingController:
+                  giftCardController.giftcardAmountController,
               suffixIcon: Container(
                 padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
                 decoration: BoxDecoration(
-                  color: ColorManager.kGreyF8,
-                  borderRadius: BorderRadius.circular(46.r)
-                ),
+                    color: ColorManager.kGreyF8,
+                    borderRadius: BorderRadius.circular(46.r)),
                 child: Row(
                   spacing: 12.w,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        giftCardController.quantityIncrementDecrement(false);
-                      },
-                      child: Icon(Icons.remove)),
-                    Text(giftCardController.giftcardQuantity< 10 ? "0${giftCardController.giftcardQuantity}" : giftCardController.giftcardQuantity.toString()),
+                        onTap: () {
+                          giftCardController.quantityIncrementDecrement(false);
+                        },
+                        child: Icon(Icons.remove)),
+                    Text(giftCardController.giftcardQuantity < 10
+                        ? "0${giftCardController.giftcardQuantity}"
+                        : giftCardController.giftcardQuantity.toString()),
                     GestureDetector(
-                      onTap: () {
-                        giftCardController.quantityIncrementDecrement(true);
-                      },
-                      child: Icon(Icons.add))
+                        onTap: () {
+                          giftCardController.quantityIncrementDecrement(true);
+                        },
+                        child: Icon(Icons.add))
                   ],
                 ),
               ),
@@ -190,11 +322,13 @@ class BuyGiftcardScreen extends StatelessWidget {
               width: double.infinity,
               padding: EdgeInsets.all(16.r),
               decoration: BoxDecoration(
-                color: ColorManager.kPrimary.withValues(alpha: .08),
-                border: Border.all(color: ColorManager.kPrimary),
-                borderRadius: BorderRadius.circular(14.r)
+                  color: ColorManager.kPrimary.withValues(alpha: .08),
+                  border: Border.all(color: ColorManager.kPrimary),
+                  borderRadius: BorderRadius.circular(14.r)),
+              child: Text(
+                formatCurrency(giftCardController.totalAmount),
+                style: get20TextStyle().copyWith(fontWeight: FontWeight.w500),
               ),
-              child: Text('₦ 7,514,40', style: get20TextStyle().copyWith(fontWeight: FontWeight.w500),),
             )
           ],
         ),

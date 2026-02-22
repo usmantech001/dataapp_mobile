@@ -199,7 +199,7 @@ class _BuyIntlDataScreenState extends State<BuyIntlDataScreen> {
                                 onSuccess: (transactionInfo) {
                                   popScreen();
                                   final items = getSummaryItems(
-                                      transactionInfo, TransactionType.data);
+                                       transInfo:  transactionInfo, TransactionType.data);
                                   print(
                                       '....able to get the summary items $items');
                                   final review = ReceiptModel(

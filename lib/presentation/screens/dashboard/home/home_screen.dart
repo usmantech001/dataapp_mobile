@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:dataplug/core/model/core/user.dart';
 import 'package:dataplug/core/providers/data_controller.dart';
 import 'package:dataplug/core/providers/user_provider.dart';
 import 'package:dataplug/core/providers/wallet_controller.dart';
+import 'package:dataplug/core/utils/app-loader.dart';
 import 'package:dataplug/core/utils/nav.dart';
 import 'package:dataplug/gen/assets.gen.dart';
 import 'package:dataplug/presentation/misc/color_manager/color_manager.dart';
@@ -63,11 +65,31 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Expanded(
-              child: RefreshIndicator.adaptive(
+              child: CustomRefreshIndicator(
                 onRefresh: () {
                   context.read<DataController>().getRecommendedDataPlans();
                   return context.read<WalletController>().getWalletBalance();
-                   
+                },
+                builder: (context, child, controller) {
+                  return Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      if (controller.isDragging || controller.isRefreshEnabled)
+                        Positioned(
+                          top: 24,
+                          child: Opacity(
+                            opacity: controller.value.clamp(0.0, 1.0),
+                            child: const LoadingIndicator(),
+                          ),
+                        ),
+
+                      
+                      Transform.translate(
+                        offset: Offset(0, controller.value * 80),
+                        child: child,
+                      ),
+                    ],
+                  );
                 },
                 child: SingleChildScrollView(
                   child: Column(
@@ -90,7 +112,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   // bgColor: ColorManager.kPrimary.withValues(alpha: .08),
                                   onTap: () {
                                     pushNamed(RoutesManager.virtualAccounts);
-                                    
                                   },
                                 )),
                                 Expanded(
@@ -188,37 +209,42 @@ class _HomeScreenState extends State<HomeScreen> {
                             dotHeight: 8),
                       )),
                       Gap(24.h),
-                     if(dataController.recommendedPlans.isNotEmpty) Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 15.w),
-                            child: Text(
-                              'Recommended for you',
-                              style: get16TextStyle()
-                                  .copyWith(fontWeight: FontWeight.w500),
+                      if (dataController.recommendedPlans.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 15.w),
+                              child: Text(
+                                'Recommended for you',
+                                style: get16TextStyle()
+                                    .copyWith(fontWeight: FontWeight.w500),
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                        height: 140.h,
-                        child: ListView.separated(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15.w, vertical: 12.h),
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              final plan = dataController.recommendedPlans[index];
-                              return PlanBox(plan: plan, onTap: (){
-                                dataController.onPlanSelected(plan, isRecommended: true);
-                                pushNamed(RoutesManager.buyRecommendedData);
-                              });
-                              
-                            },
-                            separatorBuilder: (context, index) => Gap(20),
-                            itemCount: dataController.recommendedPlans.length),
-                      )
-                        ],
-                      ),
-                      
+                            SizedBox(
+                              height: 140.h,
+                              child: ListView.separated(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 15.w, vertical: 12.h),
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    final plan =
+                                        dataController.recommendedPlans[index];
+                                    return PlanBox(
+                                        plan: plan,
+                                        onTap: () {
+                                          dataController.onPlanSelected(plan,
+                                              isRecommended: true);
+                                          pushNamed(
+                                              RoutesManager.buyRecommendedData);
+                                        });
+                                  },
+                                  separatorBuilder: (context, index) => Gap(20),
+                                  itemCount:
+                                      dataController.recommendedPlans.length),
+                            )
+                          ],
+                        ),
                     ],
                   ),
                 ),

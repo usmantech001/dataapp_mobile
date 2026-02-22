@@ -7,18 +7,18 @@ displayLoader(BuildContext context) {
       barrierDismissible: false,
       barrierColor: ColorManager.kBlack.withOpacity(0.3),
       context: context,
-      builder: (context) => AbegPayLoadingIndicator()
+      builder: (context) => LoadingIndicator()
       );
 }
 
-class AbegPayLoadingIndicator extends StatefulWidget {
-  const AbegPayLoadingIndicator({Key? key}) : super(key: key);
+class LoadingIndicator extends StatefulWidget {
+  const LoadingIndicator({Key? key}) : super(key: key);
 
   @override
-  State<AbegPayLoadingIndicator> createState() => _AbegPayLoadingIndicatorState();
+  State<LoadingIndicator> createState() => _LoadingIndicatorState();
 }
 
-class _AbegPayLoadingIndicatorState extends State<AbegPayLoadingIndicator>
+class _LoadingIndicatorState extends State<LoadingIndicator>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
@@ -51,14 +51,7 @@ class _AbegPayLoadingIndicatorState extends State<AbegPayLoadingIndicator>
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // Container(
-            //   width: 50.w,
-            //   height: 50.h,
-            //   decoration: BoxDecoration(
-            //     shape: BoxShape.circle,
-            //     color: ColorManager.kPrimaryLight, 
-            //   ),
-            // ),
+            
             Image.asset(
               'assets/images/app-logo.png', 
               width: 35.w,

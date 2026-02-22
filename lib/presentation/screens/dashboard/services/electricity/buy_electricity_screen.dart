@@ -83,90 +83,98 @@ class _BuyElectricityScreenState extends State<BuyElectricityScreen> {
               return;
             }
 
-               final generalController = context.read<GeneralController>();
-               final amount = formatUseableAmount(
-                      controller.amountController.text.trim());
-              generalController.getDiscount(type: 'electricity', provider: controller.selectedProvider!.code, amount: amount, onSuccess: (discount) {
-              num totalAmount = discount.amount??0;
+            final generalController = context.read<GeneralController>();
+            final amount =
+                formatUseableAmount(controller.amountController.text.trim());
+            generalController.getDiscount(
+              type: 'electricity',
+              provider: controller.selectedProvider!.code,
+              amount: amount,
+              onSuccess: (discount) {
+                num totalAmount = discount.amount ?? 0;
 
-            final summaryItems = [
-              SummaryItem(
-                  title: 'Electricity Provider',
-                  name: controller.selectedProvider?.name ?? ""),
-              SummaryItem(
-                title: 'Meter Number',
-                name: controller.meterNumberController.text.trim(),
-                hasDivider: true,
-              ),
-              
-              // SummaryItem(
-              //     title: 'Recharge Amount',
-              //     name: controller.amountController.text.trim()),
-              //     SummaryItem(
-              //     title: 'Total Amount',
-              //     name: formatCurrency(totalAmount)),
+                final summaryItems = [
                   SummaryItem(
-                  title: 'Amount',
-                  name: controller.amountController.text,
-                  hasDivider: true,
-                ),
-                
+                      title: 'Electricity Provider',
+                      name: controller.selectedProvider?.name ?? ""),
+                  SummaryItem(
+                    title: 'Meter Number',
+                    name: controller.meterNumberController.text.trim(),
+                    hasDivider: true,
+                  ),
 
-                if (discount.discount != 0)
+                  // SummaryItem(
+                  //     title: 'Recharge Amount',
+                  //     name: controller.amountController.text.trim()),
+                  //     SummaryItem(
+                  //     title: 'Total Amount',
+                  //     name: formatCurrency(totalAmount)),
                   SummaryItem(
-                    title: 'Discount',
-                    name: discount.discount.toString(),
+                    title: 'Amount',
+                    name: controller.amountController.text,
+                    hasDivider: true,
                   ),
-                  if (discount.fee != 0)
-                  SummaryItem(
-                    title: 'Fee',
-                    name: formatCurrency(discount.fee),
-                  ),
-               if (discount.discount != 0 || discount.fee!=0) SummaryItem(
-                    title: 'Total Amount',
-                    name: formatCurrency(totalAmount, decimal: 2)),
-            ];
-            String meterType = controller.isPrepaid ? 'prepaid' : 'postpaid';
-            final reviewModel = ReviewModel(
-                summaryItems: summaryItems,
-                amount: formatUseableAmount(controller.amountController.text),
-                shortInfo: 'Recharge $meterType meter',
-                providerType: 'Electricity',
-                providerName: controller.selectedProvider?.name,
-                logo: controller.selectedProvider?.logo,
-                onChangeProvider: () => Navigator.pushNamed(
-                      context,
-                      RoutesManager.electricityProviders,
+
+                  if (discount.discount != 0)
+                    SummaryItem(
+                      title: 'Discount',
+                      name: discount.discount.toString(),
                     ),
-                onPinCompleted: (pin) async {
-                  displayLoader(context);
-                  controller.buyUnit(
-                    pin,
-                    onSuccess: (transactionInfo) {
-                      popScreen();
-                      final items = getSummaryItems(
-                          transactionInfo, TransactionType.electricity);
-                      print('....able to get the summary items $items');
-                      final review = ReceiptModel(
-                          summaryItems: items,
-                          amount: transactionInfo.amount.toString(),
-                          shortInfo:
-                              '${transactionInfo.meta.provider?.name ?? ""} Airtime');
-                      Navigator.pushNamedAndRemoveUntil(
+                  if (discount.fee != 0)
+                    SummaryItem(
+                      title: 'Fee',
+                      name: formatCurrency(discount.fee),
+                    ),
+                  if (discount.discount != 0 || discount.fee != 0)
+                    SummaryItem(
+                        title: 'Total Amount',
+                        name: formatCurrency(totalAmount, decimal: 2)),
+                ];
+                String meterType =
+                    controller.isPrepaid ? 'prepaid' : 'postpaid';
+                final reviewModel = ReviewModel(
+                    summaryItems: summaryItems,
+                    amount:
+                        formatUseableAmount(controller.amountController.text),
+                    shortInfo: 'Recharge $meterType meter',
+                    providerType: 'Electricity',
+                    providerName: controller.selectedProvider?.name,
+                    logo: controller.selectedProvider?.logo,
+                    onChangeProvider: () => Navigator.pushNamed(
                           context,
-                          RoutesManager.successful,
-                          (Route<dynamic> route) => false,
-                          arguments: review);
-                    },
-                    onError: (error) {
-                      popScreen();
-                      showCustomErrorTransaction(
-                          context: context, errMsg: error);
-                    },
-                  );
-                });
-           showReviewBottomShhet(context, reviewDetails: reviewModel);
-              },);
+                          RoutesManager.electricityProviders,
+                        ),
+                    onPinCompleted: (pin) async {
+                      displayLoader(context);
+                      controller.buyUnit(
+                        pin,
+                        onSuccess: (transactionInfo) {
+                          popScreen();
+                          final items = getSummaryItems(
+                              transInfo: transactionInfo,
+                              TransactionType.electricity);
+                          print('....able to get the summary items $items');
+                          final review = ReceiptModel(
+                              summaryItems: items,
+                              amount: transactionInfo.amount.toString(),
+                              shortInfo:
+                                  '${transactionInfo.meta.provider?.name ?? ""} Airtime');
+                          Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              RoutesManager.successful,
+                              (Route<dynamic> route) => false,
+                              arguments: review);
+                        },
+                        onError: (error) {
+                          popScreen();
+                          showCustomErrorTransaction(
+                              context: context, errMsg: error);
+                        },
+                      );
+                    });
+                showReviewBottomShhet(context, reviewDetails: reviewModel);
+              },
+            );
           }),
       body: Consumer<ElectricityController>(
           builder: (context, electricityController, child) {
@@ -248,21 +256,23 @@ class _BuyElectricityScreenState extends State<BuyElectricityScreen> {
                                             color: ColorManager.kPrimary
                                                 .withValues(alpha: .5))),
                                     child: RichText(
-                                      maxLines: 1,
+                                        maxLines: 1,
                                         text: TextSpan(
                                             text: 'Attached Name  ',
                                             style: get14TextStyle().copyWith(
                                                 color: ColorManager.kGreyColor
                                                     .withValues(alpha: .7)),
-                                                    children: [
-                                                      TextSpan(
-                                                        text: electricityController.attachedMeterName??"",
-                                                        
-                                                        style: get14TextStyle().copyWith(color: ColorManager.kPrimary, )
-
-                                                      )
-                                                    ]
-                                                    )),
+                                            children: [
+                                              TextSpan(
+                                                  text: electricityController
+                                                          .attachedMeterName ??
+                                                      "",
+                                                  style:
+                                                      get14TextStyle().copyWith(
+                                                    color:
+                                                        ColorManager.kPrimary,
+                                                  ))
+                                            ])),
                                   )
                                 : SizedBox(),
                   ],

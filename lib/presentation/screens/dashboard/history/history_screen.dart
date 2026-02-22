@@ -314,7 +314,7 @@ class HistoryTile extends StatelessWidget {
       onTap: () {
         print(transInfo.toMap());
         final summaryItems =
-            getSummaryItems(transInfo, TransactionType.airtime);
+            getSummaryItems( transInfo:  transInfo, TransactionType.airtime);
         final details = ReceiptModel(
             summaryItems: summaryItems,
             amount: transInfo.amount.toString(),

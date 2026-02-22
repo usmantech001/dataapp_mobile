@@ -135,6 +135,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             key: _formKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
                   child: Padding(
@@ -342,8 +343,8 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                   hintText: "Enter your username",
                   textInputAction: TextInputAction.next,
                   textEditingController: userNameController,
-                  validator: (val) => Validator.validateField(
-                      fieldName: "Username", input: val),
+                  // validator: (val) => Validator.validateField(
+                  //     fieldName: "Username", input: val),
                 ),
                               
                 spacer,
@@ -477,17 +478,17 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                   text: "Update",
                   isActive: true,
                   onTap: () {
-                    if (!(_formKey.currentState?.validate() ??
-                        false)) return;
+                    // if (!(_formKey.currentState?.validate() ??
+                    //     false)) return;
                               
-                    if (gender == null) {
-                      showCustomToast(
-                        context: context,
-                        description:
-                            "Please fill all the details.",
-                      );
-                      return;
-                    }
+                    // if (gender == null) {
+                    //   showCustomToast(
+                    //     context: context,
+                    //     description:
+                    //         "Please fill all the details.",
+                    //   );
+                    //   return;
+                    // }
                               
                     //
                     updateProfile(userProvider);
@@ -508,11 +509,13 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   Future<void> updateProfile(UserProvider userProvider) async {
     if (firstnameController.text.isEmpty ||
         lastnameController.text.isEmpty ||
-        userNameController.text.isEmpty ||
+       // userNameController.text.isEmpty ||
         phoneCodeController.text.isEmpty ||
-        phoneController.text.isEmpty ||
-        countryController.text.isEmpty ||
-        stateController.text.isEmpty) {
+        phoneController.text.isEmpty 
+        //||
+        // countryController.text.isEmpty ||
+        // stateController.text.isEmpty
+        ) {
       showCustomToast(
         context: context,
         description: "Please fill all the details.",
@@ -528,11 +531,11 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       User user = await UserHelper.updateProfile(
         firstname: firstnameController.text,
         lastname: lastnameController.text,
-        username: userNameController.text,
+        username: userNameController.text.isNotEmpty? userNameController.text : null,
         phone_code: phoneCodeController.text,
         phone: phoneController.text,
-        country: countryController.text,
-        state: stateController.text,
+        country: countryController.text.isNotEmpty? countryController.text : null,
+        state: stateController.text.isNotEmpty? stateController.text : null,
         gender: enumToString(gender),
       );
       userProvider.updateUser(user);

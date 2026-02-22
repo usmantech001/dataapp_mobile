@@ -185,7 +185,7 @@ class LeaderboardTile extends StatelessWidget {
                 item.email,
                 style: get16TextStyle().copyWith(fontWeight: FontWeight.w500),
               ),
-              Text(
+             if(isReferrals) Text(
                isReferrals? '${item.value} referrals' : formatCurrency(item.value),
                 style: get14TextStyle().copyWith(
                     color: textColor?? ColorManager.kGreyColor.withValues(alpha: .7)),

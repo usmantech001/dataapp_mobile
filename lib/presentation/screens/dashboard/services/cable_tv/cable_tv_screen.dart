@@ -130,7 +130,7 @@ class _CableTvScreenState extends State<CableTvScreen> {
                       onSuccess: (transactionInfo) {
                         popScreen();
                         final items = getSummaryItems(
-                            transactionInfo, TransactionType.cable);
+                             transInfo:  transactionInfo, TransactionType.cable);
                         final review = ReceiptModel(
                             summaryItems: items,
                             amount: transactionInfo.amount.toString(),

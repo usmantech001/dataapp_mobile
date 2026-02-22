@@ -89,7 +89,7 @@ class _BuyRecommendedDataScreenState extends State<BuyRecommendedDataScreen> {
                       onSuccess: (transactionInfo) {
                         popScreen();
                         final items = getSummaryItems(
-                            transactionInfo, TransactionType.data);
+                             transInfo:  transactionInfo, TransactionType.data);
                         final review = ReceiptModel(
                             summaryItems: items,
                             amount: transactionInfo.amount.toString(),

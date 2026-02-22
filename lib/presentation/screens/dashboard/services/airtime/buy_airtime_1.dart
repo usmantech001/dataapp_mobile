@@ -147,7 +147,7 @@ class _BuyAirtime1State extends State<BuyAirtime1> {
                         FacebookEventHelper().logEvent('Airtime');
                         popScreen();
                         final items = getSummaryItems(
-                            transactionInfo, TransactionType.airtime);
+                           transInfo:  transactionInfo, TransactionType.airtime);
                         print('....able to get the summary items $items');
                         final review = ReceiptModel(
                             summaryItems: items,

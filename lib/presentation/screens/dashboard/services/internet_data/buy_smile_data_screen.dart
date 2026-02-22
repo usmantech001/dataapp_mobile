@@ -151,7 +151,7 @@ class _BuyOtherDataScreenState extends State<BuyOtherDataScreen> {
                                         onSuccess: (transactionInfo) {
                                           popScreen();
                                           final items = getSummaryItems(
-                                              transactionInfo,
+                                               transInfo:  transactionInfo,
                                               TransactionType.data);
                                           final review = ReceiptModel(
                                               summaryItems: items,
